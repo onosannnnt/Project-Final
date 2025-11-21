@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7401980dc50a04460a7ba2d9ba0a542f, type: 3}
+  m_Name: PlayerStat
+  m_EditorClassIdentifier: 
+  Level: 1
+  ExperiencePoints: 0
+  Strength: 5
+  Intelligence: 1
+  Agility: 1
+  MaxHealth: 100
+  MaxSkillPoint: 5
+  MaxSkillSlot: 2
+  PhysicalAttack: 10
+  MagicAttack: 2
+  FireDamageMultiplier: 0
+  ColdDamageMultiplier: 0
+  LightningDamageMultiplier: 0
+  PhysicalDefense: 10
+  MagicDefense: 10
+  ActionSpeed: 50
+  CriticalHitChance: 0.05
+  CriticalHitDamageMultiplier: 1.5
+  Accuracy: 300
+  EvasionRate: 300
+  StatusEffectResistance: 0.1
+  StatusHitChance: 0.1

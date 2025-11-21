@@ -1,0 +1,13 @@
+public class CombatBuff
+{
+    public Buff BuffType;
+    public float Duration;
+    public float Target;
+
+    public CombatBuff(Buff buffType, float duration, float target)
+    {
+        BuffType = buffType;
+        Duration = duration;
+        Target = target;
+    }
+}

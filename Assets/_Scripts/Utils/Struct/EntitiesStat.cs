@@ -1,0 +1,28 @@
+public struct Stat
+{
+    public int Level;
+    public float ExperiencePoints;
+    public int Strength;
+    public int Intelligence;
+    public int Agility;
+    public float MaxHealth;
+    public float CurrentHealth;
+    public float MaxSP;
+    public float CurrentSP;
+    public int MaxSkillSlot;
+    public float PhysicalAttack;
+    public float MagicAttack;
+    public float FireDamageMultiplier;
+    public float ColdDamageMultiplier;
+    public float LightningDamageMultiplier;
+    public float PhysicalDefense;
+    public float FireResistance;
+    public float ColdResistance;
+    public float LightningResistance;
+    public float ActionSpeed;
+    public float CriticalChance;
+    public float CriticalDamageMultiplier;
+    public float Accuracy;
+    public float EvasionRate;
+    public float StatusEffectResistance;
+}
