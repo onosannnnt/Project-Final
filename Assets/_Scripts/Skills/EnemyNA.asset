@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
   m_Name: EnemyNA
   m_EditorClassIdentifier: 
-  skillName: 
-  description: 
+  skillName: bash
+  description: Enemy normal attack
   spCost: 0
   StrengthRequirement: 0
   IntelligenceRequirement: 0
   AgilityRequirement: 0
   levelRequirement: 0
-  targetType: 0
-  physicalDamageMultiplier: 0
+  targetType: 1
+  physicalDamageMultiplier: 0.7
   magicDamageMultiplier: 0
   healingAmountMultiplier: 0
-  debuff: 
+  buffs: []

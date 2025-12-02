@@ -1,4 +1,4 @@
-public enum playerState
+public enum PlayerState
 {
     Idle,
     Targeting,

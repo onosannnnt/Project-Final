@@ -15,11 +15,15 @@ public class CombatUIManager : Singleton<CombatUIManager>
     //skill panel
     [SerializeField] private GameObject SkillList;
     [SerializeField] private GameObject SkillPrefab;
+    [SerializeField] private GameObject ActionPanel;
     //Action Button
     [SerializeField] private Button ActionButtonPanal;
+    [SerializeField] private Button InventoryButtonPanal;
+    [SerializeField] private Button SkillGobackButton;
+
     //turn header
     [SerializeField] private TextMeshProUGUI TurnHeaderText;
-    [SerializeField] private TextMeshProUGUI HealthText;
+    [SerializeField] private Image HealthImage;
     [SerializeField] private TextMeshProUGUI SPText;
 
     private static Skill SelectedSkill;
@@ -30,7 +34,20 @@ public class CombatUIManager : Singleton<CombatUIManager>
         {
             Debug.Log("Action Button Clicked");
             SkillList.SetActive(!SkillList.activeSelf);
+            ActionPanel.SetActive(false);
         });
+        InventoryButtonPanal.onClick.AddListener(() =>
+        {
+            Debug.Log("Inventory Button Clicked");
+            InventoryButtonPanal.gameObject.SetActive(false);
+            // Toggle Inventory Panel here
+        });
+        SkillGobackButton.onClick.AddListener(() =>
+        {
+            SkillList.SetActive(false);
+            ActionPanel.gameObject.SetActive(true);
+        });
+        SkillList.SetActive(false);
         SkillMapping();
         UpdatePlayerStatsUI();
 
@@ -40,24 +57,43 @@ public class CombatUIManager : Singleton<CombatUIManager>
     {
         foreach (Transform child in SkillList.transform)
         {
-            Destroy(child.gameObject);
+            if (child.gameObject.name != "Back")
+                Destroy(child.gameObject);
         }
+        int count = Player.GetComponent<PlayerCombat>().GetSkills().Count;
+        float spacing = 20f;
+        int mid = count / 2;
         int index = 0;
         foreach (var skill in Player.GetComponent<PlayerCombat>().GetSkills())
         {
-            Debug.Log(skill);
-            GameObject skillButton = Instantiate(SkillPrefab, SkillList.transform);
-            skillButton.GetComponent<RectTransform>().localPosition = new Vector3(450 - (index * 200), -460, 0);
-            skillButton.GetComponentInChildren<TextMeshProUGUI>().text = skill.skillName;
-            skillButton.GetComponent<Button>().onClick.AddListener(() =>
+            float x = (index - mid) * spacing;
+            if (count % 2 == 0)
             {
-                UpdatePlayerStatsUI();
-                PlayerCombat PlayerCombat = Player.GetComponent<PlayerCombat>();
-                SelectedSkill = skill;
-                Debug.Log("Selected Skill: " + SelectedSkill.skillName);
-                TurnManager.setSelectedSkill(SelectedSkill);
+                x += spacing * 0.5f;
+            }
+            GameObject skillButton = Instantiate(SkillPrefab, SkillList.transform);
+            skillButton.GetComponent<RectTransform>().localPosition = new Vector3(x, 0, 0);
+            skillButton.GetComponentInChildren<TextMeshProUGUI>().text = skill.skillName;
+            if (Player.GetComponent<PlayerCombat>().GetPlayerStats().CurrentSP < skill.spCost)
+            {
+                skillButton.GetComponent<Button>().interactable = false;
+            }
+            skillButton.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            UpdatePlayerStatsUI();
+            PlayerCombat PlayerCombat = Player.GetComponent<PlayerCombat>();
+            SelectedSkill = skill;
+            Debug.Log("Selected Skill: " + SelectedSkill.skillName);
+            TurnManager.SetSelectedSkill(SelectedSkill);
+            if (SelectedSkill.targetType == TargetType.SingleEnemy)
+            {
+                PlayerCombat.HandleSingleEnemyTargeting(SelectedSkill);
+            }
+            else
+            {
                 TurnManager.ChangingState(TurnState.SpeedCompareState);
-            });
+            }
+        });
             index += 1;
         }
         // Debug.Log(Player.GetComponent<PlayerCombat>().GetPlayerStats().MaxSkillSlot);
@@ -74,8 +110,9 @@ public class CombatUIManager : Singleton<CombatUIManager>
     public void UpdatePlayerStatsUI()
     {
         Stat playerStats = Player.GetComponent<PlayerCombat>().GetPlayerStats();
-        HealthText.text = "HP: " + Math.Max(playerStats.CurrentHealth, 0).ToString("F2") + " / " + playerStats.MaxHealth.ToString("F2");
-        SPText.text = "SP: " + Math.Max(playerStats.CurrentSP, 0) + " / " + playerStats.MaxSP;
+        // HealthText.text = "HP: " + Math.Max(playerStats.CurrentHealth, 0).ToString("F2") + " / " + playerStats.MaxHealth.ToString("F2");
+        HealthImage.fillAmount = playerStats.CurrentHealth / playerStats.MaxHealth;
+        // SPText.text = "SP: " + Math.Max(playerStats.CurrentSP, 0) + " / " + playerStats.MaxSP;
     }
     public void UpdatePlayerUIActive(bool isActive)
     {
@@ -83,5 +120,6 @@ public class CombatUIManager : Singleton<CombatUIManager>
         {
             panel.SetActive(isActive);
         }
+        SkillMapping();
     }
 }

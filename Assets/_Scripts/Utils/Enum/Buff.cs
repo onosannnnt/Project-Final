@@ -1,4 +1,4 @@
-public enum Buff
+public enum BuffType
 {
     burn,
     chill,
@@ -11,6 +11,3 @@ public enum Buff
     SpeedUp,
     SpeedDown
 }
-
-
-

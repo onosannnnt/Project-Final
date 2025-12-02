@@ -29,6 +29,6 @@ public class Skill : ScriptableObject
     [Tooltip("Healing Amount of skill base on player max health divided by 100")]
     public float healingAmountMultiplier;
     [Tooltip("Buffs applied by the Skill")]
-    public List<CombatBuff> buffs;
+    public List<StatusBuff> buffs;
 
 }

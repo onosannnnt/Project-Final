@@ -7,6 +7,7 @@ public class TurnManager : Singleton<TurnManager>
     [SerializeField] private CombatUIManager combatUIManager;
     [SerializeField] private Transform WorldParent;
     [SerializeField] private PlayerCombat PlayerCombat;
+    [SerializeField] private DropManager DropManager;
     public TurnState State { get; private set; }
 
     private List<ActionQueue> ActionQueues = new List<ActionQueue>();
@@ -90,10 +91,6 @@ public class TurnManager : Singleton<TurnManager>
         }
         ActionQueues.Sort((a, b) => b.ActionSpeed.CompareTo(a.ActionSpeed));
         combatUIManager.SetTurnHeaderText("Comparing Speeds");
-        foreach (var action in ActionQueues)
-        {
-            Debug.Log("Entity: " + action.Entity.name + ", Action Speed: " + action.ActionSpeed);
-        }
         ChangingState(TurnState.ActionState);
     }
     private void HandleLoseState()
@@ -103,29 +100,48 @@ public class TurnManager : Singleton<TurnManager>
     private void HandleWinState()
     {
         combatUIManager.SetTurnHeaderText("You Win!");
+        DropManager.GenerateItemDrop();
+
     }
     private void HandleActionState()
     {
         combatUIManager.SetTurnHeaderText("Action Phase");
         StartCoroutine(ExecuteActionPhase());
     }
+    public void HandleTargetEnemyUI()
+    {
+        combatUIManager.SetTurnHeaderText("Select an Enemy Target");
+    }
     private IEnumerator ExecuteActionPhase()
     {
         foreach (var action in ActionQueues)
         {
+            if (IsPlayerWin())
+            {
+                ChangingState(TurnState.Win);
+                yield break;
+            }
             // Debug.Log("Executing action for: " + action.Entity.name + " with speed " + action.ActionSpeed + " with skill " + (action.Skill != null ? action.Skill.skillName : "None"));
             if (action.Entity.CompareTag("Player"))
             {
+                PlayerCombat.ProcessBuffs();
                 PlayerCombat.UseSkill(action.Skill);
                 combatUIManager.UpdatePlayerStatsUI();
+                Debug.Log("Player buff : " + (PlayerCombat.GetAppliedBuffs().Count > 0 ? PlayerCombat.GetAppliedBuffs()[0].buffType.ToString() : "No Buffs"));
+
             }
             else if (action.Entity.CompareTag("Enemy"))
             {
                 EnemyCombat enemyCombat = action.Entity.GetComponent<EnemyCombat>();
                 if (enemyCombat != null)
                 {
+                    enemyCombat.ProcessBuffs();
                     enemyCombat.UseSkill(PlayerCombat);
                     combatUIManager.UpdatePlayerStatsUI();
+                    Debug.Log("Enemy buff : " + (enemyCombat.GetAppliedBuffs().Count > 0 ?
+                        enemyCombat.GetAppliedBuffs()[0].buffType.ToString() + " Duration: " + enemyCombat.GetAppliedBuffs()[0].duration + " Stacks: " + enemyCombat.GetAppliedBuffs()[0].Stack
+                        :
+                        "No Buffs"));
                 }
             }
             if (IsPlayerWin())
@@ -133,13 +149,19 @@ public class TurnManager : Singleton<TurnManager>
                 ChangingState(TurnState.Win);
                 yield break;
             }
+            else if (PlayerCombat.GetPlayerStats().CurrentHealth <= 0)
+            {
+                ChangingState(TurnState.Lose);
+                yield break;
+            }
             yield return new WaitForSeconds(1f);
         }
-        if (PlayerCombat.GetPlayerStats().CurrentHealth <= 0)
+        if (IsPlayerWin())
         {
-            ChangingState(TurnState.Lose);
+            ChangingState(TurnState.Win);
+            yield break;
         }
-        else
+        if (State != TurnState.Win && State != TurnState.Lose)
         {
             ChangingState(TurnState.PlayerTurnState);
         }
@@ -147,12 +169,15 @@ public class TurnManager : Singleton<TurnManager>
     private bool IsPlayerWin()
     {
         EnemyCombat[] enemies = WorldParent.GetComponentsInChildren<EnemyCombat>();
-        Debug.Log("Remaining Enemies: " + enemies.Length);
         return enemies.Length == 0;
     }
-    public void setSelectedSkill(Skill skill)
+    public void SetSelectedSkill(Skill skill)
     {
         SelectedSkill = skill;
+    }
+    public void RemoveKilledEnemy(EnemyCombat enemy)
+    {
+        ActionQueues.RemoveAll(a => a.Entity == enemy.gameObject);
     }
 
 }

@@ -18,9 +18,24 @@ MonoBehaviour:
   StrengthRequirement: 0
   IntelligenceRequirement: 0
   AgilityRequirement: 0
-  levelRequirement: 0
+  levelRequirement: 1
   targetType: 1
-  physicalDamageMultiplier: 0
+  physicalDamageMultiplier: 0.7
   magicDamageMultiplier: 0
   healingAmountMultiplier: 0
-  debuff: 03000000
+  buffs:
+  - buffType: 3
+    duration: 3
+    isApplied: 0
+    isStackable: 1
+    Stack: 1
+    amountMultiplier: 0
+    amountFlat: 0
+    PhysicalDamageMultiplierByMaxHealth: 0.1
+    fireDamageMultiplierByMaxHealth: 0
+    iceDamageMultiplierByMaxHealth: 0
+    lightningDamageMultiplierByMaxHealth: 0
+    PhysicalDamageFlat: 3
+    FireDamageFlat: 0
+    IceDamageFlat: 0
+    LightningDamageFlat: 0

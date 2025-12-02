@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Healinglite
   m_EditorClassIdentifier: 
   skillName: Healinglite
-  description: 
+  description: Healing low amout
   spCost: 0
   StrengthRequirement: 0
   IntelligenceRequirement: 0
@@ -22,5 +22,4 @@ MonoBehaviour:
   targetType: 0
   physicalDamageMultiplier: 0
   magicDamageMultiplier: 0
-  healingAmountMultiplier: 0
-  debuff: 
+  healingAmountMultiplier: 0.15

@@ -25,4 +25,5 @@ public struct Stat
     public float Accuracy;
     public float EvasionRate;
     public float StatusEffectResistance;
+    public float StatusHitChance;
 }

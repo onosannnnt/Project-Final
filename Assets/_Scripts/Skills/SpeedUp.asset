@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
   m_Name: SpeedUp
   m_EditorClassIdentifier: 
-  skillName: 
-  description: 
+  skillName: SpeedUp
+  description: Increase target speed
   spCost: 0
   StrengthRequirement: 0
   IntelligenceRequirement: 0
@@ -23,4 +23,19 @@ MonoBehaviour:
   physicalDamageMultiplier: 0
   magicDamageMultiplier: 0
   healingAmountMultiplier: 0
-  buffs: 
+  buffs:
+  - buffType: 8
+    duration: 3
+    isApplied: 1
+    isStackable: 0
+    Stack: 0
+    amountMultiplier: 0.05
+    amountFlat: 5
+    PhysicalDamageMultiplierByMaxHealth: 0
+    fireDamageMultiplierByMaxHealth: 0
+    iceDamageMultiplierByMaxHealth: 0
+    lightningDamageMultiplierByMaxHealth: 0
+    PhysicalDamageFlat: 0
+    FireDamageFlat: 0
+    IceDamageFlat: 0
+    LightningDamageFlat: 0
