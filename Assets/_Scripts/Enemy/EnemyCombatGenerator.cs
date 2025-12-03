@@ -4,7 +4,7 @@ public class EnemyGenerator : MonoBehaviour
 {
     [SerializeField] private GameObject Enemy;
     [SerializeField] private Transform worldParent;
-    [SerializeField] private int enemy = 1;
+    [SerializeField] private int enemy = 2;
     void Start()
     {
         GenerateEnemy();
@@ -12,7 +12,7 @@ public class EnemyGenerator : MonoBehaviour
 
     private void GenerateEnemy()
     {
-        int enemyCount = Random.Range(1, enemy + 1); // Generate between 1 to enemy
+        int enemyCount = Random.Range(2, enemy + 1); // Generate between 1 to enemy
         if (enemyCount <= 0) return;
         switch (enemyCount)
         {

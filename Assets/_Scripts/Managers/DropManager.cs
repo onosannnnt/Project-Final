@@ -20,8 +20,7 @@ public class DropManager : Singleton<DropManager>
         BackButton.onClick.AddListener(() =>
         {
             DropUI.SetActive(false);
-            SceneManager.LoadScene("Overworld");
-            // Implement logic to return to world scene
+            Loader.Load(Loader.Scenes.Overworld);
         });
     }
 

@@ -226,6 +226,11 @@ public class PlayerCombat : MonoBehaviour
 
     private void UseSkillOnSingleEnemy(Skill skill, EnemyCombat enemy)
     {
+        if (enemy.TryGetComponent<EnemyCombat>(out var ec) == false)
+        {
+            Debug.Log("No enemy targeted for skill: " + skill.skillName);
+            return;
+        }
         if (playerStats.CurrentSP < skill.spCost)
         {
             Debug.Log("Not enough SP to use " + skill.skillName);

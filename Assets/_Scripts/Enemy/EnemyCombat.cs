@@ -110,6 +110,7 @@ public class EnemyCombat : MonoBehaviour
 
     public Skill RandomSkill()
     {
+        enemyStats.ActionSpeed = UnityEngine.Random.Range(1, 60);
         int randomIndex = UnityEngine.Random.Range(0, enemySkills.Count);
         return enemySkills[randomIndex];
     }

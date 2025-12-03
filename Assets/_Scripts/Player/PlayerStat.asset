@@ -20,7 +20,7 @@ MonoBehaviour:
   MaxHealth: 100
   MaxSkillPoint: 5
   MaxSkillSlot: 2
-  PhysicalAttack: 100
+  PhysicalAttack: 30
   MagicAttack: 2
   FireDamageMultiplier: 0
   ColdDamageMultiplier: 0

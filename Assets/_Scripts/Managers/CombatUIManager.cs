@@ -26,10 +26,16 @@ public class CombatUIManager : Singleton<CombatUIManager>
     [SerializeField] private Image HealthImage;
     [SerializeField] private TextMeshProUGUI SPText;
 
+    //ActionQueue
+    [SerializeField] private Transform ActionQueueParent;
+    [SerializeField] private GameObject ActionQueuePrefab;
+
     private static Skill SelectedSkill;
+    private Sprite[] allIcons;
 
     private void Start()
     {
+        allIcons = Resources.LoadAll<Sprite>("Entities");
         ActionButtonPanal.onClick.AddListener(() =>
         {
             Debug.Log("Action Button Clicked");
@@ -121,5 +127,39 @@ public class CombatUIManager : Singleton<CombatUIManager>
             panel.SetActive(isActive);
         }
         SkillMapping();
+    }
+
+    public void UpdateActionPanel()
+    {
+        List<ActionQueue> actionQueues = TurnManager.GetVirtualActionQueues();
+        foreach (Transform child in ActionQueueParent)
+        {
+            Destroy(child.gameObject);
+        }
+        float startX = -830f;
+        float startY = 400f;
+        float stepY = -100f;
+        int index = 0;
+        foreach (var action in actionQueues)
+        {
+            Debug.Log("Action Queue Entity: " + action.Entity.name + ", Action Speed: " + action.ActionSpeed);
+            if (action.Entity == null) continue;
+            float y = startY + (index * stepY);
+            GameObject actionEntry = Instantiate(ActionQueuePrefab, ActionQueueParent);
+            actionEntry.GetComponent<RectTransform>().localPosition = new Vector3(startX, y, 0);
+            GameObject APText = actionEntry.transform.Find("AP").gameObject;
+            APText.GetComponent<TextMeshProUGUI>().text = action.ActionSpeed.ToString();
+            GameObject EntityIcon = actionEntry.transform.Find("EntityIcon").gameObject;
+            Image iconImage = EntityIcon.GetComponent<Image>();
+            // if (action.Entity.CompareTag("Player"))
+            // {
+            //     iconImage.sprite = allIcons[0]; // Player icon
+            // }
+            // else if (action.Entity.CompareTag("Enemy"))
+            // {
+            //     iconImage.sprite = allIcons[1]; // Enemy icon
+            // }
+            index += 1;
+        }
     }
 }

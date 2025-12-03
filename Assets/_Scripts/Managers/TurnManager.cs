@@ -11,6 +11,7 @@ public class TurnManager : Singleton<TurnManager>
     public TurnState State { get; private set; }
 
     private List<ActionQueue> ActionQueues = new List<ActionQueue>();
+    private List<ActionQueue> VirtualActionQueues = new List<ActionQueue>();
     private Skill SelectedSkill;
 
 
@@ -90,6 +91,7 @@ public class TurnManager : Singleton<TurnManager>
             ActionQueues.Add(actionQueue);
         }
         ActionQueues.Sort((a, b) => b.ActionSpeed.CompareTo(a.ActionSpeed));
+        VirtualActionQueues = new List<ActionQueue>(ActionQueues);
         combatUIManager.SetTurnHeaderText("Comparing Speeds");
         ChangingState(TurnState.ActionState);
     }
@@ -114,36 +116,41 @@ public class TurnManager : Singleton<TurnManager>
     }
     private IEnumerator ExecuteActionPhase()
     {
-        foreach (var action in ActionQueues)
+        combatUIManager.UpdateActionPanel();
+        yield return new WaitForSeconds(1f);
+
+        // ให้ VirtualActionQueues เป็นสำเนา
+        VirtualActionQueues = new List<ActionQueue>(ActionQueues);
+
+        while (VirtualActionQueues.Count > 0)
         {
+            var action = VirtualActionQueues[0];
+            VirtualActionQueues.RemoveAt(0); // เอาออกจากคิวทันที
+
+            combatUIManager.UpdateActionPanel();
+
             if (IsPlayerWin())
             {
                 ChangingState(TurnState.Win);
                 yield break;
             }
-            // Debug.Log("Executing action for: " + action.Entity.name + " with speed " + action.ActionSpeed + " with skill " + (action.Skill != null ? action.Skill.skillName : "None"));
+
+            if (action.Entity == null)
+                continue;
+
             if (action.Entity.CompareTag("Player"))
             {
                 PlayerCombat.ProcessBuffs();
                 PlayerCombat.UseSkill(action.Skill);
                 combatUIManager.UpdatePlayerStatsUI();
-                Debug.Log("Player buff : " + (PlayerCombat.GetAppliedBuffs().Count > 0 ? PlayerCombat.GetAppliedBuffs()[0].buffType.ToString() : "No Buffs"));
-
             }
-            else if (action.Entity.CompareTag("Enemy"))
+            else if (action.Entity.TryGetComponent<EnemyCombat>(out var enemyCombat))
             {
-                EnemyCombat enemyCombat = action.Entity.GetComponent<EnemyCombat>();
-                if (enemyCombat != null)
-                {
-                    enemyCombat.ProcessBuffs();
-                    enemyCombat.UseSkill(PlayerCombat);
-                    combatUIManager.UpdatePlayerStatsUI();
-                    Debug.Log("Enemy buff : " + (enemyCombat.GetAppliedBuffs().Count > 0 ?
-                        enemyCombat.GetAppliedBuffs()[0].buffType.ToString() + " Duration: " + enemyCombat.GetAppliedBuffs()[0].duration + " Stacks: " + enemyCombat.GetAppliedBuffs()[0].Stack
-                        :
-                        "No Buffs"));
-                }
+                enemyCombat.ProcessBuffs();
+                enemyCombat.UseSkill(PlayerCombat);
+                combatUIManager.UpdatePlayerStatsUI();
             }
+
             if (IsPlayerWin())
             {
                 ChangingState(TurnState.Win);
@@ -154,18 +161,23 @@ public class TurnManager : Singleton<TurnManager>
                 ChangingState(TurnState.Lose);
                 yield break;
             }
+
+            combatUIManager.UpdateActionPanel();
             yield return new WaitForSeconds(1f);
         }
+
         if (IsPlayerWin())
         {
             ChangingState(TurnState.Win);
             yield break;
         }
+
         if (State != TurnState.Win && State != TurnState.Lose)
         {
             ChangingState(TurnState.PlayerTurnState);
         }
     }
+
     private bool IsPlayerWin()
     {
         EnemyCombat[] enemies = WorldParent.GetComponentsInChildren<EnemyCombat>();
@@ -175,9 +187,8 @@ public class TurnManager : Singleton<TurnManager>
     {
         SelectedSkill = skill;
     }
-    public void RemoveKilledEnemy(EnemyCombat enemy)
+    public List<ActionQueue> GetVirtualActionQueues()
     {
-        ActionQueues.RemoveAll(a => a.Entity == enemy.gameObject);
+        return VirtualActionQueues;
     }
-
 }
