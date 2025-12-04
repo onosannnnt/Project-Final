@@ -24,7 +24,7 @@ public class DropManager : Singleton<DropManager>
         });
     }
 
-    public void GenerateItemDrop()
+    public void OpenDropUI()
     {
         GameObject ItemInspect = DropUI.transform.Find("Canvas").Find("DropInspect").gameObject;
 
@@ -41,7 +41,6 @@ public class DropManager : Singleton<DropManager>
             ItemInspect.transform.Find("Description").GetComponent<TextMeshProUGUI>().text = droppedItem.description;
             ItemInspect.transform.Find("Rarity").GetComponent<TextMeshProUGUI>().text = droppedItem.rarity.ToString();
             Image inspectIcon = ItemInspect.transform.Find("ItemFrame").Find("ItemImage").GetComponent<Image>();
-
             inspectIcon.sprite = droppedItem.icon;
         });
 

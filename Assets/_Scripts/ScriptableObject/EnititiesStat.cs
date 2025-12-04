@@ -16,7 +16,7 @@ public class EntitiesBaseStat : ScriptableObject
     [Tooltip("Maximum Health of the Player")]
     public float MaxHealth;
     [Tooltip("Maximum Skill Points of the Player")]
-    public float MaxSkillPoint;
+    public int MaxSkillPoint;
     [Tooltip("Max skill slot of the Player")]
     public int MaxSkillSlot;
     [Tooltip("Physical Attack Power of the Player")]

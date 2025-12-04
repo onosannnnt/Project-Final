@@ -7,11 +7,13 @@ using UnityEngine;
 public class Skill : ScriptableObject
 {
     [Tooltip("Name of the Skill")]
-    public string skillName;
+    public string SkillName;
     [Tooltip("Description of the Skill")]
-    public string description;
+    public string Description;
     [Tooltip("Sp cost of the Skill")]
-    public float spCost;
+    public int SpCost;
+    [Tooltip("Sp restore of the Skill")]
+    public int SpRestore;
     [Tooltip("Strength Requirement to use the Skill")]
     public int StrengthRequirement;
     [Tooltip("Intelligence Requirement to use the Skill")]

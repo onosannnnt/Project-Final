@@ -1,29 +1,15 @@
-public struct Stat
+public struct Damage
 {
-    public int Level;
-    public float ExperiencePoints;
-    public int Strength;
-    public int Intelligence;
-    public int Agility;
-    public float MaxHealth;
-    public float CurrentHealth;
-    public float MaxSP;
-    public float CurrentSP;
-    public int MaxSkillSlot;
-    public float PhysicalAttack;
-    public float MagicAttack;
-    public float FireDamageMultiplier;
-    public float ColdDamageMultiplier;
-    public float LightningDamageMultiplier;
-    public float PhysicalDefense;
-    public float FireResistance;
-    public float ColdResistance;
-    public float LightningResistance;
-    public float ActionSpeed;
-    public float CriticalChance;
-    public float CriticalDamageMultiplier;
-    public float Accuracy;
-    public float EvasionRate;
-    public float StatusEffectResistance;
-    public float StatusHitChance;
+    public float PhysicalDamage;
+    public float FireDamage;
+    public float ColdDamage;
+    public float LightningDamage;
+
+    public Damage(float physical, float fire, float cold, float lightning)
+    {
+        PhysicalDamage = physical;
+        FireDamage = fire;
+        ColdDamage = cold;
+        LightningDamage = lightning;
+    }
 }
