@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Schema;
+using Unity.Mathematics;
 using UnityEngine;
 
 public abstract class Entity : MonoBehaviour
@@ -58,6 +59,27 @@ public abstract class Entity : MonoBehaviour
         else
         {
             activeBuffs.Add(buff.Clone());
+        }
+    }
+    protected void UseSkill(Skill skill, Entity target)
+    {
+        if (skill == null || target == null) return;
+        if (currentSkillPoint < skill.SkillPoint)
+        {
+            Debug.Log("Not enough SP to use " + skill.SkillName);
+            return;
+        }
+        currentSkillPoint -= skill.SkillPoint;
+        Damage damage = new Damage()
+        {
+            PhysicalDamage = Math.Max(skill.PhysicalDamageMultiplier * Stats.PhysicalAttack, 0),
+            FireDamage = Math.Max(skill.FireDamageMultiplier * Stats.MagicAttack * stats.FireDamageMultiplier, 0),
+            ColdDamage = Math.Max(skill.ColdDamageMultiplier * Stats.MagicAttack * stats.ColdDamageMultiplier, 0),
+            LightningDamage = Math.Max(skill.LightningDamageMultiplier * Stats.MagicAttack * stats.LightningDamageMultiplier, 0)
+        };
+        foreach (StatusBuff buff in skill.Buffs)
+        {
+            target.ApplyBuff(buff);
         }
     }
     protected abstract void Die();
