@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,50 +8,91 @@ using UnityEngine.SceneManagement;
 public class Movement : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 7f;
-    [SerializeField] private GameInput gameInput;
-    [SerializeField] private GameObject PlayerVisual;
+    // [SerializeField] private GameInput gameInput;
+    // [SerializeField] private GameObject PlayerVisual;
 
     private bool isWalking;
 
-    private void FixedUpdate()
-    {
-        HandleInteraction();
-        HandleMovement();
+    public LayerMask terrainLayer;
+    public Rigidbody rb;
+    public float groundDist;
+    public SpriteRenderer sr; 
 
+    void Start()
+    {
+        rb = gameObject.GetComponent<Rigidbody>();
     }
 
-    public bool IsWalking()
+    void Update()
     {
-        return isWalking;
-    }
-    private void HandleMovement()
-    {
-        Vector2 inputVector = gameInput.GetMovementVectorNormalized();
-        Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
+        Vector3 castPos = transform.position;
+        castPos.y += 1;
 
-        isWalking = inputVector != Vector2.zero;
-
-        if (isWalking)
+        if (Physics.Raycast(castPos, -transfrom.up, out hit, Mathf.Infinity, terrainLayer))
         {
-            if (moveDir.x > 0)
-                PlayerVisual.transform.rotation = Quaternion.Euler(0, 0, 0);     // facing right
-            else if (moveDir.x < 0)
-                PlayerVisual.transform.rotation = Quaternion.Euler(0, 180, 0);
-        }
-        transform.position += moveDir * moveSpeed * Time.fixedDeltaTime;
-    }
-
-    private void HandleInteraction()
-    {
-        float interactDistance = 3f;
-
-        Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, interactDistance);
-        if (hit.collider != null)
-        {
-            if (gameInput.IsInteractPressed())
+            if (hit.collider != null)
             {
-                Loader.Load(Loader.Scenes.Combat);
+                Vector3 movePos = transfrom.position;
+                movePos.y = hit.point.y + groundDist;
+                transfrom.position = movePos;
             }
         }
+
+        float x = Input.GetAxis("Horizontal");
+        float y = Input.GetAxis("Vertical");
+        Vector3 moveDir = new Vector3(x, 0, y);
+        rb.velocity = moveDir * moveSpeed;
+
+        if (x != 0 && x < 0)
+        {
+            sr.flipX = true;
+        }
+        else if (x != 0 && x > 0)
+        {
+            sr.flipX = false;
+        }
+        
     }
+
+    // private void FixedUpdate()
+    // {
+    //     HandleInteraction();
+    //     HandleMovement();
+
+    // }
+
+    // public bool IsWalking()
+    // {
+    //     return isWalking;
+    // }
+    // private void HandleMovement()
+    // {
+    //     Vector2 inputVector = gameInput.GetMovementVectorNormalized();
+    //     Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
+
+    //     isWalking = inputVector != Vector2.zero;
+
+    //     if (isWalking)
+    //     {
+    //         if (moveDir.x > 0)
+    //             PlayerVisual.transform.rotation = Quaternion.Euler(0, 0, 0);     // facing right
+    //         else if (moveDir.x < 0)
+    //             PlayerVisual.transform.rotation = Quaternion.Euler(0, 180, 0);
+    //     }
+    //     transform.position += moveDir * moveSpeed * Time.fixedDeltaTime;
+    // }
+
+    // private void HandleInteraction()
+    // {
+    //     float interactDistance = 3f;
+
+    //     Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, interactDistance);
+    //     if (hit.collider != null)
+    //     {
+    //         if (gameInput.IsInteractPressed())
+    //         {
+    //             Loader.Load(Loader.Scenes.Combat);
+    //         }
+    //     }
+    // }
 }
