@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Numerics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -23,18 +22,24 @@ public class Movement : MonoBehaviour
         rb = gameObject.GetComponent<Rigidbody>();
     }
 
+    public bool IsWalking()
+        {
+        return isWalking;
+        }
+
     void Update()
     {
+        RaycastHit hit;
         Vector3 castPos = transform.position;
         castPos.y += 1;
 
-        if (Physics.Raycast(castPos, -transfrom.up, out hit, Mathf.Infinity, terrainLayer))
+        if (Physics.Raycast(castPos, -transform.up, out hit, Mathf.Infinity, terrainLayer))
         {
             if (hit.collider != null)
             {
-                Vector3 movePos = transfrom.position;
+                Vector3 movePos = transform.position;
                 movePos.y = hit.point.y + groundDist;
-                transfrom.position = movePos;
+                transform.position = movePos;
             }
         }
 
@@ -42,6 +47,17 @@ public class Movement : MonoBehaviour
         float y = Input.GetAxis("Vertical");
         Vector3 moveDir = new Vector3(x, 0, y);
         rb.velocity = moveDir * moveSpeed;
+
+        
+
+        if (moveDir != Vector3.zero)
+        {
+            isWalking = true;
+        }
+        else
+        {
+            isWalking = false;
+        }
 
         if (x != 0 && x < 0)
         {
@@ -53,6 +69,7 @@ public class Movement : MonoBehaviour
         }
         
     }
+}
 
     // private void FixedUpdate()
     // {
@@ -95,4 +112,3 @@ public class Movement : MonoBehaviour
     //         }
     //     }
     // }
-}
