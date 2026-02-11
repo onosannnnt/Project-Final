@@ -2,12 +2,14 @@ using UnityEngine;
 
 public struct ActionQueue
 {
-    public GameObject Entity;
+    public Entity Caster;
+    public Entity Target;
     public Skill Skill;
     public float ActionSpeed;
-    public ActionQueue(GameObject owner, Skill skill, float actionSpeed)
+    public ActionQueue(Entity caster, Entity target, Skill skill, float actionSpeed)
     {
-        Entity = owner;
+        Caster = caster;
+        Target = target;
         Skill = skill;
         ActionSpeed = actionSpeed;
     }

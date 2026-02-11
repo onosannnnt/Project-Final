@@ -1,86 +1,144 @@
 using System;
 using System.Collections.Generic;
-using System.Xml.Schema;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public abstract class Entity : MonoBehaviour
 {
+
     [SerializeField] private EntitiesBaseStat stats; // Base stats from ScriptableObject
+    [SerializeField] private List<Skill> skills;
     protected float currentHealth;
     protected int currentSkillPoint;
-    protected List<StatusBuff> activeBuffs = new List<StatusBuff>();
+    public BuffManager buffController;
+    public SkillManager skillManager;
     protected Skill selectedSkill;
 
+    protected virtual void Awake()
+    {
+        buffController = new BuffManager(this);
+        skillManager = new SkillManager(this);
+    }
     protected virtual void Start()
     {
-        currentHealth = stats.MaxHealth;
-        currentSkillPoint = stats.MaxSkillPoint;
+        currentHealth = GetStat(StatType.MaxHealth);
+        currentSkillPoint = (int)GetStat(StatType.MaxSkillPoint);
+        skillManager.SetSkills(skills);
     }
 
-    public virtual float CurrentHealth => currentHealth;
+    public virtual float CurrentHealth => math.min(currentHealth, GetStat(StatType.MaxHealth));
     public virtual int CurrentSP => currentSkillPoint;
     public virtual EntitiesBaseStat Stats => stats;
-    public virtual Skill SelectedSkill => selectedSkill;
+    public virtual Skill GetSelectedSkill => selectedSkill;
+    public virtual void SetSelectedSkill(Skill skill)
+    {
+        selectedSkill = skill;
+    }
 
     public virtual void TakeDamage(Damage damage)
     {
-        float physicalDamageAfterMitigation = Mathf.Max(damage.PhysicalDamage * (1 - stats.PhysicalDefense / 100f), 0);
-        float fireDamageAfterMitigation = Mathf.Max(damage.FireDamage * (1 - stats.FireResistance / 100f), 0);
-        float coldDamageAfterMitigation = Mathf.Max(damage.ColdDamage * (1 - stats.ColdDamageMultiplier / 100f), 0);
-        float lightningDamageAfterMitigation = Mathf.Max(damage.LightningDamage * (1 - stats.LightningResistance / 100f), 0);
-        float totalDamage = physicalDamageAfterMitigation + fireDamageAfterMitigation + coldDamageAfterMitigation + lightningDamageAfterMitigation;
-        currentHealth -= totalDamage;
+        float total = 0f;
+
+        float mitigated = ApplyMitigation(damage);
+        total += mitigated;
+
+        currentHealth -= total;
+        Debug.Log($"{gameObject.name} took {total} damage.");
+
         if (currentHealth <= 0)
-        {
             Die();
-        }
     }
-    public virtual void Heal(float amount)
+    private float ApplyMitigation(Damage damage)
+    {
+        float resist = damage.Type switch
+        {
+            DamageType.Physical => GetStat(StatType.PhysicalDefense),
+            DamageType.Fire => GetStat(StatType.FireResistance),
+            DamageType.Cold => GetStat(StatType.ColdResistance),
+            DamageType.Lightning => GetStat(StatType.LightningResistance),
+            _ => 0
+        };
+
+        float reduced = damage.Amount * (1f - resist / 100f);
+        return Mathf.Max(reduced, 0);
+    }
+    public virtual void Heal(Entity source, float amount)
     {
         currentHealth = Mathf.Min(currentHealth + amount, stats.MaxHealth);
     }
+
     public virtual void SPRecover(int amount)
     {
         currentSkillPoint = Mathf.Min(currentSkillPoint + amount, stats.MaxSkillPoint);
     }
-    public virtual void ApplyBuff(StatusBuff buff)
+
+    public float GetStat(StatType stat)
     {
-        if (buff == null) return;
-        StatusBuff existingBuff = activeBuffs.Find(b => b.BuffType == buff.BuffType);
-        if (existingBuff != null)
+        float baseStat = stats.GetBase(stat);
+        float flatStat = 0;
+        float MultiplierStat = 1f;
+
+        foreach (var buff in buffController.GetBuff())
         {
-            if (buff.IsStackable)
+            foreach (var modifier in buff.modifiers)
             {
-                existingBuff.Stack += buff.Stack;
+                if (modifier.Stat != stat) continue;
+                switch (modifier.Type)
+                {
+                    case ModifierType.Flat:
+                        flatStat += modifier.Value;
+                        break;
+                    case ModifierType.Percent:
+                        if (buff.isStackable)
+                        {
+                            float totalPercent = 0f;
+                            switch (buff.StackCalculationType)
+                            {
+                                case StackMultiplierType.Linear:
+                                    totalPercent = modifier.Value * buff.Stack;
+                                    break;
+                                case StackMultiplierType.DiminishingReturn:
+                                    {
+                                        int linearStacks = 5; // ปรับได้
+                                        for (int i = 0; i < buff.Stack; i++)
+                                        {
+                                            if (i < linearStacks)
+                                            {
+                                                totalPercent += modifier.Value;
+                                            }
+                                            else
+                                            {
+                                                int drIndex = i - linearStacks + 2;
+                                                totalPercent += modifier.Value / drIndex;
+                                            }
+                                        }
+                                        break;
+                                    }
+                            }
+                            MultiplierStat *= 1 + totalPercent;
+                        }
+                        else
+                        {
+                            MultiplierStat *= 1 + modifier.Value;
+                        }
+                        break;
+                }
             }
-            existingBuff.Duration = buff.Duration;
         }
-        else
-        {
-            activeBuffs.Add(buff.Clone());
-        }
-    }
-    protected void UseSkill(Skill skill, Entity target)
-    {
-        if (skill == null || target == null) return;
-        if (currentSkillPoint < skill.SkillPoint)
-        {
-            Debug.Log("Not enough SP to use " + skill.SkillName);
-            return;
-        }
-        currentSkillPoint -= skill.SkillPoint;
-        Damage damage = new Damage()
-        {
-            PhysicalDamage = Math.Max(skill.PhysicalDamageMultiplier * Stats.PhysicalAttack, 0),
-            FireDamage = Math.Max(skill.FireDamageMultiplier * Stats.MagicAttack * stats.FireDamageMultiplier, 0),
-            ColdDamage = Math.Max(skill.ColdDamageMultiplier * Stats.MagicAttack * stats.ColdDamageMultiplier, 0),
-            LightningDamage = Math.Max(skill.LightningDamageMultiplier * Stats.MagicAttack * stats.LightningDamageMultiplier, 0)
-        };
-        foreach (StatusBuff buff in skill.Buffs)
-        {
-            target.ApplyBuff(buff);
-        }
+        return (baseStat + flatStat) * MultiplierStat;
     }
     protected abstract void Die();
+    protected virtual bool CanAction()
+    {
+        foreach (var buff in buffController.GetBuff())
+        {
+            if (buff.buffType == BuffType.CrowdControl)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

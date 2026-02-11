@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,10 +10,10 @@ public class TurnManager : Singleton<TurnManager>
     private PlayerCombat playerCombat;
     private void Start()
     {
-        playerCombat = FindObjectOfType<PlayerCombat>();
+        playerCombat = PlayerCombat.instance;
         SetState(TurnState.PlayerTurnState);
     }
-    private void SetState(TurnState newState)
+    public void SetState(TurnState newState)
     {
         currentState = newState;
         switch (currentState)
@@ -21,13 +22,21 @@ public class TurnManager : Singleton<TurnManager>
                 HandlePlayerTurn();
                 break;
             case TurnState.SpeedCompareState:
+                List<GameObject> enemies = GetAllEnemies();
+                if (enemies.Count == 0) return;
+                foreach (GameObject enemy in enemies)
+                {
+                    EnemyCombat enemyCombat = enemy.GetComponent<EnemyCombat>();
+                    playerCombat.SetPlayerState(PlayerActionState.Action);
+                    enemyCombat.Highlight(Color.white);
+                }
                 HandleSpeedComparison();
                 break;
             case TurnState.ActionState:
-                HandleActionExecution();
+                StartCoroutine(HandleActionExecution());
                 break;
             case TurnState.Win:
-                // Handle win condition
+                Win();
                 break;
             case TurnState.Lose:
                 Loader.Load(Loader.Scenes.Overworld);
@@ -36,57 +45,75 @@ public class TurnManager : Singleton<TurnManager>
     }
     private void HandlePlayerTurn()
     {
-        Debug.Log("Player's Turn");
-        Damage damage = new Damage
-        {
-            PhysicalDamage = 10f,
-            FireDamage = 0f,
-            ColdDamage = 0f,
-            LightningDamage = 0f
-        };
-        playerCombat.TakeDamage(damage);
-        Debug.Log("Player Health: " + playerCombat.CurrentHealth + " with : " + (playerCombat.CurrentHealth / playerCombat.Stats.MaxHealth * 100) + "%");
-        CombatPlayerUI.Instance.GetComponent<CombatPlayerUI>().UpdateHealthBar();
+
     }
 
     private void HandleSpeedComparison()
     {
         ActionQueue playerAction = new ActionQueue();
-        playerAction.Entity = playerCombat.gameObject;
-        playerAction.Skill = playerCombat.SelectedSkill;
-        playerAction.ActionSpeed = playerCombat.Stats.ActionSpeed;
+        playerAction.Caster = playerCombat;
+        playerAction.Target = playerCombat.GetEnemyTarget();
+        playerAction.Skill = playerCombat.GetSelectedSkill;
+        playerAction.ActionSpeed = playerCombat.GetStat(StatType.ActionSpeed);
         actionQueue.Add(playerAction);
         List<GameObject> enemies = GetAllEnemies();
         foreach (GameObject enemy in enemies)
         {
-            Entity enemyEntity = enemy.GetComponent<Entity>(); //TODO: Change to EnemyCombat when created
+            Entity enemyEntity = enemy.GetComponent<EnemyCombat>();
             ActionQueue enemyAction = new ActionQueue();
-            enemyAction.Entity = enemy;
-            enemyAction.Skill = enemyEntity.SelectedSkill;
+            enemyAction.Caster = enemyEntity;
+            enemyAction.Target = playerCombat;
+            enemyAction.Skill = enemyEntity.skillManager.RandomSkill();
             enemyAction.ActionSpeed = enemyEntity.Stats.ActionSpeed;
             actionQueue.Add(enemyAction);
         }
         actionQueue.Sort((a, b) => b.ActionSpeed.CompareTo(a.ActionSpeed));
         SetState(TurnState.ActionState);
     }
-    private IEnumerable<WaitForSeconds> HandleActionExecution()
+    private IEnumerator HandleActionExecution()
     {
+        yield return new WaitForSeconds(1f);
         while (actionQueue.Count > 0)
         {
             ActionQueue currentAction = actionQueue[0];
-            GameObject entity = currentAction.Entity;
+            Entity entity = currentAction.Caster;
             Skill skill = currentAction.Skill;
-            // Execute the skill (implementation depends on your Skill class)
-            Debug.Log($"{entity.name} uses {skill.SkillName}");
+            Entity target = currentAction.Target;
+            Debug.Log(entity.gameObject.name + " is taking action with " + currentAction.ActionSpeed + " speed.");
+            if (entity.CompareTag("Player"))
+            {
+                playerCombat.buffController.OnTurnStart(playerCombat);
+                playerCombat.Action();
+                playerCombat.buffController.OnTurnEnd(playerCombat);
+            }
+            else if (entity.CompareTag("Enemy"))
+            {
+                EnemyCombat enemyCombat = entity.GetComponent<EnemyCombat>();
+                enemyCombat.buffController.OnTurnStart(enemyCombat);
+                enemyCombat.skillManager.UseSkill(skill, playerCombat);
+                enemyCombat.buffController.OnTurnEnd(enemyCombat);
+            }
             actionQueue.RemoveAt(0);
             yield return new WaitForSeconds(1f);
+        }
+        if (playerCombat.CurrentHealth <= 0)
+        {
+            SetState(TurnState.Lose);
+            yield break;
+        }
+        List<GameObject> remainingEnemies = GetAllEnemies();
+        if (remainingEnemies.Count == 0)
+        {
+            SetState(TurnState.Win);
+            yield break;
         }
         SetState(TurnState.PlayerTurnState);
         yield break;
     }
+
     private void Win()
     {
-
+        Debug.Log("You Win!");
     }
     private List<GameObject> GetAllEnemies()
     {
@@ -99,5 +126,9 @@ public class TurnManager : Singleton<TurnManager>
             }
         }
         return enemies;
+    }
+    public void RemoveEntityFromActionQueue(Entity entity)
+    {
+        actionQueue.RemoveAll(a => a.Caster == entity);
     }
 }

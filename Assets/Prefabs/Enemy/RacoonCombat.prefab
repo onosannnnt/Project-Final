@@ -278,7 +278,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 0.273
+  m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
@@ -405,7 +405,7 @@ GameObject:
   m_Component:
   - component: {fileID: 638757405302400597}
   - component: {fileID: 1294968933682025695}
-  - component: {fileID: 3883311061619463090}
+  - component: {fileID: 2460078117148971548}
   m_Layer: 0
   m_Name: RacoonCombat
   m_TagString: Enemy
@@ -475,7 +475,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1.2}
   m_EdgeRadius: 0
---- !u!114 &3883311061619463090
+--- !u!114 &2460078117148971548
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -484,12 +484,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 6702360306364772165}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bad9a6887e5bd4c06b67bfd4005b5855, type: 3}
+  m_Script: {fileID: 11500000, guid: f5dbaa7addc304059b7130b778c6d5d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyBaseStats: {fileID: 11400000, guid: 9d474a7d1119b4e5bac6c95557e5bf3e, type: 2}
-  enemySkills:
-  - {fileID: 11400000, guid: 61fb0f6570f234d21adbe91c49882939, type: 2}
-  playerCombat: {fileID: 7977669114527906489, guid: bee767d543ab4463aaf2e5e987d25263,
-    type: 3}
+  stats: {fileID: 11400000, guid: 9d474a7d1119b4e5bac6c95557e5bf3e, type: 2}
+  skills:
+  - {fileID: 11400000, guid: d75e4d8f22f5c4ef898db19bd30e49ca, type: 2}
   HealthBar: {fileID: 3161185528136002616}
