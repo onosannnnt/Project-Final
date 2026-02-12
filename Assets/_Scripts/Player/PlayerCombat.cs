@@ -1,345 +1,148 @@
-using System;
-using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
-public class PlayerCombat : MonoBehaviour
+public class PlayerCombat : Entity
 {
-    // Player Stats
-    public static PlayerCombat Instance { get; private set; }
-    [SerializeField] private EntitiesBaseStat playerBaseStats;
-    private Stat playerStats;
-    //skills
-    [SerializeField] private List<Skill> playerSkills;
-    //world
-    [SerializeField] private Transform worldParent;
-    [SerializeField] private TurnManager TurnManager;
-
-    private PlayerState playerState;
-    private Skill currentSkill;
-    private EnemyCombat targetedEnemy;
-    private List<StatusBuff> activeBuffs = new List<StatusBuff>();
-    private List<StatusBuff> skillBuffs = new List<StatusBuff>();
-
-
-    //monobehavior lifecycle method
-
-    private void Awake()
+    public static PlayerCombat instance;
+    private PlayerActionState playerState;
+    private Entity enemyTarget;
+    protected override void Awake()
     {
-        if (Instance != null && Instance != this)
+        base.Awake();
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
         {
             Destroy(gameObject);
-            return;
         }
-        Instance = this;
     }
-    private void Start()
+    protected override void Start()
     {
-        playerStats.Level = playerBaseStats.Level;
-        playerStats.ExperiencePoints = playerBaseStats.ExperiencePoints;
-        playerStats.Strength = playerBaseStats.Strength;
-        playerStats.Intelligence = playerBaseStats.Intelligence;
-        playerStats.Agility = playerBaseStats.Agility;
-        playerStats.MaxHealth = playerBaseStats.MaxHealth;
-        playerStats.CurrentHealth = playerStats.MaxHealth;
-        playerStats.MaxSP = playerBaseStats.MaxSkillPoint;
-        playerStats.CurrentSP = playerStats.MaxSP;
-        playerStats.PhysicalAttack = playerBaseStats.PhysicalAttack;
-        playerStats.MagicAttack = playerBaseStats.MagicAttack;
-        playerStats.PhysicalDefense = playerBaseStats.PhysicalDefense;
-        playerStats.FireResistance = playerBaseStats.FireResistance;
-        playerStats.ColdResistance = playerBaseStats.ColdResistance;
-        playerStats.LightningResistance = playerBaseStats.LightningResistance;
-        playerStats.ActionSpeed = playerBaseStats.ActionSpeed;
-        playerStats.CriticalChance = playerBaseStats.CriticalHitChance;
-        playerStats.CriticalDamageMultiplier = playerBaseStats.CriticalHitDamageMultiplier;
-        playerStats.Accuracy = playerBaseStats.Accuracy;
-        playerStats.EvasionRate = playerBaseStats.EvasionRate;
-        playerStats.StatusEffectResistance = playerBaseStats.StatusEffectResistance;
-        playerStats.StatusHitChance = playerBaseStats.StatusHitChance;
+        base.Start();
+        playerState = PlayerActionState.Idle;
     }
-
-    //set-get method
-    public Stat GetPlayerStats()
+    protected override void Die()
     {
-        return playerStats;
+        Debug.Log("Player Died");
     }
-
-    public List<Skill> GetSkills()
+    public void SelectSkill(Skill skill)
     {
-        return playerSkills;
+        selectedSkill = skill;
     }
-    public List<StatusBuff> GetAppliedBuffs()
+    public PlayerActionState GetPlayerState => playerState;
+    public void SetPlayerState(PlayerActionState state)
     {
-        return activeBuffs;
+        playerState = state;
     }
-
-    //skill usage method
-    public void UseSkill(Skill skill)
+    public void SetEnemyTarget(Entity enemy)
     {
-        if (playerStats.CurrentSP < skill.spCost)
+        enemyTarget = enemy;
+    }
+    public Entity GetEnemyTarget()
+    {
+        return enemyTarget;
+    }
+    public void Highlight(Color color)
+    {
+        GameObject PlayerVisual = transform.Find("PlayerVisual").gameObject;
+        PlayerVisual.GetComponent<SpriteRenderer>().color = color;
+    }
+    public void HandleSelectSkill()
+    {
+        if (selectedSkill == null) return;
+        if (selectedSkill.TargetType != TargetType.Self)
         {
-            Debug.Log("Not enough SP to use " + skill.skillName);
-            return;
+            foreach (var enemy in FindObjectsOfType<EnemyCombat>())
+            {
+                enemy.Highlight(Color.yellow);
+            }
         }
-        switch (skill.targetType)
+        switch (selectedSkill.TargetType)
         {
-            case TargetType.SingleEnemy:
-                UseSkillOnSingleEnemy(skill, targetedEnemy);
-                break;
-            case TargetType.AllEnemies:
-                HandleAllEnemiesTargeting(skill);
-                break;
             case TargetType.Self:
-                HandleSelfTargeting(skill);
+                Highlight(Color.yellow);
+                foreach (var enemy in FindObjectsOfType<EnemyCombat>())
+                {
+                    enemy.Highlight(Color.white);
+                }
+                SetPlayerState(PlayerActionState.Targeting);
+                break;
+
+            case TargetType.SingleEnemy:
+                Highlight(Color.white);
+                foreach (var enemy in FindObjectsOfType<EnemyCombat>())
+                {
+                    enemy.Highlight(Color.yellow);
+                }
+                SetPlayerState(PlayerActionState.Targeting);
+                break;
+
+            case TargetType.AllEnemies:
+                Highlight(Color.white);
+                foreach (var enemy in FindObjectsOfType<EnemyCombat>())
+                {
+                    enemy.Highlight(Color.yellow);
+                }
+                SetPlayerState(PlayerActionState.Targeting);
                 break;
         }
     }
-    public void HandleSingleEnemyTargeting(Skill skill)
+    private void OnMouseEnter()
     {
-        SetState(PlayerState.Targeting);
-        TurnManager.HandleTargetEnemyUI();
-        currentSkill = skill;
-        HighlightEnemies(true);
+        if (playerState != PlayerActionState.Targeting || selectedSkill == null) return;
+        if (selectedSkill.TargetType != TargetType.Self) return;
+        Highlight(Color.green);
     }
-
-    private void HandleAllEnemiesTargeting(Skill skill)
+    private void OnMouseExit()
     {
-        skillBuffs.Clear();
-        if (playerStats.CurrentSP < skill.spCost)
+        if (playerState != PlayerActionState.Targeting || selectedSkill == null) return;
+        if (selectedSkill.TargetType != TargetType.Self) return;
+        Highlight(Color.yellow);
+    }
+    private void OnMouseDown()
+    {
+        if (playerState != PlayerActionState.Targeting || selectedSkill == null) return;
+        if (selectedSkill.TargetType != TargetType.Self) return;
+        Highlight(Color.white);
+        TurnManager.Instance.SetState(TurnState.SpeedCompareState);
+    }
+    public void Action()
+    {
+        if (currentSkillPoint < selectedSkill.SkillPoint)
         {
-            Debug.Log("Not enough SP to use " + skill.skillName);
+            Debug.Log("Not enough SP to use " + selectedSkill.name);
             return;
         }
-        playerStats.CurrentSP -= skill.spCost;
-        foreach (var buff in skill.buffs)
+        currentSkillPoint -= selectedSkill.SkillPoint;
+        switch (selectedSkill.TargetType)
         {
-            StatusBuff refBuff = buff.Clone();
-            skillBuffs.Add(refBuff);
-        }
-        EnemyCombat[] enemies = worldParent.GetComponentsInChildren<EnemyCombat>();
-        List<EnemyCombat> enemyList = new List<EnemyCombat>(enemies);
-        bool isCriticalHit = UnityEngine.Random.value < playerStats.CriticalChance;
-        foreach (var enemy in enemyList)
-        {
-            float phycalDamage = skill.physicalDamageMultiplier + playerStats.PhysicalAttack;
-            float fireDamage = playerStats.MagicAttack * playerStats.FireDamageMultiplier / 100;
-            float coldDamage = playerStats.MagicAttack * playerStats.ColdDamageMultiplier / 100;
-            float lightningDamage = playerStats.MagicAttack * playerStats.LightningDamageMultiplier / 100;
-            if (isCriticalHit)
-            {
-                phycalDamage *= playerStats.CriticalDamageMultiplier;
-                fireDamage *= playerStats.CriticalDamageMultiplier;
-                coldDamage *= playerStats.CriticalDamageMultiplier;
-                lightningDamage *= playerStats.CriticalDamageMultiplier;
-            }
-            foreach (var buff in skillBuffs)
-            {
-                bool isBuffHit = UnityEngine.Random.Range(0f, 100f) < playerStats.StatusHitChance * 100;
-                bool isResisted = UnityEngine.Random.Range(0f, 100f) < playerStats.StatusEffectResistance * 100;
-                if (isBuffHit && !isResisted)
+            case TargetType.Self:
+                Debug.Log("Player used " + selectedSkill.name + " on self");
+                skillManager.UseSkill(selectedSkill, this);
+                break;
+
+            case TargetType.SingleEnemy:
+                Debug.Log("Player used " + selectedSkill.name + " on " + enemyTarget.gameObject.name);
+                skillManager.UseSkill(selectedSkill, enemyTarget);
+                break;
+
+            case TargetType.AllEnemies:
+                Debug.Log("Player used " + selectedSkill.name + " on all enemies");
+                foreach (var enemy in FindObjectsOfType<EnemyCombat>())
                 {
-                    ApplyBuff(buff);
-                    Debug.Log("Applied buff: " + buff.buffType + " to player.");
+                    skillManager.UseSkill(selectedSkill, enemy);
                 }
-            }
-            skillBuffs.Clear();
-            enemy.ApplyDamage(phycalDamage, fireDamage, coldDamage, lightningDamage);
+                break;
         }
-    }
-    private void HandleSelfTargeting(Skill skill)
-    {
-        Heal(skill.healingAmountMultiplier * playerStats.MaxHealth);
-        foreach (var buff in skill.buffs)
+        currentSkillPoint += math.min(selectedSkill.SkillPointRestore, (int)GetStat(StatType.MaxSkillPoint));
+        SetSelectedSkill(null);
+        SetEnemyTarget(null);
+        SetPlayerState(PlayerActionState.Idle);
+        foreach (var enemy in FindObjectsOfType<EnemyCombat>())
         {
-            StatusBuff refBuff = buff.Clone();
-            switch (buff.buffType)
-            {
-                case BuffType.HealOverTime:
-                    Debug.Log("Applied HealOverTime buff to player.");
-                    break;
-                case BuffType.SpeedUp:
-                    StatusBuff existingBuff = activeBuffs.Find(b => b.buffType == BuffType.SpeedUp);
-                    if (existingBuff == null)
-                    {
-                        activeBuffs.Add(refBuff);
-                        SpeedUpBuffEffect(refBuff);
-                        Debug.Log("Applied SpeedUp buff to player.");
-                        refBuff.isApplied = true;
-                    }
-                    else
-                    {
-                        existingBuff.ResetDuration(refBuff.duration);
-                        Debug.Log("Refreshed SpeedUp buff duration to " + refBuff.duration);
-                    }
-                    break;
-            }
+            enemy.Highlight(Color.white);
         }
-
-    }
-    public void ApplyDamage(float PhysicalDamage, float FireDamage, float ColdDamage, float LightningDamage)
-    {
-        float physicalDamageAfterDefense = 100 / (100 + playerStats.PhysicalDefense) * PhysicalDamage;
-        float fireDamageAfterResistance = Math.Max(0, FireDamage - (FireDamage * playerStats.FireResistance));
-        float coldDamageAfterResistance = Math.Max(0, ColdDamage - (ColdDamage * playerStats.ColdResistance));
-        float lightningDamageAfterResistance = Math.Max(0, LightningDamage - (LightningDamage * playerStats.LightningResistance));
-        float totalDamage = physicalDamageAfterDefense + fireDamageAfterResistance + coldDamageAfterResistance + lightningDamageAfterResistance;
-        totalDamage = Mathf.Max(totalDamage, 0); // Ensure damage is not negative
-        playerStats.CurrentHealth -= totalDamage;
-        Debug.Log("Player took " + totalDamage + " damage. Current Health: " + playerStats.CurrentHealth);
-    }
-    private void Heal(float healAmount)
-    {
-        playerStats.CurrentHealth += healAmount;
-        if (playerStats.CurrentHealth > playerStats.MaxHealth)
-        {
-            playerStats.CurrentHealth = playerStats.MaxHealth;
-        }
-        Debug.Log("Player healed " + healAmount + " health. Current Health: " + playerStats.CurrentHealth);
-    }
-    public void OnEnemyClicked(EnemyCombat enemy)
-    {
-        if (playerState != PlayerState.Targeting || currentSkill == null) return;
-
-        if (currentSkill.targetType == TargetType.SingleEnemy)
-        {
-            targetedEnemy = enemy;
-            HighlightEnemies(false);
-            currentSkill = null;
-            SetState(PlayerState.Idle);
-        }
-        TurnManager.ChangingState(TurnState.SpeedCompareState);
-
-    }
-    private void HighlightEnemies(bool on)
-    {
-        EnemyCombat[] enemies = worldParent.GetComponentsInChildren<EnemyCombat>();
-        List<EnemyCombat> enemyList = new List<EnemyCombat>(enemies);
-        foreach (var enemy in enemyList)
-        {
-            enemy.SetHighlight(on);
-        }
-    }
-    private void SetState(PlayerState newState)
-    {
-        playerState = newState;
-    }
-
-    private void UseSkillOnSingleEnemy(Skill skill, EnemyCombat enemy)
-    {
-        if (enemy.TryGetComponent<EnemyCombat>(out var ec) == false)
-        {
-            Debug.Log("No enemy targeted for skill: " + skill.skillName);
-            return;
-        }
-        if (playerStats.CurrentSP < skill.spCost)
-        {
-            Debug.Log("Not enough SP to use " + skill.skillName);
-            return;
-        }
-        playerStats.CurrentSP -= skill.spCost;
-        foreach (var buff in skill.buffs)
-        {
-            StatusBuff refBuff = buff.Clone(); // Create a local copy to avoid closure issues
-            skillBuffs.Add(refBuff);
-        }
-
-        float physicalDamage = skill.physicalDamageMultiplier + playerStats.PhysicalAttack;
-        float fireDamage = playerStats.MagicAttack * playerStats.FireDamageMultiplier / 100;
-        float coldDamage = playerStats.MagicAttack * playerStats.ColdDamageMultiplier / 100;
-        float lightningDamage = playerStats.MagicAttack * playerStats.LightningDamageMultiplier / 100;
-
-        bool isCriticalHit = UnityEngine.Random.value < playerStats.CriticalChance;
-        if (isCriticalHit)
-        {
-            physicalDamage *= playerStats.CriticalDamageMultiplier;
-            fireDamage *= playerStats.CriticalDamageMultiplier;
-            coldDamage *= playerStats.CriticalDamageMultiplier;
-            lightningDamage *= playerStats.CriticalDamageMultiplier;
-        }
-        ;
-        foreach (var buff in skillBuffs)
-        {
-            bool isBuffHit = UnityEngine.Random.Range(0f, 100f) < playerStats.StatusHitChance * 100;
-            bool isResisted = UnityEngine.Random.Range(0f, 100f) < enemy.GetEnemyStats().StatusEffectResistance * 100;
-            if (isBuffHit && !isResisted)
-            {
-                enemy.ApplyBuff(buff);
-                Debug.Log("Applied buff: " + buff.buffType + " to enemy: " + enemy.name);
-            }
-            else
-            {
-                Debug.Log("Buff: " + buff.buffType + " failed to apply to enemy: " + enemy.name);
-            }
-        }
-
-        enemy.ApplyDamage(physicalDamage, fireDamage, coldDamage, lightningDamage);
-    }
-    public void ApplyBuff(StatusBuff buff)
-    {
-        StatusBuff existingBuff = activeBuffs.Find(b => b.buffType == buff.buffType);
-        if (existingBuff != null)
-        {
-            existingBuff.ResetDuration(buff.duration);
-            Debug.Log("Refreshed buff: " + activeBuffs.Find(b => b.buffType == buff.buffType).buffType + " duration to " + buff.duration);
-        }
-        if (buff.isStackable && existingBuff != null)
-        {
-            buff.Stack += 1;
-            Debug.Log("Increased stack of buff: " + buff.buffType + " to " + buff.Stack);
-            return;
-        }
-        activeBuffs.Add(buff);
-    }
-    public void ProcessBuffs()
-    {
-        List<StatusBuff> buffsToRemove = new List<StatusBuff>();
-        foreach (var buff in activeBuffs)
-        {
-            Debug.Log("Processing buff: " + buff.buffType + " with duration " + buff.duration + " and stack " + buff.Stack);
-            switch (buff.buffType)
-            {
-                case BuffType.Bleed:
-                    BleedEffect(buff);
-                    buff.duration -= 1;
-                    if (buff.duration <= 0)
-                    {
-                        buffsToRemove.Add(buff);
-                    }
-                    break;
-                case BuffType.SpeedUp:
-                    if (!buff.isApplied)
-                    {
-                        SpeedUpBuffEffect(buff);
-                        buff.isApplied = true;
-                    }
-                    buff.duration -= 1;
-                    if (buff.duration <= 0)
-                    {
-                        buffsToRemove.Add(buff);
-                    }
-                    break;
-            }
-        }
-        foreach (var buff in buffsToRemove)
-        {
-            activeBuffs.Remove(buff);
-        }
-    }
-    private void BleedEffect(StatusBuff buff)
-    {
-        float physicalDamageAfterDefense = 100f / (100f + playerStats.PhysicalDefense) * buff.Stack * ((buff.PhysicalDamageMultiplierByMaxHealth * playerStats.MaxHealth) + buff.PhysicalDamageFlat);
-        float fireDamageAfterResistance = Math.Max(0, buff.fireDamageMultiplierByMaxHealth * playerStats.MaxHealth + buff.FireDamageFlat - ((buff.fireDamageMultiplierByMaxHealth * playerStats.MaxHealth + buff.FireDamageFlat) * playerStats.FireResistance));
-        float coldDamageAfterResistance = Math.Max(0, buff.iceDamageMultiplierByMaxHealth * playerStats.MaxHealth + buff.IceDamageFlat - ((buff.iceDamageMultiplierByMaxHealth * playerStats.MaxHealth + buff.IceDamageFlat) * playerStats.ColdResistance));
-        float lightningDamageAfterResistance = Math.Max(0, buff.lightningDamageMultiplierByMaxHealth * playerStats.MaxHealth + buff.LightningDamageFlat - ((buff.lightningDamageMultiplierByMaxHealth * playerStats.MaxHealth + buff.LightningDamageFlat) * playerStats.LightningResistance));
-        float totalDamage = physicalDamageAfterDefense + fireDamageAfterResistance + coldDamageAfterResistance + lightningDamageAfterResistance;
-        totalDamage = Mathf.Max(totalDamage, 0); // Ensure damage is not negative
-        playerStats.CurrentHealth -= totalDamage;
-        Debug.Log("Player took " + totalDamage + " damage from Bleed. Current Health: " + playerStats.CurrentHealth);
-    }
-    private void SpeedUpBuffEffect(StatusBuff buff)
-    {
-        playerStats.ActionSpeed = (playerStats.ActionSpeed + buff.amountFlat) * (1 + buff.amountMultiplier);
-        Debug.Log("Player speed increased by SpeedUp buff. New Action Speed: " + playerStats.ActionSpeed);
-
     }
 }
