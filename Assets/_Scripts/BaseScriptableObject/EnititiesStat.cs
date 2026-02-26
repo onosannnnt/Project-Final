@@ -30,7 +30,7 @@ public class EntitiesBaseStat : ScriptableObject
     [Tooltip("Lightning Damage multiplier of the Player")]
     public float LightningDamageMultiplier;
     [Tooltip("Physical Defense of the Player")]
-    public float PhysicalDefense;
+    public float Armour;
     [Tooltip("Fire Resistance of the Player divided by 100")]
     public float FireResistance;
     [Tooltip("Cold Resistance of the Player divided by 100")]
@@ -73,8 +73,8 @@ public class EntitiesBaseStat : ScriptableObject
             case StatType.MagicAttack:
                 return MagicAttack;
 
-            case StatType.PhysicalDefense:
-                return PhysicalDefense;
+            case StatType.Armour:
+                return Armour;
 
             case StatType.FireResistance:
                 return FireResistance;

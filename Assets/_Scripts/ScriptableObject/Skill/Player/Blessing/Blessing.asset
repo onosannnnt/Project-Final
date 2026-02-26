@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
-  m_Name: SpeedUp
+  m_Name: Blessing
   m_EditorClassIdentifier: 
-  Name: Speed Up
+  Name: Blessing
   Level: 0
   Strength: 0
   Agility: 0
@@ -22,3 +22,4 @@ MonoBehaviour:
   TargetType: 0
   SkillEffects:
   - {fileID: 11400000, guid: 075a49543b71c49d9a5ae43bd999c1b2, type: 2}
+  - {fileID: 11400000, guid: b5f615fdfe3b84dc79df0bd619e4822d, type: 2}

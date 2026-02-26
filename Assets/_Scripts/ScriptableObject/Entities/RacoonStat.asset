@@ -25,12 +25,12 @@ MonoBehaviour:
   FireDamageMultiplier: 0
   ColdDamageMultiplier: 0
   LightningDamageMultiplier: 0
-  PhysicalDefense: 0
+  Armour: 0
   FireResistance: 0
   ColdResistance: 0
   LightningResistance: 0
   ActionSpeed: 20
-  CriticalHitChance: 5
+  CriticalHitChance: 0.3
   CriticalHitDamageMultiplier: 1.5
   Accuracy: 300
   EvasionRate: 0

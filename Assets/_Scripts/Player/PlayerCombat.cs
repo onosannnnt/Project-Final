@@ -1,11 +1,11 @@
-using Unity.Mathematics;
+using System;
 using UnityEngine;
 
 public class PlayerCombat : Entity
 {
     public static PlayerCombat instance;
     private PlayerActionState playerState;
-    private Entity enemyTarget;
+    private EnemyCombat enemyTarget;
     protected override void Awake()
     {
         base.Awake();
@@ -27,6 +27,15 @@ public class PlayerCombat : Entity
     {
         Debug.Log("Player Died");
     }
+    public override void TakeDamage(Damage damage)
+    {
+        base.TakeDamage(damage);
+        // HealthbarUI.Instance.UpdateHealthBar();
+        if (CurrentHealth <= 0)
+        {
+            Die();
+        }
+    }
     public void SelectSkill(Skill skill)
     {
         selectedSkill = skill;
@@ -36,9 +45,10 @@ public class PlayerCombat : Entity
     {
         playerState = state;
     }
-    public void SetEnemyTarget(Entity enemy)
+    public void SetEnemyTarget(EnemyCombat enemy)
     {
         enemyTarget = enemy;
+        TargetingPanel.instance.SetEnemyTargetPanel(enemy);
     }
     public Entity GetEnemyTarget()
     {
@@ -52,13 +62,6 @@ public class PlayerCombat : Entity
     public void HandleSelectSkill()
     {
         if (selectedSkill == null) return;
-        if (selectedSkill.TargetType != TargetType.Self)
-        {
-            foreach (var enemy in FindObjectsOfType<EnemyCombat>())
-            {
-                enemy.Highlight(Color.yellow);
-            }
-        }
         switch (selectedSkill.TargetType)
         {
             case TargetType.Self:
@@ -74,7 +77,10 @@ public class PlayerCombat : Entity
                 Highlight(Color.white);
                 foreach (var enemy in FindObjectsOfType<EnemyCombat>())
                 {
-                    enemy.Highlight(Color.yellow);
+                    if (enemy == enemyTarget)
+                        enemy.Highlight(Color.red);
+                    else
+                        enemy.Highlight(Color.yellow);
                 }
                 SetPlayerState(PlayerActionState.Targeting);
                 break;
@@ -83,7 +89,10 @@ public class PlayerCombat : Entity
                 Highlight(Color.white);
                 foreach (var enemy in FindObjectsOfType<EnemyCombat>())
                 {
-                    enemy.Highlight(Color.yellow);
+                    if (enemy == enemyTarget)
+                        enemy.Highlight(Color.red);
+                    else
+                        enemy.Highlight(Color.yellow);
                 }
                 SetPlayerState(PlayerActionState.Targeting);
                 break;
@@ -115,7 +124,7 @@ public class PlayerCombat : Entity
             Debug.Log("Not enough SP to use " + selectedSkill.name);
             return;
         }
-        currentSkillPoint -= selectedSkill.SkillPoint;
+        SetSP(-selectedSkill.SkillPoint);
         switch (selectedSkill.TargetType)
         {
             case TargetType.Self:
@@ -136,7 +145,7 @@ public class PlayerCombat : Entity
                 }
                 break;
         }
-        currentSkillPoint += math.min(selectedSkill.SkillPointRestore, (int)GetStat(StatType.MaxSkillPoint));
+        SetSP(selectedSkill.SkillPointRestore);
         SetSelectedSkill(null);
         SetEnemyTarget(null);
         SetPlayerState(PlayerActionState.Idle);
@@ -145,4 +154,5 @@ public class PlayerCombat : Entity
             enemy.Highlight(Color.white);
         }
     }
+
 }

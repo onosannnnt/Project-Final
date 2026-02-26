@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -45,26 +46,34 @@ public class TurnManager : Singleton<TurnManager>
     }
     private void HandlePlayerTurn()
     {
-
+        playerCombat.SetEnemyTarget(GetFirstEnemy());
+        TargetingPanel.instance.SetEnemyTargetPanel(playerCombat.GetEnemyTarget());
+        ActionBarUI.Instance.gameObject.SetActive(true);
     }
 
     private void HandleSpeedComparison()
     {
-        ActionQueue playerAction = new ActionQueue();
-        playerAction.Caster = playerCombat;
-        playerAction.Target = playerCombat.GetEnemyTarget();
-        playerAction.Skill = playerCombat.GetSelectedSkill;
-        playerAction.ActionSpeed = playerCombat.GetStat(StatType.ActionSpeed);
+        ActionBarUI.Instance.gameObject.SetActive(false);
+        SkillPanelUI.Instance.gameObject.SetActive(false);
+        ActionQueue playerAction = new ActionQueue
+        {
+            Caster = playerCombat,
+            Target = playerCombat.GetEnemyTarget(),
+            Skill = playerCombat.GetSelectedSkill,
+            ActionSpeed = playerCombat.GetStat(StatType.ActionSpeed)
+        };
         actionQueue.Add(playerAction);
         List<GameObject> enemies = GetAllEnemies();
         foreach (GameObject enemy in enemies)
         {
             Entity enemyEntity = enemy.GetComponent<EnemyCombat>();
-            ActionQueue enemyAction = new ActionQueue();
-            enemyAction.Caster = enemyEntity;
-            enemyAction.Target = playerCombat;
-            enemyAction.Skill = enemyEntity.skillManager.RandomSkill();
-            enemyAction.ActionSpeed = enemyEntity.Stats.ActionSpeed;
+            ActionQueue enemyAction = new ActionQueue
+            {
+                Caster = enemyEntity,
+                Target = playerCombat,
+                Skill = enemyEntity.skillManager.RandomSkill(),
+                ActionSpeed = enemyEntity.Stats.ActionSpeed
+            };
             actionQueue.Add(enemyAction);
         }
         actionQueue.Sort((a, b) => b.ActionSpeed.CompareTo(a.ActionSpeed));
@@ -79,21 +88,29 @@ public class TurnManager : Singleton<TurnManager>
             Entity entity = currentAction.Caster;
             Skill skill = currentAction.Skill;
             Entity target = currentAction.Target;
+
             Debug.Log(entity.gameObject.name + " is taking action with " + currentAction.ActionSpeed + " speed.");
             if (entity.CompareTag("Player"))
             {
                 playerCombat.buffController.OnTurnStart(playerCombat);
-                playerCombat.Action();
+                if (entity.CanAction() == true) playerCombat.Action();
                 playerCombat.buffController.OnTurnEnd(playerCombat);
             }
             else if (entity.CompareTag("Enemy"))
             {
                 EnemyCombat enemyCombat = entity.GetComponent<EnemyCombat>();
                 enemyCombat.buffController.OnTurnStart(enemyCombat);
-                enemyCombat.skillManager.UseSkill(skill, playerCombat);
+                if (entity.CanAction() == true) enemyCombat.skillManager.UseSkill(skill, playerCombat);
                 enemyCombat.buffController.OnTurnEnd(enemyCombat);
             }
             actionQueue.RemoveAt(0);
+            List<GameObject> remainingEnemies = GetAllEnemies();
+            remainingEnemies.RemoveAll(enemy => enemy.GetComponent<EnemyCombat>().IsDead());
+            if (remainingEnemies.Count == 0)
+            {
+                SetState(TurnState.Win);
+                yield break;
+            }
             yield return new WaitForSeconds(1f);
         }
         if (playerCombat.CurrentHealth <= 0)
@@ -101,12 +118,7 @@ public class TurnManager : Singleton<TurnManager>
             SetState(TurnState.Lose);
             yield break;
         }
-        List<GameObject> remainingEnemies = GetAllEnemies();
-        if (remainingEnemies.Count == 0)
-        {
-            SetState(TurnState.Win);
-            yield break;
-        }
+
         SetState(TurnState.PlayerTurnState);
         yield break;
     }
@@ -130,5 +142,15 @@ public class TurnManager : Singleton<TurnManager>
     public void RemoveEntityFromActionQueue(Entity entity)
     {
         actionQueue.RemoveAll(a => a.Caster == entity);
+    }
+    private EnemyCombat GetFirstEnemy()
+    {
+        var enemies = FindObjectsOfType<EnemyCombat>();
+        if (enemies.Length == 0) return null;
+        return enemies[0];
+    }
+    public TurnState GetTurnState()
+    {
+        return currentState;
     }
 }

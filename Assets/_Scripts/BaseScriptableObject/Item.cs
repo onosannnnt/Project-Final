@@ -14,6 +14,6 @@ public class Item : ScriptableObject
 
     public Item Clone()
     {
-        return Instantiate(this);
+        return CreateInstance<Item>();
     }
 }

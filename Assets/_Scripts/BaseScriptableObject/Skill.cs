@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public enum SkillTag
@@ -36,18 +35,7 @@ public class Skill : ScriptableObject
 
     public void Execute(Entity caster, Entity target)
     {
-        float hitChance = caster.GetStat(StatType.Accuracy) / (caster.GetStat(StatType.Accuracy) + target.GetStat(StatType.EvasionRate));
-
-        if (Random.Range(0f, 1f) > hitChance)
-        {
-            Debug.Log("Applied skill into " + target.gameObject.name + " but it missed!");
-            return;
-        }
-        var orderedEffects = SkillEffects
-        .OrderBy(e => e.Phase)
-        .ToList();
-
-        foreach (var effect in orderedEffects)
+        foreach (var effect in SkillEffects)
         {
             Debug.Log(effect.name + " effect is executed from skill " + Name);
             effect.Execute(caster, target);

@@ -16,18 +16,30 @@ public class BuffManager
         return activeBuffs;
     }
 
-    public void addBuff(Buff buff)
+    public void AddBuff(Buff buff)
     {
         Buff existingBuff = activeBuffs.Find(b => b.BuffName == buff.BuffName);
+
         if (existingBuff != null)
         {
             existingBuff.Duration = Mathf.Max(existingBuff.Duration, buff.Duration);
-            if (existingBuff.isStackable) existingBuff.Stack += 1;
+
+            if (existingBuff.isStackable)
+            {
+                existingBuff.Stack += 1;
+            }
+
+            existingBuff.OnRefresh(owner); // ← ใช้อันนี้แทน
         }
-        else activeBuffs.Add(buff.Clone());
-        OnApply(owner, buff);
+        else
+        {
+            Buff newBuff = buff.Clone();
+            activeBuffs.Add(newBuff);
+
+            newBuff.OnApply(owner); // ← Apply ตัว clone เท่านั้น
+        }
     }
-    public void removeBuff(Buff buff)
+    public void RemoveBuff(Buff buff)
     {
         Debug.Log(owner.gameObject.name + " lost buff: " + buff.BuffName);
         activeBuffs.Remove(buff);

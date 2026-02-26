@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewSkill", menuName = "ScriptableObjects/SkillEffect/BuffEffect")]
+[CreateAssetMenu(fileName = "BuffEffect", menuName = "ScriptableObjects/SkillEffect/BuffEffect")]
 
 public class BuffEffect : SkillEffect
 {
     public List<Buff> buffs;
-    public override SkillEffectPhase Phase => SkillEffectPhase.PreDamage;
 
     public override void Execute(Entity caster, Entity target)
     {
@@ -22,10 +21,10 @@ public class BuffEffect : SkillEffect
         {
             if (buff.targetType == TargetType.Self)
             {
-                caster.buffController.addBuff(buff);
+                caster.buffController.AddBuff(buff);
             }
             else if (isBuff && !isResist)
-                target.buffController.addBuff(buff);
+                target.buffController.AddBuff(buff);
         }
     }
 }

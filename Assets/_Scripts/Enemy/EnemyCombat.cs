@@ -2,21 +2,43 @@ using UnityEngine;
 
 public class EnemyCombat : Entity
 {
+    [SerializeField] private Sprite Icon;
 
-    [SerializeField] private GameObject HealthBar;
+    [SerializeField] private GameObject healthBarForeground;
+    private float maxhealthBarForegroundWidth;
+    private bool isDead;
+
+    protected override void Start()
+    {
+        base.Start();
+        maxhealthBarForegroundWidth = healthBarForeground.GetComponent<RectTransform>().sizeDelta.x;
+        if (PlayerCombat.instance.GetEnemyTarget() == this) TargetingPanel.instance.SetEnemyTargetPanel(this);
+    }
+    private void Update()
+    {
+        if (PlayerCombat.instance.GetEnemyTarget() == this && PlayerCombat.instance.GetPlayerState == PlayerActionState.Targeting && PlayerCombat.instance.GetSelectedSkill.TargetType != TargetType.Self)
+            Highlight(Color.red);
+        else if (PlayerCombat.instance.GetPlayerState == PlayerActionState.Targeting && PlayerCombat.instance.GetSelectedSkill.TargetType != TargetType.Self)
+            Highlight(Color.yellow);
+        else
+            Highlight(Color.white);
+    }
 
     protected override void Die()
     {
         gameObject.SetActive(false);
+        isDead = true;
+        // Destroy(gameObject);
     }
     public override void TakeDamage(Damage damage)
     {
         base.TakeDamage(damage);
-        var healthBar = HealthBar.GetComponent<UnityEngine.UI.Image>();
+        var healthBar = healthBarForeground.GetComponent<UnityEngine.UI.Image>();
         Debug.Log($"{gameObject.name} took {damage.Amount} damage, current health: {CurrentHealth / GetStat(StatType.MaxHealth)}");
         if (healthBar != null)
         {
-            healthBar.fillAmount = CurrentHealth / GetStat(StatType.MaxHealth);
+            float healthPercent = CurrentHealth / GetStat(StatType.MaxHealth);
+            healthBarForeground.GetComponent<RectTransform>().sizeDelta = new Vector2(maxhealthBarForegroundWidth * healthPercent, healthBarForeground.GetComponent<RectTransform>().sizeDelta.y);
         }
         if (CurrentHealth <= 0)
         {
@@ -28,29 +50,19 @@ public class EnemyCombat : Entity
         GameObject EnemyVisual = transform.Find("EnemyVisual").gameObject;
         EnemyVisual.GetComponent<SpriteRenderer>().color = color;
     }
-    public void OnMouseOver()
-    {
-        TargetingPanel.instance.SetEnemyTargetPanel(this);
-        TargetingPanel.instance.SetActivePanel(true);
-        if (PlayerCombat.instance.GetSelectedSkill == null) return;
-        if (PlayerCombat.instance.GetPlayerState != PlayerActionState.Targeting) return;
-        if (PlayerCombat.instance.GetSelectedSkill.TargetType == TargetType.Self) return;
-        Highlight(Color.red);
-    }
-    public void OnMouseExit()
-    {
-        TargetingPanel.instance.gameObject.SetActive(false);
-        if (PlayerCombat.instance.GetPlayerState != PlayerActionState.Targeting) return;
-        if (PlayerCombat.instance.GetSelectedSkill == null) return;
-        if (PlayerCombat.instance.GetSelectedSkill.TargetType == TargetType.Self) return;
-        Highlight(Color.yellow);
-    }
     public void OnMouseDown()
     {
         if (PlayerCombat.instance.GetPlayerState != PlayerActionState.Targeting) return;
         if (PlayerCombat.instance.GetSelectedSkill == null) return;
         if (PlayerCombat.instance.GetSelectedSkill.TargetType == TargetType.Self) return;
+        if (PlayerCombat.instance.GetEnemyTarget() == this)
+            TurnManager.Instance.SetState(TurnState.SpeedCompareState);
         PlayerCombat.instance.SetEnemyTarget(this);
-        TurnManager.Instance.SetState(TurnState.SpeedCompareState);
+        TargetingPanel.instance.SetEnemyTargetPanel(this);
+
+    }
+    public bool IsDead()
+    {
+        return isDead;
     }
 }
