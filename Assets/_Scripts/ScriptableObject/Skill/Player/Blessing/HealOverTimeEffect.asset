@@ -25,6 +25,6 @@ MonoBehaviour:
   targetType: 0
   modifiers: []
   isInitialized: 1
-  healAmount: 0.1
+  healAmount: 0.2
   healScale: 2
   healModifierType: 1

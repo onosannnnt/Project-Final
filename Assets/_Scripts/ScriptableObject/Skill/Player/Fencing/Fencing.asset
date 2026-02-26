@@ -17,7 +17,7 @@ MonoBehaviour:
   Strength: 0
   Agility: 0
   Intelligence: 0
-  SkillPoint: 1
+  SkillPoint: 5
   SkillPointRestore: 3
   TargetType: 1
   SkillEffects:

@@ -25,7 +25,7 @@ MonoBehaviour:
   FireDamageMultiplier: 0.1
   ColdDamageMultiplier: 0
   LightningDamageMultiplier: 0
-  PhysicalDefense: 10
+  Armour: 0
   FireResistance: 0
   ColdResistance: 0
   LightningResistance: 0
@@ -33,6 +33,6 @@ MonoBehaviour:
   CriticalHitChance: 0.05
   CriticalHitDamageMultiplier: 1.5
   Accuracy: 1000
-  EvasionRate: 300
+  EvasionRate: 1000
   StatusEffectResistance: 0.1
   StatusHitChance: 1

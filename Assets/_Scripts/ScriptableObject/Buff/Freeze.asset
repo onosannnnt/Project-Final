@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3255b5e03e46a432f85eb0aab966b4ae, type: 3}
   m_Name: Freeze
   m_EditorClassIdentifier: 
-  BuffName: 
+  BuffName: Freeze
   Description: 
   Icon: {fileID: 0}
   buffType: 0

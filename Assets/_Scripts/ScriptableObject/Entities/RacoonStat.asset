@@ -32,7 +32,7 @@ MonoBehaviour:
   ActionSpeed: 20
   CriticalHitChance: 0.3
   CriticalHitDamageMultiplier: 1.5
-  Accuracy: 300
+  Accuracy: 1000
   EvasionRate: 0
   StatusEffectResistance: 0
   StatusHitChance: 0

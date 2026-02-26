@@ -16,7 +16,7 @@ MonoBehaviour:
   Description: 
   Icon: {fileID: 0}
   buffType: 0
-  Duration: 0
+  Duration: 3
   isStackable: 1
   Stack: 1
   StackCalculationType: 0
@@ -27,3 +27,5 @@ MonoBehaviour:
   - Stat: 17
     Type: 1
     Value: 0.05
+  isInitialized: 1
+  FreezeBuff: {fileID: 11400000, guid: 3c3fd6178fca249f6bb156004aa22f49, type: 2}
