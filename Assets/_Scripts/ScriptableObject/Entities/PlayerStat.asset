@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7401980dc50a04460a7ba2d9ba0a542f, type: 3}
   m_Name: PlayerStat
   m_EditorClassIdentifier: 
+  entityName: 
+  Icon: {fileID: 0}
   Level: 1
   ExperiencePoints: 0
   Strength: 5
   Intelligence: 1
   Agility: 1
-  MaxHealth: 100
+  MaxHealth: 10000
   MaxSkillPoint: 10
   MaxSkillSlot: 2
   PhysicalAttack: 30
@@ -33,6 +35,6 @@ MonoBehaviour:
   CriticalHitChance: 0.05
   CriticalHitDamageMultiplier: 1.5
   Accuracy: 1000
-  EvasionRate: 1000
+  EvasionRate: 10
   StatusEffectResistance: 0.1
   StatusHitChance: 1

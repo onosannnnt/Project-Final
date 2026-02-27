@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: BuffEffect
   m_EditorClassIdentifier: 
   buffs:
-  - {fileID: 11400000, guid: 03f8fe2159e6a4b7b81f041a193ef73b, type: 2}
+  - {fileID: 11400000, guid: aeb0042d4d3584716b1a1d6c5fb1eb74, type: 2}

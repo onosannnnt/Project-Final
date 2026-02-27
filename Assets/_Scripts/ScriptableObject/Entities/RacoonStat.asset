@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7401980dc50a04460a7ba2d9ba0a542f, type: 3}
   m_Name: RacoonStat
   m_EditorClassIdentifier: 
+  entityName: Raccoon
+  Icon: {fileID: -1102573834, guid: 1281f6e90a34745d6b62e3a9fecdd0c1, type: 3}
   Level: 1
   ExperiencePoints: 0
   Strength: 0

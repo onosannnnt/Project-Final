@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7014d046e3364875982fb8e5ada1f8c, type: 3}
   m_Name: Chill
   m_EditorClassIdentifier: 
-  BuffName: 
+  BuffName: Chill
   Description: 
   Icon: {fileID: 0}
   buffType: 0
@@ -20,7 +20,7 @@ MonoBehaviour:
   isStackable: 1
   Stack: 1
   StackCalculationType: 0
-  Threshold: 4
+  Threshold: 2
   DiminishingReturnDecayFactor: 0
   targetType: 1
   modifiers:
