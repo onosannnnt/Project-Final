@@ -20,7 +20,7 @@ public enum StatType
     FireDamageMultiplier,
     ColdDamageMultiplier,
     LightningDamageMultiplier,
-    PhysicalDefense,
+    Armour,
     FireResistance,
     ColdResistance,
     LightningResistance,
@@ -31,5 +31,10 @@ public enum StatType
     EvasionRate,
     StatusEffectResistance,
     StatusHitChance
+}
+public enum EntityModifierType
+{
+    Incoming,
+    Outgoing
 }
 

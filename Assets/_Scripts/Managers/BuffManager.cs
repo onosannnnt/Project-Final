@@ -16,18 +16,29 @@ public class BuffManager
         return activeBuffs;
     }
 
-    public void addBuff(Buff buff)
+    public void AddBuff(Buff buff)
     {
         Buff existingBuff = activeBuffs.Find(b => b.BuffName == buff.BuffName);
+
         if (existingBuff != null)
         {
             existingBuff.Duration = Mathf.Max(existingBuff.Duration, buff.Duration);
-            if (existingBuff.isStackable) existingBuff.Stack += 1;
+
+            if (existingBuff.isStackable)
+            {
+                existingBuff.Stack += 1;
+            }
+            existingBuff.OnApply(owner);
+            existingBuff.OnRefresh(owner);
         }
-        else activeBuffs.Add(buff.Clone());
-        OnApply(owner, buff);
+        else
+        {
+            Buff newBuff = buff.Clone();
+            activeBuffs.Add(newBuff);
+            newBuff.OnApply(owner);
+        }
     }
-    public void removeBuff(Buff buff)
+    public void RemoveBuff(Buff buff)
     {
         Debug.Log(owner.gameObject.name + " lost buff: " + buff.BuffName);
         activeBuffs.Remove(buff);
@@ -64,5 +75,9 @@ public class BuffManager
     public Buff GetBuffByName(string buffName)
     {
         return activeBuffs.Find(b => b.BuffName == buffName);
+    }
+    public List<Buff> GetBuffsByType(BuffType type)
+    {
+        return activeBuffs.FindAll(b => b.buffType == type);
     }
 }

@@ -1,16 +1,12 @@
-using System.Collections.Generic;
 using UnityEngine;
 
-
-[CreateAssetMenu(fileName = "NewSkill", menuName = "ScriptableObjects/SkillEffect/DamageEffect")]
+[CreateAssetMenu(fileName = "DamageEffect", menuName = "ScriptableObjects/SkillEffect/DamageEffect")]
 public class DamageEffect : SkillEffect
 {
     [SerializeField] public DamageType DamageType;
     [Tooltip("Damage Multiplier is not be in percent (1 = 100%, 1.5 = 150%)")]
     [SerializeField] public float DamageMultiplier;
-    [SerializeField] public DamageScale DamageScale;
-    [SerializeField] public List<Buff> Buffs;
-    public override SkillEffectPhase Phase => SkillEffectPhase.Damage;
+    [SerializeField] public StatScale statScale;
 
     public DamageEffect(DamageType damageType, float damageMultiplier)
     {
@@ -22,11 +18,11 @@ public class DamageEffect : SkillEffect
     {
         Debug.Log(caster.gameObject.name + " used " + DamageType + " DamageEffect on " + target.gameObject.name);
 
-        StatType scalingStat = Damage.GetScalingStat(DamageScale);
+        StatType scalingStat = Utils.GetScalingStat(statScale);
         float baseStat = caster.GetStat(scalingStat);
 
         float damageMultiplierStat = 0f;
-        StatType multiplierStatType = Damage.GetDamageMultiplierStat(DamageType);
+        StatType multiplierStatType = Utils.GetDamageMultiplierStat(DamageType);
         if (multiplierStatType != StatType.None)
             damageMultiplierStat = caster.GetStat(multiplierStatType);
 
@@ -36,13 +32,8 @@ public class DamageEffect : SkillEffect
             (1 + damageMultiplierStat);
         Debug.Log($"Base Stat: {baseStat}, Damage Multiplier: {DamageMultiplier}, Damage Multiplier Stat: {damageMultiplierStat}, Final Damage before crit: {finalDamage}");
 
-        bool isCrit = Random.Range(0f, 100f) < caster.GetStat(StatType.CriticalHitChance);
-        if (isCrit)
-        {
-            finalDamage *= 1 + caster.GetStat(StatType.CriticalDamageMultiplier);
-        }
-
         Damage damage = new Damage(DamageType, finalDamage);
-        target.TakeDamage(damage);
+        DamageCtx ctx = new DamageCtx(caster, target, damage);
+        DamageSystem.Process(ctx);
     }
 }

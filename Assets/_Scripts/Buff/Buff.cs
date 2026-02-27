@@ -47,7 +47,7 @@ public class Buff : ScriptableObject
     public float DiminishingReturnDecayFactor;
     public TargetType targetType;
     public List<StatModifier> modifiers = new List<StatModifier>();
-    private bool isInitialized = true;
+    public bool isInitialized = true;
 
     public virtual void OnApply(Entity owner) { }
     public virtual void OnTurnStart(Entity owner) { }
@@ -60,6 +60,10 @@ public class Buff : ScriptableObject
             return;
         }
         Duration -= 1;
+    }
+    public virtual void OnRefresh(Entity owner)
+    {
+        // default ไม่ทำอะไร
     }
     public virtual void OnRemove(Entity owner) { }
 

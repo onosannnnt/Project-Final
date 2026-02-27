@@ -9,8 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96c91456b669f4856867d806353c122a, type: 3}
-  m_Name: BuffEffect
+  m_Script: {fileID: 11500000, guid: c46aedc9ed1084bb3abe687953decc10, type: 3}
+  m_Name: ColdDamage
   m_EditorClassIdentifier: 
-  buffs:
-  - {fileID: 11400000, guid: c30ead97586014d488b09c1378d00ca2, type: 2}
+  DamageType: 0
+  DamageMultiplier: 0
+  DamageScale: 0

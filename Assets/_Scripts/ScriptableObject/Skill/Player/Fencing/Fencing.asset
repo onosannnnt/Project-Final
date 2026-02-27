@@ -17,8 +17,9 @@ MonoBehaviour:
   Strength: 0
   Agility: 0
   Intelligence: 0
-  SkillPoint: 1
+  SkillPoint: 5
   SkillPointRestore: 3
   TargetType: 1
   SkillEffects:
   - {fileID: 11400000, guid: 7be364133e1c04b3c99994dfa87907e9, type: 2}
+  - {fileID: 11400000, guid: dd35884e72ab841e39ba37a0f097a678, type: 2}

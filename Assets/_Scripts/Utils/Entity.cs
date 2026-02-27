@@ -1,19 +1,25 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public abstract class Entity : MonoBehaviour
 {
-
+    [SerializeField] private GameObject DamageTextPrefab;
+    [SerializeField] private Transform DamageCanvas;
+    [SerializeField] private float FloatSpeed = 1f;
+    [SerializeField] private float FloatDuration = 1f;
     [SerializeField] private EntitiesBaseStat stats; // Base stats from ScriptableObject
-    [SerializeField] private List<Skill> skills;
+    [SerializeField] private SkillLoadout skills;
     protected float currentHealth;
     protected int currentSkillPoint;
     public BuffManager buffController;
     public SkillManager skillManager;
     protected Skill selectedSkill;
+    public List<IDamageModifier> OutgoingModifiers = new();
+    public List<IDamageModifier> IncomingModifiers = new();
 
     protected virtual void Awake()
     {
@@ -24,7 +30,11 @@ public abstract class Entity : MonoBehaviour
     {
         currentHealth = GetStat(StatType.MaxHealth);
         currentSkillPoint = (int)GetStat(StatType.MaxSkillPoint);
-        skillManager.SetSkills(skills);
+        skillManager.SetSkills(skills.EquippedSkills);
+
+        OutgoingModifiers.Add(new CriticalModifier());
+        IncomingModifiers.Add(new ResistanceModifier());
+        IncomingModifiers.Add(new EvasionModifier());
     }
 
     public virtual float CurrentHealth => math.min(currentHealth, GetStat(StatType.MaxHealth));
@@ -38,39 +48,24 @@ public abstract class Entity : MonoBehaviour
 
     public virtual void TakeDamage(Damage damage)
     {
-        float total = 0f;
 
-        float mitigated = ApplyMitigation(damage);
-        total += mitigated;
-
-        currentHealth -= total;
-        Debug.Log($"{gameObject.name} took {total} damage.");
-
+        currentHealth = math.max(currentHealth - damage.Amount, 0);
+        Debug.Log($"{gameObject.name} took {damage.Amount} damage, current health: {CurrentHealth}/{GetStat(StatType.MaxHealth)}");
+        ShowDamage((int)damage.Amount, Utils.GetDamageColor(damage.Type), damage.IsCriticalHit);
         if (currentHealth <= 0)
             Die();
     }
-    private float ApplyMitigation(Damage damage)
-    {
-        float resist = damage.Type switch
-        {
-            DamageType.Physical => GetStat(StatType.PhysicalDefense),
-            DamageType.Fire => GetStat(StatType.FireResistance),
-            DamageType.Cold => GetStat(StatType.ColdResistance),
-            DamageType.Lightning => GetStat(StatType.LightningResistance),
-            _ => 0
-        };
 
-        float reduced = damage.Amount * (1f - resist / 100f);
-        return Mathf.Max(reduced, 0);
-    }
-    public virtual void Heal(Entity source, float amount)
+    public virtual void Heal(float amount)
     {
-        currentHealth = Mathf.Min(currentHealth + amount, stats.MaxHealth);
+        currentHealth = Mathf.Min(currentHealth + amount, GetStat(StatType.MaxHealth));
+        ShowDamage((int)amount, Color.green);
     }
+    public virtual void SetSP(int amount)
+    {
+        currentSkillPoint = Mathf.Clamp(currentSkillPoint + amount, 0, (int)GetStat(StatType.MaxSkillPoint));
+        Debug.Log($"{gameObject.name} SP changed by {amount}, current SP: {CurrentSP}/{(int)GetStat(StatType.MaxSkillPoint)}");
 
-    public virtual void SPRecover(int amount)
-    {
-        currentSkillPoint = Mathf.Min(currentSkillPoint + amount, stats.MaxSkillPoint);
     }
 
     public float GetStat(StatType stat)
@@ -129,7 +124,7 @@ public abstract class Entity : MonoBehaviour
         return (baseStat + flatStat) * MultiplierStat;
     }
     protected abstract void Die();
-    protected virtual bool CanAction()
+    public virtual bool CanAction()
     {
         foreach (var buff in buffController.GetBuff())
         {
@@ -140,5 +135,44 @@ public abstract class Entity : MonoBehaviour
         }
         return true;
     }
-
+    public void AddModifier(IDamageModifier modifier, EntityModifierType modifierType)
+    {
+        if (modifierType == EntityModifierType.Outgoing)
+            OutgoingModifiers.Add(modifier);
+        else if (modifierType == EntityModifierType.Incoming)
+            IncomingModifiers.Add(modifier);
+    }
+    public void RemoveModifier(IDamageModifier modifier, EntityModifierType modifierType)
+    {
+        if (modifierType == EntityModifierType.Outgoing)
+            OutgoingModifiers.Remove(modifier);
+        else if (modifierType == EntityModifierType.Incoming)
+            IncomingModifiers.Remove(modifier);
+    }
+    public void ShowDamage(int damage, Color color, bool isCriticalHit = false)
+    {
+        GameObject damageTextObj = Instantiate(DamageTextPrefab, DamageCanvas);
+        damageTextObj.GetComponentInChildren<TextMeshProUGUI>().text = damage.ToString() == "0" ? "Miss" : damage.ToString();
+        if (isCriticalHit)
+        {
+            damageTextObj.GetComponentInChildren<TextMeshProUGUI>().text += "!!";
+        }
+        damageTextObj.GetComponentInChildren<TextMeshProUGUI>().color = color;
+        if (damageTextObj != null)
+        {
+            StartCoroutine(FloatAndFade(damageTextObj));
+        }
+    }
+    private System.Collections.IEnumerator FloatAndFade(GameObject damageTextObj)
+    {
+        float elapsedTime = 0f;
+        Vector3 startPosition = damageTextObj.transform.position;
+        while (elapsedTime < FloatDuration)
+        {
+            damageTextObj.transform.position = startPosition + Vector3.up * FloatSpeed * elapsedTime;
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        Destroy(damageTextObj);
+    }
 }

@@ -12,18 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7014d046e3364875982fb8e5ada1f8c, type: 3}
   m_Name: Chill
   m_EditorClassIdentifier: 
-  BuffName: 
+  BuffName: Chill
   Description: 
   Icon: {fileID: 0}
   buffType: 0
-  Duration: 0
+  Duration: 3
   isStackable: 1
   Stack: 1
   StackCalculationType: 0
-  Threshold: 4
+  Threshold: 2
   DiminishingReturnDecayFactor: 0
   targetType: 1
   modifiers:
   - Stat: 17
     Type: 1
     Value: 0.05
+  isInitialized: 1
+  FreezeBuff: {fileID: 11400000, guid: 3c3fd6178fca249f6bb156004aa22f49, type: 2}

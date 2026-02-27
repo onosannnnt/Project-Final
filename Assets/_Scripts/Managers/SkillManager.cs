@@ -15,6 +15,7 @@ public class SkillManager
         Debug.Log(owner.gameObject.name + " is using skill: " + skill.Name + " on " + target.gameObject.name);
         if (skill == null || target == null) return;
         skill.Execute(owner, target);
+        Debug.Log(owner.gameObject.name + " has " + owner.CurrentHealth + " HP and " + owner.CurrentSP + " SP after using skill: " + skill.Name);
     }
     public List<Skill> GetSkills()
     {

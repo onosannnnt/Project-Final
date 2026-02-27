@@ -1,19 +1,19 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Buff", menuName = "ScriptableObjects/Buff/DOT")]
+[CreateAssetMenu(fileName = "DOT", menuName = "ScriptableObjects/Buff/DOT")]
 
 public class DOT : Buff
 {
     //TODO: ทำส่วนที่เพิ่มลด damage จาก dot เช่น inc dot, inc ignite, inc bleed etc.
 
     public float value;
-    public DamageScale damageScale;
+    public StatScale statScale;
     public ModifierType damageModifierType;
     public DamageType damageType;
     public override void OnTurnStart(Entity owner)
     {
         float totalDamage = 0f;
-        StatType scalingStat = Damage.GetScalingStat(damageScale);
+        StatType scalingStat = Utils.GetScalingStat(statScale);
         float baseStat = owner.GetStat(scalingStat);
 
 

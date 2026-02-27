@@ -10,6 +10,5 @@ public enum SkillEffectPhase
 [System.Serializable]
 public abstract class SkillEffect : ScriptableObject
 {
-    public abstract SkillEffectPhase Phase { get; }
     public abstract void Execute(Entity caster, Entity target);
 }

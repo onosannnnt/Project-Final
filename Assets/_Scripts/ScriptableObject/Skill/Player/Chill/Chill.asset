@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
   m_Name: Chill
   m_EditorClassIdentifier: 
-  Name: 
+  Name: Chill
   Level: 0
   Strength: 0
   Agility: 0

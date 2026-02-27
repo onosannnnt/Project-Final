@@ -17,11 +17,11 @@ public class CombatPlayerUI : Singleton<CombatPlayerUI>
     {
         SetUpEventHandlers();
     }
-    private void Update()
-    {
-        UpdateHealthBar();
-        UpdateSPBar();
-    }
+    // private void Update()
+    // {
+    //     UpdateHealthBar();
+    //     UpdateSPBar();
+    // }
     private void SetUpEventHandlers()
     {
         skillsButton.onClick.AddListener(() =>
@@ -75,6 +75,7 @@ public class CombatPlayerUI : Singleton<CombatPlayerUI>
             {
                 playerCombat.SetSelectedSkill(skill);
                 playerCombat.HandleSelectSkill();
+                TargetingPanel.instance.SetActivePanel(true);
                 playerCombat.SetPlayerState(PlayerActionState.Targeting);
             });
             index += 1;

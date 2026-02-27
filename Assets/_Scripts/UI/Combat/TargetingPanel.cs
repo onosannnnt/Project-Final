@@ -1,14 +1,18 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TargetingPanel : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI targetingNameText;
-    [SerializeField] private GameObject healthBarForeground;
-    [SerializeField] private TextMeshProUGUI TextHealthBar;
-    [SerializeField] private GameObject BuffParent;
+    [SerializeField] private TextMeshProUGUI TargetingNameText;
+    [SerializeField] private TextMeshProUGUI LevelText;
+    [SerializeField] private Image Icon;
+    [SerializeField] private Transform BuffParent;
     [SerializeField] private GameObject BuffPrefab;
-    private EnemyCombat currentTarget;
+    [SerializeField] private Transform StatusBuffParent;
+    [SerializeField] private GameObject StatusBuffPrefab;
+    private Entity currentTarget;
     private float maxhealthBarForegroundWidth;
     public static TargetingPanel instance;
     private void Awake()
@@ -22,47 +26,74 @@ public class TargetingPanel : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    public void Start()
+    private void Start()
     {
         gameObject.SetActive(false);
-        maxhealthBarForegroundWidth = healthBarForeground.GetComponent<RectTransform>().sizeDelta.x;
-
     }
-    private void UpdateHealthBar()
+    private void Update()
     {
-        if (currentTarget == null) return;
-        targetingNameText.text = currentTarget.gameObject.name;
-        float healthPercent = currentTarget.CurrentHealth / currentTarget.GetStat(StatType.MaxHealth);
-        healthBarForeground.GetComponent<RectTransform>().sizeDelta = new Vector2(maxhealthBarForegroundWidth * healthPercent, healthBarForeground.GetComponent<RectTransform>().sizeDelta.y);
-        TextHealthBar.text = HealthColor(healthPercent) + $"{currentTarget.CurrentHealth} / {currentTarget.GetStat(StatType.MaxHealth)} </color>";
+        if (PlayerCombat.instance.GetPlayerState == PlayerActionState.Targeting && currentTarget != null && TurnManager.Instance.GetTurnState() == TurnState.PlayerTurnState && PlayerCombat.instance.GetSelectedSkill.TargetType != TargetType.Self)
+        {
+            SetActivePanel(true);
+        }
+        else
+        {
+            SetActivePanel(false);
+        }
     }
     public void SetActivePanel(bool active)
     {
         gameObject.SetActive(active);
-        UpdateHealthBar();
         SetBuffs();
+        SetStatusBuff();
+        TargetingNameText.text = currentTarget.Stats.GetName();
+        Icon.sprite = currentTarget.Stats.GetIcon();
+        LevelText.text = $"Lv.{currentTarget.Stats.Level}";
     }
-    public void SetEnemyTargetPanel(EnemyCombat enemy)
+    public void SetEnemyTargetPanel(Entity enemy)
     {
         currentTarget = enemy;
+        if (PlayerCombat.instance.GetPlayerState == PlayerActionState.Targeting)
+        {
+            SetActivePanel(true);
+        }
     }
     public void SetBuffs()
     {
-        float startX = -165f;
-        float spacing = 40f;
         foreach (Transform child in BuffParent.transform)
         {
             Destroy(child.gameObject);
         }
-        foreach (var buff in currentTarget.buffController.GetBuff())
+        if (currentTarget == null) return;
+        List<Buff> Buffs = currentTarget.buffController.GetBuffsByType(BuffType.CrowdControl);
+        if (Buffs.Count == 0) BuffParent.gameObject.SetActive(false);
+        else BuffParent.gameObject.SetActive(true);
+        foreach (var buff in Buffs)
         {
             GameObject buffObj = Instantiate(BuffPrefab, BuffParent.transform);
-            buffObj.GetComponent<RectTransform>().anchoredPosition = new Vector2(startX, 0);
+            buffObj.GetComponent<Image>().sprite = buff.Icon;
             buffObj.transform.Find("Duration").GetComponentInChildren<TextMeshProUGUI>().text = BuffStackColor(buff.Duration) + $"{buff.Duration}</color>";
             buffObj.transform.Find("Stack").GetComponentInChildren<TextMeshProUGUI>().text = BuffStackColor(buff.Stack) + $"{buff.Stack}</color>";
-            startX += spacing;
         }
     }
+    public void SetStatusBuff()
+    {
+        foreach (Transform child in StatusBuffParent.transform)
+        {
+            Destroy(child.gameObject);
+        }
+        if (currentTarget == null) return;
+        List<Buff> statusBuffs = currentTarget.buffController.GetBuffsByType(BuffType.CrowdControl);
+        if (statusBuffs.Count == 0) StatusBuffParent.gameObject.SetActive(false);
+        else StatusBuffParent.gameObject.SetActive(true);
+        if (statusBuffs.Count == 0) return;
+        foreach (var buff in statusBuffs)
+        {
+            GameObject buffObj = Instantiate(StatusBuffPrefab, StatusBuffParent.transform);
+            buffObj.GetComponent<Image>().sprite = buff.Icon;
+        }
+    }
+
     private string BuffStackColor(int stack)
     {
         if (stack >= 5)
@@ -71,12 +102,5 @@ public class TargetingPanel : MonoBehaviour
             return "<color=yellow>";
         else
             return "<color=red>";
-    }
-    private string HealthColor(float healthPercent)
-    {
-        if (healthPercent >= 0.5f)
-            return "<color=white>";
-        else
-            return "<color=black>";
     }
 }
