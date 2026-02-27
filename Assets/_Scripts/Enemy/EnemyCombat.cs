@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class EnemyCombat : Entity
 {
-    [SerializeField] private Sprite Icon;
-
     [SerializeField] private GameObject healthBarForeground;
     private float maxhealthBarForegroundWidth;
     private bool isDead;

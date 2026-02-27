@@ -28,15 +28,14 @@ public class BuffManager
             {
                 existingBuff.Stack += 1;
             }
-
-            existingBuff.OnRefresh(owner); // ← ใช้อันนี้แทน
+            existingBuff.OnApply(owner);
+            existingBuff.OnRefresh(owner);
         }
         else
         {
             Buff newBuff = buff.Clone();
             activeBuffs.Add(newBuff);
-
-            newBuff.OnApply(owner); // ← Apply ตัว clone เท่านั้น
+            newBuff.OnApply(owner);
         }
     }
     public void RemoveBuff(Buff buff)
@@ -76,5 +75,9 @@ public class BuffManager
     public Buff GetBuffByName(string buffName)
     {
         return activeBuffs.Find(b => b.BuffName == buffName);
+    }
+    public List<Buff> GetBuffsByType(BuffType type)
+    {
+        return activeBuffs.FindAll(b => b.buffType == type);
     }
 }

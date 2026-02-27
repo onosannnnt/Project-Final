@@ -3,6 +3,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "EntitiesStat", menuName = "ScriptableObjects/EntitiesStat", order = 1)]
 public class EntitiesBaseStat : ScriptableObject
 {
+    [Tooltip("Name of the Player")]
+    public string entityName;
+    [Tooltip("Icon of the Player")]
+    public Sprite Icon;
     [Tooltip("Level of the Player")]
     public int Level;
     [Tooltip("Experience Points of the Player")]
@@ -125,5 +129,12 @@ public class EntitiesBaseStat : ScriptableObject
         EntitiesBaseStat clone = Instantiate(this);
         return clone;
     }
-
+    public string GetName()
+    {
+        return entityName;
+    }
+    public Sprite GetIcon()
+    {
+        return Icon;
+    }
 }

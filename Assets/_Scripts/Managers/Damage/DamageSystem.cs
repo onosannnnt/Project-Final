@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public static class DamageSystem
 {
     public static void Process(DamageCtx ctx)
@@ -8,6 +10,7 @@ public static class DamageSystem
         foreach (var mod in ctx.Target.IncomingModifiers)
             mod.Modify(ctx);
 
+        ctx.Damage.Amount = Mathf.Max(ctx.Damage.Amount, 0);
         ctx.Target.TakeDamage(ctx.Damage);
     }
 }

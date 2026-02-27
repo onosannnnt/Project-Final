@@ -49,7 +49,7 @@ public abstract class Entity : MonoBehaviour
     public virtual void TakeDamage(Damage damage)
     {
 
-        currentHealth -= damage.Amount;
+        currentHealth = math.max(currentHealth - damage.Amount, 0);
         Debug.Log($"{gameObject.name} took {damage.Amount} damage, current health: {CurrentHealth}/{GetStat(StatType.MaxHealth)}");
         ShowDamage((int)damage.Amount, Utils.GetDamageColor(damage.Type), damage.IsCriticalHit);
         if (currentHealth <= 0)
