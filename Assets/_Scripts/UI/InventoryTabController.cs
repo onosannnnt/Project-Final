@@ -12,73 +12,66 @@ public class InventoryTabController : MonoBehaviour
         public Image tabButtonImage;
         public Sprite activeSprite;
         public Sprite inactiveSprite;
-        public KeyCode hotkey; // เพิ่มช่องสำหรับใส่ปุ่มบนคีย์บอร์ด
+        public KeyCode hotkey;
     }
 
     public List<Tab> allTabs;
-    public GameObject inventoryUI; // ตัว Parent ใหญ่ที่เก็บทุกอย่าง (เพื่อสั่ง เปิด/ปิด เมนู)
+    public GameObject inventoryUI;
     public GameObject listBackground;
 
     void Start()
     {
-        // เริ่มเกมมาให้ปิด Inventory ไว้ก่อน
-        inventoryUI.SetActive(false);
+        if (inventoryUI != null) inventoryUI.SetActive(false);
     }
 
     void Update()
-{
-    // 1. เช็คปุ่มลัดอื่นๆ (E, F, M...)
-    for (int i = 0; i < allTabs.Count; i++)
     {
-        if (Input.GetKeyDown(allTabs[i].hotkey))
+        // 1. จัดการปุ่ม Esc (ปิดอย่างเดียวตามโค้ดล่าสุดของคุณ)
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            OpenInventory(i);
+            if (inventoryUI != null) inventoryUI.SetActive(false);
+            return;
         }
-    }
 
-    // 2. กรณีพิเศษ: ปุ่ม Esc
-    if (Input.GetKeyDown(KeyCode.Escape))
-    {
-        // ถ้าเมนูปิดอยู่ -> ให้เปิดหน้า Setting (สมมติ Setting คือ Index 4)
-        if (!inventoryUI.activeSelf) 
+        // 2. เช็คปุ่มลัดอื่นๆ
+        for (int i = 0; i < allTabs.Count; i++)
         {
-            OpenInventory(4); // เปลี่ยนเลข 4 เป็น Index ของหน้า Setting ใน List ของคุณ
-        }
-        else 
-        {
-            // ถ้าเมนูเปิดอยู่แล้ว -> ให้ปิดเมนู
-            inventoryUI.SetActive(false);
+            if (allTabs[i].hotkey == KeyCode.None || allTabs[i].hotkey == KeyCode.Escape) continue;
+
+            if (Input.GetKeyDown(allTabs[i].hotkey))
+            {
+                OpenInventory(i);
+            }
         }
     }
-}
 
     public void OpenInventory(int index)
-{
-    // ถ้าหน้าจอนั้นเปิดอยู่แล้ว แล้วกดปุ่มเดิมซ้ำ ให้ปิดเมนู (Toggle)
-    if (inventoryUI.activeSelf && allTabs[index].panel.activeSelf)
     {
-        inventoryUI.SetActive(false);
-        return;
+        // ป้องกัน Error: เช็คว่า Index อยู่ในขอบเขตและตัวแปรไม่เป็น Null
+        if (index < 0 || index >= allTabs.Count || inventoryUI == null || allTabs[index].panel == null) 
+        {
+            Debug.LogWarning("ตรวจเช็ค Inspector: อาจจะลืมลาก Panel หรือตั้งค่า Index ผิด");
+            return;
+        }
+            inventoryUI.SetActive(true);
+            ShowTab(index);
     }
-
-    inventoryUI.SetActive(true);
-    ShowTab(index);
-}
 
     public void ShowTab(int index)
     {
         for (int i = 0; i < allTabs.Count; i++)
         {
+            if (allTabs[i].panel == null || allTabs[i].tabButtonImage == null) continue;
+
             bool isActive = (i == index);
             allTabs[i].panel.SetActive(isActive);
             allTabs[i].tabButtonImage.sprite = isActive ? allTabs[i].activeSprite : allTabs[i].inactiveSprite;
         }
 
-        // จัดการพื้นหลัง (ในรูปเห็นเป็นกรอบกระดาษ ถ้าเป็น World Map อาจจะอยากให้จางลงหรือหายไป)
         if (listBackground != null)
         {
-            // สมมติ World Map คือ Index 4
-            listBackground.SetActive(index != 4); 
+            // เช็คตามชื่อ Tab แทนการใช้ตัวเลข Index ตายตัวจะปลอดภัยกว่าครับ
+            listBackground.SetActive(allTabs[index].name != "World Map"); 
         }
     }
 }
