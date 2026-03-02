@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
@@ -11,6 +9,10 @@ public abstract class Entity : MonoBehaviour
     [SerializeField] private Transform DamageCanvas;
     [SerializeField] private float FloatSpeed = 1f;
     [SerializeField] private float FloatDuration = 1f;
+    [Header("Spread Settings")]
+    public float SpreadAmount = 0.3f;       // How far left/right the text will drift
+    public float RandomSpawnOffset = 0.1f; // Slight scatter so they don't spawn perfectly overlapping
+    [Header("Properties")]
     [SerializeField] private EntitiesBaseStat stats; // Base stats from ScriptableObject
     [SerializeField] private SkillLoadout skills;
     protected float currentHealth;
@@ -152,27 +154,52 @@ public abstract class Entity : MonoBehaviour
     public void ShowDamage(int damage, Color color, bool isCriticalHit = false)
     {
         GameObject damageTextObj = Instantiate(DamageTextPrefab, DamageCanvas);
-        damageTextObj.GetComponentInChildren<TextMeshProUGUI>().text = damage.ToString() == "0" ? "Miss" : damage.ToString();
+
+        // OPTIMIZATION: Cache the text component so we only search for it once
+        TextMeshProUGUI textComponent = damageTextObj.GetComponentInChildren<TextMeshProUGUI>();
+
+        textComponent.text = damage.ToString() == "0" ? "Miss" : damage.ToString();
+        textComponent.color = color;
+
         if (isCriticalHit)
         {
-            damageTextObj.GetComponentInChildren<TextMeshProUGUI>().text += "!!";
+            textComponent.text += "!!";
         }
-        damageTextObj.GetComponentInChildren<TextMeshProUGUI>().color = color;
+
         if (damageTextObj != null)
         {
             StartCoroutine(FloatAndFade(damageTextObj));
         }
     }
+
     private System.Collections.IEnumerator FloatAndFade(GameObject damageTextObj)
     {
         float elapsedTime = 0f;
-        Vector3 startPosition = damageTextObj.transform.position;
+
+        // 1. Scatter the starting position slightly
+        Vector3 randomSpawnOffset = new Vector3(
+            UnityEngine.Random.Range(-RandomSpawnOffset, RandomSpawnOffset),
+            UnityEngine.Random.Range(-RandomSpawnOffset, RandomSpawnOffset),
+            0f
+        );
+        Vector3 startPosition = damageTextObj.transform.position + randomSpawnOffset;
+        damageTextObj.transform.position = startPosition;
+
+        // 2. Calculate a randomized drift direction (Up + Random Left/Right)
+        float randomXDrift = UnityEngine.Random.Range(-SpreadAmount, SpreadAmount);
+
+        // We use normalized so the text travels at the same consistent speed regardless of the angle
+        Vector3 moveDirection = new Vector3(randomXDrift, 1f, 0f).normalized;
+
         while (elapsedTime < FloatDuration)
         {
-            damageTextObj.transform.position = startPosition + Vector3.up * FloatSpeed * elapsedTime;
+            // 3. Move the text along the new randomized vector
+            damageTextObj.transform.position = startPosition + (moveDirection * FloatSpeed * elapsedTime);
+
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+
         Destroy(damageTextObj);
     }
 }
