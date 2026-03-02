@@ -44,6 +44,5 @@ public class Skill : ScriptableObject
             Debug.Log(effect.name + " effect is executed from skill " + skillName);
             effect.Execute(caster, target);
         }
-
     }
 }
