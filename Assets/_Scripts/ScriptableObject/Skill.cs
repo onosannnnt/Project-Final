@@ -6,9 +6,14 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewSkill", menuName = "ScriptableObjects/Skill")]
 public class Skill : ScriptableObject
 {
+    [Tooltip("ID of the Skill")]
+    public string skillID;
+    [Tooltip("Skill Icon")]
+    public Sprite skillIcon;
     [Tooltip("Name of the Skill")]
     public string skillName;
     [Tooltip("Description of the Skill")]
+    [TextArea(3, 10)] // (จำนวนบรรทัดเริ่มต้น, จำนวนบรรทัดสูงสุด)
     public string description;
     [Tooltip("Sp cost of the Skill")]
     public float spCost;

@@ -71,7 +71,7 @@ public class InventoryTabController : MonoBehaviour
         if (listBackground != null)
         {
             // เช็คตามชื่อ Tab แทนการใช้ตัวเลข Index ตายตัวจะปลอดภัยกว่าครับ
-            listBackground.SetActive(allTabs[index].name != "World Map"); 
+            listBackground.SetActive(allTabs[index].name != "WorldMap"); 
         }
     }
 }
