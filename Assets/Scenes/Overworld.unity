@@ -233,7 +233,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 26.82}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &53929160
 MonoBehaviour:
@@ -1319,14 +1319,14 @@ MonoBehaviour:
   m_Padding:
     m_Left: 0
     m_Right: 0
-    m_Top: 32
-    m_Bottom: 42
+    m_Top: 20
+    m_Bottom: 31
   m_ChildAlignment: 4
   m_Spacing: 0
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
-  m_ChildControlHeight: 0
+  m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
@@ -2030,13 +2030,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 44288014}
-  m_Horizontal: 1
+  m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 2
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 100
   m_Viewport: {fileID: 939253592}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 416474577}
@@ -3167,7 +3167,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 1232, y: -360}
-  m_SizeDelta: {x: 700, y: 0}
+  m_SizeDelta: {x: 700, y: 700}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1032754054
 CanvasRenderer:
@@ -3190,7 +3190,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
-  m_VerticalFit: 2
+  m_VerticalFit: 0
 --- !u!114 &1032754056
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4645,6 +4645,42 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9dd6f04a00f2dd34eba5dedc1f624476, type: 2}
   - {fileID: 11400000, guid: 3c99df0d082a8ea428380d9d53f82b5e, type: 2}
   - {fileID: 11400000, guid: 0d36abd1ab093284ca46b9745dfee778, type: 2}
+  - {fileID: 11400000, guid: c05fd8fb6480d4a458ede02594e01f09, type: 2}
+  - {fileID: 11400000, guid: 9dcbebc88d374ee478a8a54d324fe8f3, type: 2}
+  - {fileID: 11400000, guid: 77bc1b571444d6d4fb6a6e7fbf693240, type: 2}
+  - {fileID: 11400000, guid: e934a12691db83941bcfc8d9e5a9d0c3, type: 2}
+  - {fileID: 11400000, guid: 6e20f918143d6c346bf944ccbd12b8c8, type: 2}
+  - {fileID: 11400000, guid: 9f1d56c8acbdcd14f8078ae84d06e3f7, type: 2}
+  - {fileID: 11400000, guid: c1f3efcee53a34e40b5320820e8b077c, type: 2}
+  - {fileID: 11400000, guid: be09837fa77d8ab4094775d50fa8c1f0, type: 2}
+  - {fileID: 11400000, guid: 44a8f2a09c757f6458b6d9a13424ce85, type: 2}
+  - {fileID: 11400000, guid: e1ee63d43a3d9e144b98b4fc51929cf0, type: 2}
+  - {fileID: 11400000, guid: b44eb76c1bd40f643ac677dd01fb3f56, type: 2}
+  - {fileID: 11400000, guid: 2dd9ecaee8bf5b841ae58078feb9e812, type: 2}
+  - {fileID: 11400000, guid: 2efdbd2e5d0399f4abbb243bd02caf50, type: 2}
+  - {fileID: 11400000, guid: 10c49c764890f374c9107e750e301be4, type: 2}
+  - {fileID: 11400000, guid: d1d7bf7fd56556848ac6ee49bb0f418e, type: 2}
+  - {fileID: 11400000, guid: d66244b19fd04d2469b4556e867796d7, type: 2}
+  - {fileID: 11400000, guid: 19cb22f93bf5a1c4ca1414b756893720, type: 2}
+  - {fileID: 11400000, guid: 7978a5f5373361d40a7e2bea3c76082e, type: 2}
+  - {fileID: 11400000, guid: 7bf4bb260b1724940aeecd961e1d4e14, type: 2}
+  - {fileID: 11400000, guid: b346396056c655147bcbb4b6c9d0d5d6, type: 2}
+  - {fileID: 11400000, guid: 53afe38ce1285e54287617797959002c, type: 2}
+  - {fileID: 11400000, guid: 0fafcf8958408a1498d60a93bbe339c2, type: 2}
+  - {fileID: 11400000, guid: 23a41b39ccebe354a87af10753f1336f, type: 2}
+  - {fileID: 11400000, guid: 4bd1944dee0dc0546b6ebb0694370c7d, type: 2}
+  - {fileID: 11400000, guid: 50018d4cba6e37643a31b74ddd328c47, type: 2}
+  - {fileID: 11400000, guid: dbb01b2fc9f4bf645b219c7e50e8afe7, type: 2}
+  - {fileID: 11400000, guid: a76d5613feba74d499bac6ecf494e1d6, type: 2}
+  - {fileID: 11400000, guid: ca9597d861ff865468f65987f0abb92d, type: 2}
+  - {fileID: 11400000, guid: 4d856dc05f935e84a84b8e7bccc23b2a, type: 2}
+  - {fileID: 11400000, guid: 735feec1c7bfac24f9ff046d018c4cb9, type: 2}
+  - {fileID: 11400000, guid: f611c5eb0fce7564d821d0a711c5065e, type: 2}
+  - {fileID: 11400000, guid: eaccda369693f5546bc069ebb49b77d6, type: 2}
+  - {fileID: 11400000, guid: 8b066cdf94c41a742b2ff2c73b9cf414, type: 2}
+  - {fileID: 11400000, guid: 5e3e853435450a7479bb5e35bbe320a2, type: 2}
+  - {fileID: 11400000, guid: 86a3fa9d365aa6b46b5148225fa7352f, type: 2}
+  - {fileID: 11400000, guid: fef55dd8329996046975a2db7a581a43, type: 2}
   skillSlotPrefab: {fileID: 125270501465738059, guid: 1a5ac496baf806d439436b3eaa85a0d5,
     type: 3}
   contentParent: {fileID: 44288014}
