@@ -5,22 +5,50 @@ using TMPro;
 
 public class SkillHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
-    [Header("UI Elements at Slot")]
+    private Image bgImage;
+    private Sprite originalBGSprite;
+    private Image checkmarkImage;
+
+    [Header("UI Elements")]
     public GameObject hoverBG;      
     public GameObject selectedBG;   
     public Image buttonIconImage;    
     public TextMeshProUGUI skillNameText;
 
-    [Header("Global Tooltip Settings")]
+    [Header("Checkmark Settings")]
+    public Sprite unselectedCheckmark; // ติ๊กถูกเทา
+    public Sprite selectedCheckmark;   // ติ๊กถูกม่วง
+
+    [Header("Tooltip")]
     public GameObject infoBox;
     public TextMeshProUGUI infoText; 
     [TextArea] public string skillDescription; 
-
     public Vector3 offset = new Vector3(0, 0, 0); 
-    
-    // เพิ่มตัวแปรเก็บข้อมูลจาก ScriptableObject
+
     [HideInInspector] public Skill skillData; 
-    private bool isSelected = false; 
+    public bool isSelected = false; 
+
+    void Awake()
+    {
+        bgImage = GetComponent<Image>();
+        if (bgImage != null) originalBGSprite = bgImage.sprite;
+        
+        if (selectedBG != null)
+            checkmarkImage = selectedBG.GetComponent<Image>();
+    }
+
+    void Start()
+    {
+        UpdateCheckmarkVisual();
+    }
+
+    public void SetupData(Skill data) 
+    {
+        skillData = data;
+        if (buttonIconImage != null) buttonIconImage.sprite = data.skillIcon; 
+        skillDescription = data.description;
+        if (skillNameText != null) skillNameText.text = data.skillName;
+    }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
@@ -45,28 +73,38 @@ public class SkillHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerEx
         if (manager == null) return;
 
         if (isSelected) 
-        {
-            isSelected = false;
             manager.DeselectSkill(this);
-        }
         else 
-        {
-            // ส่งข้อมูล skillData ไปให้ Manager ด้วย
-            if (manager.TrySelectSkill(this, skillData)) 
-            {
-                isSelected = true;
-            }
-        }
+            manager.TrySelectSkill(this, skillData);
 
-        if (selectedBG != null) selectedBG.SetActive(isSelected);
+        // หมายเหตุ: manager จะเป็นคนเรียก SetSelected เองเพื่อความแม่นยำ
     }
 
-    public void SetupData(Skill data) 
+    public void SetSelected(bool state, bool triggerCheck = true)
     {
-        skillData = data; // เก็บข้อมูลไว้ใช้ตอนถูกเลือก
-        if (buttonIconImage != null) buttonIconImage.sprite = data.skillIcon; 
-        skillDescription = data.description;
-        if (skillNameText != null) skillNameText.text = data.skillName;
+        isSelected = state;
+        UpdateCheckmarkVisual();
+        
+        if (triggerCheck) 
+        {
+            SkillListManager manager = Object.FindFirstObjectByType<SkillListManager>();
+            if (manager != null) manager.CheckForSetMatch();
+        }
+    }
+
+    private void UpdateCheckmarkVisual()
+    {
+        if (checkmarkImage == null) return;
+        checkmarkImage.sprite = isSelected ? selectedCheckmark : unselectedCheckmark;
+        if (selectedBG != null) selectedBG.SetActive(true); 
+    }
+
+    public void ApplySetVisuals(SkillSet set)
+    {
+        if (bgImage == null) bgImage = GetComponent<Image>();
+        if (bgImage == null) return;
+
+        bgImage.sprite = (set == null) ? originalBGSprite : set.setSelectedBG;
     }
 
     void OnDisable()

@@ -19,6 +19,8 @@ public class InventoryTabController : MonoBehaviour
     public GameObject inventoryUI;
     public GameObject listBackground;
 
+    public SkillListManager skillManager;
+
     void Start()
     {
         if (inventoryUI != null) inventoryUI.SetActive(false);
@@ -68,10 +70,15 @@ public class InventoryTabController : MonoBehaviour
             allTabs[i].tabButtonImage.sprite = isActive ? allTabs[i].activeSprite : allTabs[i].inactiveSprite;
         }
 
+        // log loadout ตอนเข้าหน้า Skill
+        if (allTabs[index].name == "Skill" && skillManager != null)
+        {
+            skillManager.LogSimpleLoadout();
+        }
+
         if (listBackground != null)
         {
-            // เช็คตามชื่อ Tab แทนการใช้ตัวเลข Index ตายตัวจะปลอดภัยกว่าครับ
-            listBackground.SetActive(allTabs[index].name != "WorldMap"); 
+            listBackground.SetActive(allTabs[index].name != "WorldMap");
         }
     }
 }

@@ -1,38 +1,52 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 public class SelectedSlot : MonoBehaviour
 {
-    public bool isFull = false;
-    public SkillHoverHandler currentSkillSource; // อ้างอิงกลับไปยังปุ่มในคลัง
-    private GameObject spawnedDisplay; // เก็บตัว Prefab ที่ถูกสร้างขึ้น
+    public bool isOccupied = false; 
+    public SkillHoverHandler currentHandler; 
+    public Skill skillData; 
+    private GameObject spawnedDisplay; 
 
-    // ฟังก์ชันสร้าง Prefab และใส่ข้อมูลจาก ScriptableObject
-    public void SetSkill(SkillHoverHandler source, GameObject prefab, Skill skillData)
-{
-    currentSkillSource = source;
-    spawnedDisplay = Instantiate(prefab, transform); 
-    
-    // ดึง Manager มาจากตัวคุม
-    SkillListManager manager = Object.FindFirstObjectByType<SkillListManager>();
-
-    var displayScript = spawnedDisplay.GetComponent<SelectedSkillDisplay>();
-    if (displayScript != null)
+    public void SetSkill(SkillHoverHandler source, GameObject prefab, Skill data)
     {
-        // ส่งทั้งข้อมูลสกิล และ Manager เข้าไป
-        displayScript.Setup(skillData, manager);
+        // 1. กวาดล้างของเก่าก่อนสร้างเสมอ
+        ClearSlot(); 
+
+        currentHandler = source;
+        skillData = data;
+        spawnedDisplay = Instantiate(prefab, transform); 
+        
+        SkillListManager manager = Object.FindFirstObjectByType<SkillListManager>();
+        var displayScript = spawnedDisplay.GetComponent<SelectedSkillDisplay>();
+        if (displayScript != null)
+        {
+            displayScript.Setup(data, manager);
+        }
+        
+        isOccupied = true;
     }
-    
-    isFull = true;
-}
 
     public void ClearSlot()
     {
-        currentSkillSource = null;
-        if (spawnedDisplay != null) Destroy(spawnedDisplay);
-        isFull = false;
+        currentHandler = null;
+        skillData = null;
+        isOccupied = false;
+
+        ForceEmpty();
     }
 
-    
+    public void ForceEmpty()
+    {
+        // ลบแบบ Hardcode จนกว่าจะไม่มีลูกเหลืออยู่
+        int safetyBreak = 0;
+        while (transform.childCount > 0 && safetyBreak < 10)
+        {
+            Transform child = transform.GetChild(0);
+            child.SetParent(null); // ตัดขาดทันทีเพื่อให้ภาพหายจาก Canvas
+            DestroyImmediate(child.gameObject); // สั่งฆ่าทันที
+            safetyBreak++;
+        }
+        
+        spawnedDisplay = null;
+    }
 }
-

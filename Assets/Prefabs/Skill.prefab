@@ -66,11 +66,15 @@ MonoBehaviour:
   selectedBG: {fileID: 4854424161149686286}
   buttonIconImage: {fileID: 8072929963546307090}
   skillNameText: {fileID: 4815078829302975481}
+  unselectedCheckmark: {fileID: 21300000, guid: 965556510d805684c8caae216cd8d744,
+    type: 3}
+  selectedCheckmark: {fileID: 21300000, guid: 660840f0efd4c4b65b78c338400ba61e, type: 3}
   infoBox: {fileID: 0}
   infoText: {fileID: 0}
   skillDescription: dkfjingvbkdfbgnidfjbnijdfbdifb
   offset: {x: 0, y: 80, z: 0}
   skillData: {fileID: 0}
+  isSelected: 0
 --- !u!1 &2507301503333667294
 GameObject:
   m_ObjectHideFlags: 0
