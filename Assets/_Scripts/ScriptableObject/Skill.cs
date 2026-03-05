@@ -13,7 +13,7 @@ public class Skill : ScriptableObject
     [Tooltip("Name of the Skill")]
     public string skillName;
     [Tooltip("Description of the Skill")]
-    [TextArea(3, 10)] // (จำนวนบรรทัดเริ่มต้น, จำนวนบรรทัดสูงสุด)
+    [TextArea(3, 10)]
     public string description;
     [Tooltip("Sp cost of the Skill")]
     public float spCost;
