@@ -7,7 +7,7 @@ public class BuffEffect : SkillEffect
 {
     public List<Buff> buffs;
 
-    public override void Execute(Entity caster, Entity target)
+    public override void Execute(Entity caster, Entity target, CombatActionLog log)
     {
         bool isBuff =
             Random.Range(0f, 100f) < caster.GetStat(StatType.StatusHitChance) * 100;
@@ -24,7 +24,15 @@ public class BuffEffect : SkillEffect
                 caster.buffController.AddBuff(buff);
             }
             else if (isBuff && !isResist)
+            {
                 target.buffController.AddBuff(buff);
+            }
+            log.AddBuffEffectLog(new BuffEffectLog()
+            {
+                AppliedTargetID = isBuff && !isResist ? target.GetEntityID() : caster.GetEntityID(),
+                AppliedTarget = isBuff && !isResist ? target.gameObject.name : caster.gameObject.name,
+                Buff = new BuffEffectData(buff)
+            });
         }
     }
 }

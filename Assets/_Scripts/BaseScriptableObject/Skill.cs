@@ -37,12 +37,12 @@ public class Skill : ScriptableObject
     public TargetType TargetType;
     public List<SkillEffect> SkillEffects;
 
-    public void Execute(Entity caster, Entity target)
+    public void Execute(Entity caster, Entity target, CombatActionLog log)
     {
         foreach (var effect in SkillEffects)
         {
             Debug.Log(effect.name + " effect is executed from skill " + skillName);
-            effect.Execute(caster, target);
+            effect.Execute(caster, target, log);
         }
     }
 }

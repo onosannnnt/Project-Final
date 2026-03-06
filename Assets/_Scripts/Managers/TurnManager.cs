@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class TurnManager : Singleton<TurnManager>
@@ -9,6 +10,7 @@ public class TurnManager : Singleton<TurnManager>
     private TurnState currentState;
     private List<ActionQueue> actionQueue = new List<ActionQueue>();
     private PlayerCombat playerCombat;
+    private int turnRound = 0;
     private void Start()
     {
         playerCombat = PlayerCombat.instance;
@@ -49,6 +51,7 @@ public class TurnManager : Singleton<TurnManager>
         playerCombat.SetEnemyTarget(GetFirstEnemy());
         TargetingPanel.instance.SetEnemyTargetPanel(playerCombat.GetEnemyTarget());
         ActionBarUI.Instance.gameObject.SetActive(true);
+        turnRound++;
     }
 
     private void HandleSpeedComparison()
@@ -81,6 +84,7 @@ public class TurnManager : Singleton<TurnManager>
     }
     private IEnumerator HandleActionExecution()
     {
+        int actionID = 0;
         yield return new WaitForSeconds(1f);
         while (actionQueue.Count > 0)
         {
@@ -88,22 +92,40 @@ public class TurnManager : Singleton<TurnManager>
             Entity entity = currentAction.Caster;
             Skill skill = currentAction.Skill;
             Entity target = currentAction.Target;
-
             Debug.Log(entity.gameObject.name + " is taking action with " + currentAction.ActionSpeed + " speed.");
+            CombatActionLog log = new()
+            {
+                TurnID = turnRound,
+                ActionID = actionID++,
+                CasterID = entity.GetEntityID(),
+                CasterName = entity.Stats.EntityName,
+                TargetID = target.GetEntityID(),
+                TargetName = target.Stats.EntityName,
+                SkillID = skill.ID,
+                SkillName = skill.Name,
+                ActionPointUsed = skill.SkillPoint,
+                ActionPointRecovery = skill.SkillPointRestore,
+                ActionSpeed = currentAction.ActionSpeed,
+                DamageEffectLogs = new(),
+                BuffEffectLogs = new(),
+                HealEffectLogs = new()
+            };
             if (entity.CompareTag("Player"))
             {
                 playerCombat.buffController.OnTurnStart(playerCombat);
-                if (entity.CanAction() == true) playerCombat.Action();
+                if (entity.CanAction() == true) playerCombat.Action(log);
                 playerCombat.buffController.OnTurnEnd(playerCombat);
             }
             else if (entity.CompareTag("Enemy"))
             {
                 EnemyCombat enemyCombat = entity.GetComponent<EnemyCombat>();
                 enemyCombat.buffController.OnTurnStart(enemyCombat);
-                if (entity.CanAction() == true) enemyCombat.skillManager.UseSkill(skill, playerCombat);
+                if (entity.CanAction() == true) enemyCombat.skillManager.UseSkill(skill, playerCombat, log);
                 enemyCombat.buffController.OnTurnEnd(enemyCombat);
             }
             actionQueue.RemoveAt(0);
+            ShowLog(log);
+            // SaveLogJson(log);
             List<GameObject> remainingEnemies = GetAllEnemies();
             remainingEnemies.RemoveAll(enemy => enemy.GetComponent<EnemyCombat>().IsDead());
             if (remainingEnemies.Count == 0)
@@ -152,5 +174,10 @@ public class TurnManager : Singleton<TurnManager>
     public TurnState GetTurnState()
     {
         return currentState;
+    }
+    private void ShowLog(CombatActionLog log)
+    {
+        string jsonData = JsonUtility.ToJson(log, true);
+        Debug.Log("ข้อมูล JSON คือ:\n" + jsonData);
     }
 }

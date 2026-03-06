@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class PlayerCombat : Entity
 {
+    [SerializeField] private UserData userData;
     public static PlayerCombat instance;
     private PlayerActionState playerState;
     private EnemyCombat enemyTarget;
@@ -22,6 +23,17 @@ public class PlayerCombat : Entity
     {
         base.Start();
         playerState = PlayerActionState.Idle;
+    }
+    public void SetUserData(UserData data)
+    {
+        userData = data;
+        ID = data.ID;
+        Stats.EntityName = data.Username;
+
+    }
+    public UserData GetUserData()
+    {
+        return userData;
     }
     protected override void Die()
     {
@@ -117,7 +129,7 @@ public class PlayerCombat : Entity
         Highlight(Color.white);
         TurnManager.Instance.SetState(TurnState.SpeedCompareState);
     }
-    public void Action()
+    public void Action(CombatActionLog log)
     {
         if (currentSkillPoint < selectedSkill.SkillPoint)
         {
@@ -129,19 +141,19 @@ public class PlayerCombat : Entity
         {
             case TargetType.Self:
                 Debug.Log("Player used " + selectedSkill.name + " on self");
-                skillManager.UseSkill(selectedSkill, this);
+                skillManager.UseSkill(selectedSkill, this, log);
                 break;
 
             case TargetType.SingleEnemy:
                 Debug.Log("Player used " + selectedSkill.name + " on " + enemyTarget.gameObject.name);
-                skillManager.UseSkill(selectedSkill, enemyTarget);
+                skillManager.UseSkill(selectedSkill, enemyTarget, log);
                 break;
 
             case TargetType.AllEnemies:
                 Debug.Log("Player used " + selectedSkill.name + " on all enemies");
                 foreach (var enemy in FindObjectsOfType<EnemyCombat>())
                 {
-                    skillManager.UseSkill(selectedSkill, enemy);
+                    skillManager.UseSkill(selectedSkill, enemy, log);
                 }
                 break;
         }
@@ -154,5 +166,6 @@ public class PlayerCombat : Entity
             enemy.Highlight(Color.white);
         }
     }
+
 
 }
