@@ -8,7 +8,7 @@ public class HealEffect : SkillEffect
     public StatScale healScale;
     public ModifierType healModifierType;
 
-    public override void Execute(Entity caster, Entity target)
+    public override void Execute(Entity caster, Entity target, CombatActionLog log)
     {
         Debug.Log(caster.gameObject.name + " used HealEffect on " + target.gameObject.name);
         float finalHeal = HealAmount;
@@ -23,6 +23,12 @@ public class HealEffect : SkillEffect
                 finalHeal = baseStat * HealAmount;
                 break;
         }
-        target.Heal(finalHeal);
+        caster.Heal(finalHeal);
+        log.AddHealEffectLog(new HealEffectLog()
+        {
+            AppliedTarget = caster.Stats.EntityName,
+            AppliedTargetID = caster.GetEntityID(),
+            HealAmount = finalHeal
+        });
     }
 }

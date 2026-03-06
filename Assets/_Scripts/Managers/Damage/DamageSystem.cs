@@ -2,7 +2,7 @@ using UnityEngine;
 
 public static class DamageSystem
 {
-    public static void Process(DamageCtx ctx)
+    public static void Process(DamageCtx ctx, CombatActionLog log)
     {
         foreach (var mod in ctx.Caster.OutgoingModifiers)
             mod.Modify(ctx);
@@ -12,5 +12,11 @@ public static class DamageSystem
 
         ctx.Damage.Amount = Mathf.Max(ctx.Damage.Amount, 0);
         ctx.Target.TakeDamage(ctx.Damage);
+        log.AddDamageEffectLog(new DamageEffectLog()
+        {
+            AppliedTarget = ctx.Target.Stats.EntityName,
+            AppliedTargetID = ctx.Target.GetEntityID(),
+            Damage = new DamageEffectData(ctx.Damage)
+        });
     }
 }

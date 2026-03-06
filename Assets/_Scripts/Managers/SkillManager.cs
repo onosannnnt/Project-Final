@@ -10,11 +10,11 @@ public class SkillManager
         this.owner = owner;
     }
 
-    public void UseSkill(Skill skill, Entity target)
+    public void UseSkill(Skill skill, Entity target, CombatActionLog log)
     {
         Debug.Log(owner.gameObject.name + " is using skill: " + skill.skillName + " on " + target.gameObject.name);
         if (skill == null || target == null) return;
-        skill.Execute(owner, target);
+        skill.Execute(owner, target, log);
         Debug.Log(owner.gameObject.name + " has " + owner.CurrentHealth + " HP and " + owner.CurrentSP + " SP after using skill: " + skill.skillName);
     }
     public List<Skill> GetSkills()

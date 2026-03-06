@@ -14,7 +14,7 @@ public class DamageEffect : SkillEffect
         DamageMultiplier = damageMultiplier;
     }
 
-    public override void Execute(Entity caster, Entity target)
+    public override void Execute(Entity caster, Entity target, CombatActionLog log)
     {
         Debug.Log(caster.gameObject.name + " used " + DamageType + " DamageEffect on " + target.gameObject.name);
 
@@ -34,6 +34,6 @@ public class DamageEffect : SkillEffect
 
         Damage damage = new Damage(DamageType, finalDamage);
         DamageCtx ctx = new DamageCtx(caster, target, damage);
-        DamageSystem.Process(ctx);
+        DamageSystem.Process(ctx, log);
     }
 }

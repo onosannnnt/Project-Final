@@ -4,7 +4,7 @@ using UnityEngine;
 public class EntitiesBaseStat : ScriptableObject
 {
     [Tooltip("Name of the Player")]
-    public string entityName;
+    public string EntityName;
     [Tooltip("Icon of the Player")]
     public Sprite Icon;
     [Tooltip("Level of the Player")]
@@ -131,7 +131,7 @@ public class EntitiesBaseStat : ScriptableObject
     }
     public string GetName()
     {
-        return entityName;
+        return EntityName;
     }
     public Sprite GetIcon()
     {

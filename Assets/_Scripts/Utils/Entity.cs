@@ -15,6 +15,7 @@ public abstract class Entity : MonoBehaviour
     [Header("Properties")]
     [SerializeField] private EntitiesBaseStat stats; // Base stats from ScriptableObject
     [SerializeField] private SkillLoadout skills;
+    protected int ID;
     protected float currentHealth;
     protected int currentSkillPoint;
     public BuffManager buffController;
@@ -46,6 +47,14 @@ public abstract class Entity : MonoBehaviour
     public virtual void SetSelectedSkill(Skill skill)
     {
         selectedSkill = skill;
+    }
+    public virtual void SetEntityID(int id)
+    {
+        ID = id;
+    }
+    public virtual int GetEntityID()
+    {
+        return ID;
     }
 
     public virtual void TakeDamage(Damage damage)
