@@ -115,6 +115,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 3992123013372977322}
   - {fileID: 6373750671139891826}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 160.717, z: 0}
@@ -175,12 +176,111 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa9ddd893f2fc4d58b020320d1096fca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerBaseStats: {fileID: 11400000, guid: 9ec49d53315034108919a533486662e6, type: 2}
-  playerSkills:
-  - {fileID: 11400000, guid: 99b2dd9ac74814538a02889df1dcca1d, type: 2}
-  - {fileID: 11400000, guid: d75e4d8f22f5c4ef898db19bd30e49ca, type: 2}
-  - {fileID: 11400000, guid: 19289bc29d05f48d39e47f4a70167151, type: 2}
-  - {fileID: 11400000, guid: d75e4d8f22f5c4ef898db19bd30e49ca, type: 2}
-  - {fileID: 11400000, guid: d75e4d8f22f5c4ef898db19bd30e49ca, type: 2}
-  worldParent: {fileID: 0}
-  TurnManager: {fileID: 0}
+  DamageTextPrefab: {fileID: 827353491416033085, guid: c4b672b6114e644118bff5090eaf7a83,
+    type: 3}
+  DamageCanvas: {fileID: 3992123013372977322}
+  FloatSpeed: 0.5
+  FloatDuration: 1
+  stats: {fileID: 0}
+  skills: []
+--- !u!1 &8764232415643294593
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3992123013372977322}
+  - component: {fileID: 4641732367204927649}
+  - component: {fileID: 4052186470307717885}
+  - component: {fileID: 242406611144476813}
+  m_Layer: 5
+  m_Name: DamageList
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &3992123013372977322
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8764232415643294593}
+  m_LocalRotation: {x: 0, y: 0.985875, z: 0, w: 0.16748306}
+  m_LocalPosition: {x: 0, y: 0, z: -0.18}
+  m_LocalScale: {x: 0.00039999993, y: 0.0004, z: 0.00039999993}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 9066802528797163780}
+  m_LocalEulerAnglesHint: {x: 0, y: 160.717, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -0.491, y: 0.047}
+  m_SizeDelta: {x: 1920.0017, y: 507.3513}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!223 &4641732367204927649
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8764232415643294593}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 25
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!114 &4052186470307717885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8764232415643294593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_UiScaleMode: 0
+  m_ReferencePixelsPerUnit: 100
+  m_ScaleFactor: 1
+  m_ReferenceResolution: {x: 800, y: 600}
+  m_ScreenMatchMode: 0
+  m_MatchWidthOrHeight: 0
+  m_PhysicalUnit: 3
+  m_FallbackScreenDPI: 96
+  m_DefaultSpriteDPI: 96
+  m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 1
+--- !u!114 &242406611144476813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8764232415643294593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
