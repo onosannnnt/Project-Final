@@ -12,17 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
   m_Name: 36Entangling Curse
   m_EditorClassIdentifier: 
-  skillID: 36
-  skillIcon: {fileID: 21300000, guid: efb06f96df4234e5ca8d13a5f2e855c6, type: 3}
   skillName: Entangling Curse
   description: Decrease Attack by #% and Speed by #%.
-  spCost: 0
-  StrengthRequirement: 0
-  IntelligenceRequirement: 0
-  AgilityRequirement: 0
-  levelRequirement: 0
-  targetType: 0
-  physicalDamageMultiplier: 0
-  magicDamageMultiplier: 0
-  healingAmountMultiplier: 0
-  buffs: []
+  skillIcon: {fileID: 21300000, guid: ea3b8a61f4add494c84dfcffa4d9cc32, type: 3}
+  Level: 0
+  Strength: 0
+  Agility: 0
+  Intelligence: 0
+  SkillPoint: 0
+  SkillPointRestore: 0
+  TargetType: 0
+  SkillEffects: []

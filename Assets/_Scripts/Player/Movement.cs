@@ -7,8 +7,8 @@ using UnityEngine.SceneManagement;
 public class Movement : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 7f;
-    // [SerializeField] private GameInput gameInput;
-    // [SerializeField] private GameObject PlayerVisual;
+    [SerializeField] private GameInput gameInput;
+    [SerializeField] private GameObject PlayerVisual;
 
     private bool isWalking;
 
@@ -69,14 +69,30 @@ public class Movement : MonoBehaviour
         }
         
     }
+
+    private void FixedUpdate()
+    {
+        HandleInteraction();
+
+    }
+
+        private void HandleInteraction()
+    {
+        float interactDistance = 3f;
+
+        Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, interactDistance);
+        if (hit.collider != null)
+        {
+            if (gameInput.IsInteractPressed())
+            {
+                Loader.Load(Loader.Scenes.Combat);
+            }
+        } else if (gameInput.IsInteractPressed())
+        {
+            Debug.Log("ไม่มีอะไรให้โต้ตอบ");
+        }
+    }
 }
-
-    // private void FixedUpdate()
-    // {
-    //     HandleInteraction();
-    //     HandleMovement();
-
-    // }
 
     // public bool IsWalking()
     // {
@@ -99,16 +115,4 @@ public class Movement : MonoBehaviour
     //     transform.position += moveDir * moveSpeed * Time.fixedDeltaTime;
     // }
 
-    // private void HandleInteraction()
-    // {
-    //     float interactDistance = 3f;
 
-    //     Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, interactDistance);
-    //     if (hit.collider != null)
-    //     {
-    //         if (gameInput.IsInteractPressed())
-    //         {
-    //             Loader.Load(Loader.Scenes.Combat);
-    //         }
-    //     }
-    // }

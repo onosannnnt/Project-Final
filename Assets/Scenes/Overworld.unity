@@ -1116,7 +1116,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1180751302}
   m_HandleRect: {fileID: 1180751301}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1891,6 +1891,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3
+  gameInput: {fileID: 1798345012}
+  PlayerVisual: {fileID: 0}
   terrainLayer:
     serializedVersion: 2
     m_Bits: 64
