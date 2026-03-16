@@ -16,6 +16,7 @@ public class Movement : MonoBehaviour
     public Rigidbody rb;
     public float groundDist;
     public SpriteRenderer sr; 
+    private bool interactRequested;
 
     void Start()
     {
@@ -67,30 +68,48 @@ public class Movement : MonoBehaviour
         {
             sr.flipX = false;
         }
+
+        if (gameInput.IsInteractPressed())
+        {
+            interactRequested = true;
+        }
         
     }
 
     private void FixedUpdate()
     {
-        HandleInteraction();
+        if (interactRequested)
+        {
+            HandleInteraction();
+            interactRequested = false; // รีเซ็ตค่าหลังจากใช้งานแล้ว
+        }
 
     }
 
         private void HandleInteraction()
     {
-        float interactDistance = 3f;
+        // float interactDistance = 3f;
 
-        Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, interactDistance);
-        if (hit.collider != null)
+        // Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, interactDistance);
+        // if (hit.collider != null)
+        // {
+        //     if (gameInput.IsInteractPressed())
+        //     {
+        //         Loader.Load(Loader.Scenes.Combat);
+        //     }
+        // } else if (gameInput.IsInteractPressed())
+        // {
+        //     Debug.Log("ไม่มีอะไรให้โต้ตอบ");
+        // }
+
+        // หาตัว Manager ในฉากแล้วสั่ง Save ก่อนโหลดฉากใหม่
+        SkillListManager skillManager = FindObjectOfType<SkillListManager>();
+        if (skillManager != null) 
         {
-            if (gameInput.IsInteractPressed())
-            {
-                Loader.Load(Loader.Scenes.Combat);
-            }
-        } else if (gameInput.IsInteractPressed())
-        {
-            Debug.Log("ไม่มีอะไรให้โต้ตอบ");
+            skillManager.SaveLoadout(); 
         }
+
+        Loader.Load(Loader.Scenes.Combat);
     }
 }
 

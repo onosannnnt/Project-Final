@@ -24,6 +24,9 @@ public class SkillListManager : MonoBehaviour
     public GameObject bubbleBoxInScene;
     public TextMeshProUGUI bubbleTextInScene;
 
+    [Header("Data Saving")]
+    public SkillLoadout playerLoadout;
+
     void Start()
     {
         // ล้างทุกอย่างให้เกลี้ยงตั้งแต่วินาทีแรกที่เห็น
@@ -124,6 +127,7 @@ public class SkillListManager : MonoBehaviour
         }
         
         ActivateSetUI(handler.skillSetData);
+        SaveLoadout();
     }
 
     public void DeselectFullSet()
@@ -162,6 +166,7 @@ public class SkillListManager : MonoBehaviour
 
         DeactivateSetUI();
         currentActiveSet = null;
+        SaveLoadout();
 
         // 3. บังคับให้ UI คำนวณตำแหน่งและภาพใหม่ทันที
         Canvas.ForceUpdateCanvases();
@@ -176,6 +181,7 @@ public class SkillListManager : MonoBehaviour
             {
                 slot.SetSkill(handler, selectedSkillPrefab, skillData);
                 handler.SetSelected(true); // สั่งติ๊กถูกม่วงที่ปุ่มเล็ก
+                SaveLoadout();
                 return true;
             }
         }
@@ -192,6 +198,7 @@ public class SkillListManager : MonoBehaviour
             {
                 slot.ClearSlot();
                 handler.SetSelected(false);
+                SaveLoadout();
                 break;
             }
         }
@@ -233,6 +240,28 @@ public class SkillListManager : MonoBehaviour
             if (h != null && h.skillData == target) return h;
         }
         return null;
+    }
+
+    public void SaveLoadout()
+    {
+        if (playerLoadout == null) return;
+
+        // ล้างข้อมูลเก่าใน ScriptableObject
+        playerLoadout.EquippedSkills.Clear();
+
+        // วนลูปเช็คช่องที่เลือกอยู่แล้วเพิ่มเข้าไปใน List
+        foreach (var slot in selectedSlots)
+        {
+            if (slot != null && slot.isOccupied && slot.skillData != null)
+            {
+                playerLoadout.EquippedSkills.Add(slot.skillData);
+            }
+        }
+        
+        // บันทึกสถานะ (ใช้เฉพาะใน Editor เพื่อให้ค่าไม่หายเวลาปิดเกม)
+        #if UNITY_EDITOR
+        UnityEditor.EditorUtility.SetDirty(playerLoadout);
+        #endif
     }
 
     public void LogSimpleLoadout()

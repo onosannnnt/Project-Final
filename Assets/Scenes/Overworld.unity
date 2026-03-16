@@ -1116,7 +1116,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1180751302}
   m_HandleRect: {fileID: 1180751301}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -5628,6 +5628,7 @@ MonoBehaviour:
   - {fileID: 826861436}
   bubbleBoxInScene: {fileID: 1032754051}
   bubbleTextInScene: {fileID: 53929160}
+  playerLoadout: {fileID: 11400000, guid: 5a526a6ae7db0422c9d63b916530c938, type: 2}
 --- !u!114 &1798345015
 MonoBehaviour:
   m_ObjectHideFlags: 0

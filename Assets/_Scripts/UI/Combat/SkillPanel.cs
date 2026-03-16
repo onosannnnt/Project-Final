@@ -34,7 +34,6 @@ public class SkillPanelUI : Singleton<SkillPanelUI>
         {
             GameObject skillButton = Instantiate(SkillButtonPrefab, SkillPanel.transform);
             skillButton.GetComponentInChildren<TextMeshProUGUI>().text = skill.skillName;
-            skillButton.GetComponent<Image>().sprite = skill.skillIcon;
             if (playerCombat.CurrentSP < skill.SkillPoint)
             {
                 skillButton.GetComponent<Button>().interactable = false;
