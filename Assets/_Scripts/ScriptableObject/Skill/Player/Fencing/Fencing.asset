@@ -25,3 +25,5 @@ MonoBehaviour:
   SkillEffects:
   - {fileID: 11400000, guid: 7be364133e1c04b3c99994dfa87907e9, type: 2}
   - {fileID: 11400000, guid: dd35884e72ab841e39ba37a0f097a678, type: 2}
+  - {fileID: 11400000, guid: 1b4658e782b0b4cf2a95ff4b8e736738, type: 2}
+  - {fileID: 11400000, guid: fb31cda4382f94e0e99ad8f9aa1a0ef6, type: 2}

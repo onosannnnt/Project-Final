@@ -1,7 +1,5 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 
 public class TurnManager : Singleton<TurnManager>
@@ -10,11 +8,13 @@ public class TurnManager : Singleton<TurnManager>
     private TurnState currentState;
     private List<ActionQueue> actionQueue = new List<ActionQueue>();
     private PlayerCombat playerCombat;
-    private int turnRound = 0;
-    private void Start()
+    public int turnRound = 0;
+    public int combatID = 0;
+    private async void Start()
     {
         playerCombat = PlayerCombat.instance;
         SetState(TurnState.PlayerTurnState);
+        combatID = await NetworkManager.GetLatestCombatID();
     }
     public void SetState(TurnState newState)
     {
@@ -95,6 +95,7 @@ public class TurnManager : Singleton<TurnManager>
             Debug.Log(entity.gameObject.name + " is taking action with " + currentAction.ActionSpeed + " speed.");
             CombatActionLog log = new()
             {
+                CombatID = combatID,
                 TurnID = turnRound,
                 ActionID = actionID++,
                 CasterID = entity.GetEntityID(),
@@ -108,23 +109,34 @@ public class TurnManager : Singleton<TurnManager>
                 ActionSpeed = currentAction.ActionSpeed,
                 DamageEffectLogs = new(),
                 BuffEffectLogs = new(),
-                HealEffectLogs = new()
+                HealEffectLogs = new(),
+                EntityLogs = new()
             };
+            log.AddEntityLog(new EntityStatData(playerCombat));
+            foreach (var enemy in GetAllEnemies())
+            {
+                var enemyEntity = enemy.GetComponent<EnemyCombat>();
+                if (enemyEntity)
+                {
+                    log.AddEntityLog(new EntityStatData(enemyEntity));
+                }
+            }
             if (entity.CompareTag("Player"))
             {
-                playerCombat.buffController.OnTurnStart(playerCombat);
+                playerCombat.buffController.OnTurnStart(playerCombat, log);
                 if (entity.CanAction() == true) playerCombat.Action(log);
                 playerCombat.buffController.OnTurnEnd(playerCombat);
             }
             else if (entity.CompareTag("Enemy"))
             {
                 EnemyCombat enemyCombat = entity.GetComponent<EnemyCombat>();
-                enemyCombat.buffController.OnTurnStart(enemyCombat);
+                enemyCombat.buffController.OnTurnStart(enemyCombat, log);
                 if (entity.CanAction() == true) enemyCombat.skillManager.UseSkill(skill, playerCombat, log);
                 enemyCombat.buffController.OnTurnEnd(enemyCombat);
             }
             actionQueue.RemoveAt(0);
             ShowLog(log);
+            NetworkManager.SaveCombatActionLogs(log);
             // SaveLogJson(log);
             List<GameObject> remainingEnemies = GetAllEnemies();
             remainingEnemies.RemoveAll(enemy => enemy.GetComponent<EnemyCombat>().IsDead());

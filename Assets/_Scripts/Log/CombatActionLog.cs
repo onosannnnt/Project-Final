@@ -4,6 +4,7 @@ using System.Collections.Generic;
 [Serializable]
 public class CombatActionLog
 {
+    public int CombatID;
     public int TurnID;
     public int ActionID;
     public int CasterID;
@@ -18,6 +19,7 @@ public class CombatActionLog
     public List<DamageEffectLog> DamageEffectLogs;
     public List<BuffEffectLog> BuffEffectLogs;
     public List<HealEffectLog> HealEffectLogs;
+    public List<EntityStatData> EntityLogs;
     public void AddDamageEffectLog(DamageEffectLog log)
     {
         if (DamageEffectLogs == null) return;
@@ -32,6 +34,12 @@ public class CombatActionLog
     {
         if (HealEffectLogs == null) return;
         HealEffectLogs.Add(log);
+    }
+    public void AddEntityLog(EntityStatData log)
+    {
+        if (EntityLogs == null) return;
+        UnityEngine.Debug.Log("Entity log added");
+        EntityLogs.Add(log);
     }
 }
 
@@ -108,5 +116,59 @@ public class StatModifierData
         Stat = stat.Stat.ToString();
         Type = stat.Type.ToString();
         Value = stat.Value;
+    }
+}
+
+[Serializable]
+public class EntityStatData
+{
+    public int EntityID;
+    public string EntityName;
+    public int Level;
+    public float MaxHealth;
+    public float CurrentHealth;
+    public int MaxSkillPoint;
+    public int CurrentSkillPoint;
+    public float PhysicalAttack;
+    public float MagicAttack;
+    public float FireDamageMultiplier;
+    public float ColdDamageMultiplier;
+    public float LightningDamageMultiplier;
+    public float Armour;
+    public float FireResistance;
+    public float ColdResistance;
+    public float LightningResistance;
+    public float ActionSpeed;
+    public float CriticalHitChance;
+    public float CriticalHitDamageMultiplier;
+    public float Accuracy;
+    public float EvasionRate;
+    public float StatusEffectResistance;
+    public float StatusHitChance;
+    public EntityStatData(Entity entity)
+    {
+        EntityID = entity.GetEntityID();
+        EntityName = entity.Stats.EntityName;
+        Level = entity.Stats.Level;
+        MaxHealth = entity.GetStat(StatType.MaxHealth);
+        CurrentHealth = entity.CurrentHealth;
+        MaxSkillPoint = (int)entity.GetStat(StatType.MaxSkillPoint);
+        CurrentSkillPoint = entity.CurrentSP;
+        PhysicalAttack = entity.GetStat(StatType.PhysicalAttack);
+        MagicAttack = entity.GetStat(StatType.MagicAttack);
+        FireDamageMultiplier = entity.GetStat(StatType.FireDamageMultiplier);
+        ColdDamageMultiplier = entity.GetStat(StatType.ColdDamageMultiplier);
+        LightningDamageMultiplier = entity.GetStat(StatType.LightningDamageMultiplier);
+        Armour = entity.GetStat(StatType.Armour);
+        FireResistance = entity.GetStat(StatType.FireResistance);
+        ColdResistance = entity.GetStat(StatType.ColdResistance);
+        LightningResistance = entity.GetStat(StatType.LightningResistance);
+        ActionSpeed = entity.GetStat(StatType.ActionSpeed);
+        CriticalHitChance = entity.GetStat(StatType.CriticalHitChance);
+        CriticalHitDamageMultiplier = entity.GetStat(StatType.CriticalDamageMultiplier);
+        Accuracy = entity.GetStat(StatType.Accuracy);
+        EvasionRate = entity.GetStat(StatType.EvasionRate);
+        StatusEffectResistance = entity.GetStat(StatType.StatusEffectResistance);
+        StatusHitChance = entity.GetStat(StatType.StatusHitChance);
     }
 }

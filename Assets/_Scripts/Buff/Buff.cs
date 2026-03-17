@@ -50,7 +50,7 @@ public class Buff : ScriptableObject
     public bool isInitialized = true;
 
     public virtual void OnApply(Entity owner) { }
-    public virtual void OnTurnStart(Entity owner) { }
+    public virtual void OnTurnStart(Entity owner, CombatActionLog log) { }
     public virtual void OnTurnEnd(Entity owner)
     {
         if (isInitialized)
