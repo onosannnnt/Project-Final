@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f2e260a015c0f3468ba64206c6bd968, type: 3}
+  m_Name: 3Windstalker
+  m_EditorClassIdentifier: 
+  setName: Windstalker
+  selectedSkills:
+  - {fileID: 11400000, guid: c05fd8fb6480d4a458ede02594e01f09, type: 2}
+  - {fileID: 11400000, guid: 9dcbebc88d374ee478a8a54d324fe8f3, type: 2}
+  - {fileID: 11400000, guid: 7bf4bb260b1724940aeecd961e1d4e14, type: 2}
+  - {fileID: 11400000, guid: 7978a5f5373361d40a7e2bea3c76082e, type: 2}
+  - {fileID: 11400000, guid: 77bc1b571444d6d4fb6a6e7fbf693240, type: 2}
+  setHoverBG: {fileID: 21300000, guid: 6f1fddb5c16074b40ba48e1456076c67, type: 3}
+  setSelectedBG: {fileID: 21300000, guid: 6c77d91c09040a0428cab558e5d1acc1, type: 3}
+  setCheckmark: {fileID: 21300000, guid: 660840f0efd4c4b65b78c338400ba61e, type: 3}

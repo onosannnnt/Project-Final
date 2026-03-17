@@ -20,7 +20,11 @@ public enum SkillTag
 [CreateAssetMenu(fileName = "NewSkill", menuName = "ScriptableObjects/Utils/Skill")]
 public class Skill : ScriptableObject
 {
-    public string Name;
+    [Header("Skill Info")]
+    public string skillName;
+    [TextArea(3, 10)]
+    public string description;
+    public Sprite skillIcon;
     [Header("Requirement")]
     public int Level;
     public int Strength;
@@ -37,7 +41,7 @@ public class Skill : ScriptableObject
     {
         foreach (var effect in SkillEffects)
         {
-            Debug.Log(effect.name + " effect is executed from skill " + Name);
+            Debug.Log(effect.name + " effect is executed from skill " + skillName);
             effect.Execute(caster, target);
         }
 

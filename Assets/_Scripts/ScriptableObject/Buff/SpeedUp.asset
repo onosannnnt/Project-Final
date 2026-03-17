@@ -16,7 +16,7 @@ MonoBehaviour:
   Description: 
   Icon: {fileID: 0}
   buffType: 0
-  Duration: 3
+  Duration: 2
   isStackable: 0
   Stack: 1
   StackCalculationType: 0
@@ -26,7 +26,8 @@ MonoBehaviour:
   modifiers:
   - Stat: 17
     Type: 0
-    Value: 10
+    Value: 30
   - Stat: 17
     Type: 1
-    Value: 10
+    Value: 0.3
+  isInitialized: 1
