@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Physical
   m_EditorClassIdentifier: 
   DamageType: 0
-  DamageMultiplier: 0
+  DamageMultiplier: 0.7
   statScale: 0

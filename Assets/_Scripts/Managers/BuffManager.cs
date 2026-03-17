@@ -47,11 +47,11 @@ public class BuffManager
     {
         buff.OnApply(owner);
     }
-    public virtual void OnTurnStart(Entity owner)
+    public virtual void OnTurnStart(Entity owner, CombatActionLog log)
     {
         foreach (var buff in activeBuffs)
         {
-            buff.OnTurnStart(owner);
+            buff.OnTurnStart(owner, log);
         }
     }
     public virtual void OnTurnEnd(Entity owner)

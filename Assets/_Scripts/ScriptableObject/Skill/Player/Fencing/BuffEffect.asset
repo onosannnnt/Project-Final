@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buffs:
   - {fileID: 11400000, guid: aeb0042d4d3584716b1a1d6c5fb1eb74, type: 2}
+  - {fileID: 11400000, guid: 053ce3973900e4e8184d7ad9d01175b4, type: 2}
+  - {fileID: 11400000, guid: 712a8f5eeb07e45948ff8e1e071a8ddb, type: 2}

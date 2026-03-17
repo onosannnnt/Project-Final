@@ -23,4 +23,4 @@ MonoBehaviour:
   SkillPointRestore: 0
   TargetType: 1
   SkillEffects:
-  - {fileID: 11400000, guid: a3e933bd114bc49799dce6539fc071c1, type: 2}
+  - {fileID: 11400000, guid: 132bf8c91bcf84afea83fcfddaffbe35, type: 2}

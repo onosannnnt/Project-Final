@@ -8,7 +8,7 @@ public class HealOverTimeEffect : Buff
     public StatScale healScale;
     public ModifierType healModifierType;
 
-    public override void OnTurnStart(Entity owner)
+    public override void OnTurnStart(Entity owner, CombatActionLog log)
     {
         float totalHeal = 0f;
         StatType scalingStat = Utils.GetScalingStat(healScale);
@@ -39,6 +39,12 @@ public class HealOverTimeEffect : Buff
             }
         }
         Debug.Log($"{owner.gameObject.name} heals {totalHeal} HP from {name} HOT.");
+        log.AddHealEffectLog(new HealEffectLog
+        {
+            AppliedTargetID = owner.GetEntityID(),
+            AppliedTarget = owner.Stats.EntityName,
+            HealAmount = totalHeal
+        });
         owner.Heal(totalHeal);
     }
 }

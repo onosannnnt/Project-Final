@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "DOT", menuName = "ScriptableObjects/Buff/DOT")]
@@ -10,7 +11,7 @@ public class DOT : Buff
     public StatScale statScale;
     public ModifierType damageModifierType;
     public DamageType damageType;
-    public override void OnTurnStart(Entity owner)
+    public override void OnTurnStart(Entity owner, CombatActionLog log)
     {
         float totalDamage = 0f;
         StatType scalingStat = Utils.GetScalingStat(statScale);
@@ -43,7 +44,8 @@ public class DOT : Buff
         }
         Debug.Log($"{owner.gameObject.name} takes {totalDamage} {damageType} damage from {name} DOT.");
         Damage damage = new Damage(damageType, totalDamage);
-        owner.TakeDamage(damage);
+        DamageCtx ctx = new DamageCtx(owner, owner, damage);
+        DamageSystem.Process(ctx, log);
     }
 
 }
