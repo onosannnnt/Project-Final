@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3255b5e03e46a432f85eb0aab966b4ae, type: 3}
-  m_Name: SpeedUp
+  m_Name: DefDown
   m_EditorClassIdentifier: 
-  BuffName: SpeedUp
+  BuffName: DefDown
   Description: 
   Icon: {fileID: 0}
   buffType: 0
-  Duration: 2
+  Duration: 3
   isStackable: 0
   Stack: 1
   StackCalculationType: 0
@@ -24,10 +24,7 @@ MonoBehaviour:
   DiminishingReturnDecayFactor: 0
   targetType: 0
   modifiers:
-  - Stat: 17
-    Type: 0
-    Value: 30
-  - Stat: 17
+  - Stat: 13
     Type: 1
-    Value: 0.3
+    Value: -0.3
   isInitialized: 1

@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3255b5e03e46a432f85eb0aab966b4ae, type: 3}
-  m_Name: SpeedUp
+  m_Name: minispd
   m_EditorClassIdentifier: 
-  BuffName: SpeedUp
+  BuffName: minispd
   Description: 
   Icon: {fileID: 0}
   buffType: 0
@@ -25,9 +25,6 @@ MonoBehaviour:
   targetType: 0
   modifiers:
   - Stat: 17
-    Type: 0
-    Value: 30
-  - Stat: 17
     Type: 1
-    Value: 0.3
+    Value: 0.1
   isInitialized: 1

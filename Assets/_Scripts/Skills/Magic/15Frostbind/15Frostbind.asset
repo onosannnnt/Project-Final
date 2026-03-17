@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
+  m_Name: 15Frostbind
+  m_EditorClassIdentifier: 
+  skillName: Frostbind
+  description: Deal Ice DMG equal to 140% of the player's MATK to a selected enemy
+    and inflict Chill for 3 turns.
+  skillIcon: {fileID: 21300000, guid: 1f1aaf4286d2c4ea495a95b2bba8abaa, type: 3}
+  Level: 0
+  Strength: 0
+  Agility: 0
+  Intelligence: 0
+  SkillPoint: 0
+  SkillPointRestore: 0
+  TargetType: 1
+  SkillEffects:
+  - {fileID: 11400000, guid: 9eba15fe4dae84054849aee488c4d10c, type: 2}
+  - {fileID: 11400000, guid: 2e5e555a0edb744c7bb7ad5364837a81, type: 2}

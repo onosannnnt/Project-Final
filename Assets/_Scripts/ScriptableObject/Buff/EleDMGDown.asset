@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3255b5e03e46a432f85eb0aab966b4ae, type: 3}
-  m_Name: SpeedUp
+  m_Name: EleDMGDown
   m_EditorClassIdentifier: 
-  BuffName: SpeedUp
+  BuffName: EleDMGDown
   Description: 
   Icon: {fileID: 0}
   buffType: 0
@@ -22,12 +22,15 @@ MonoBehaviour:
   StackCalculationType: 0
   Threshold: 0
   DiminishingReturnDecayFactor: 0
-  targetType: 0
+  targetType: 1
   modifiers:
-  - Stat: 17
-    Type: 0
-    Value: 30
-  - Stat: 17
+  - Stat: 10
     Type: 1
-    Value: 0.3
+    Value: -0.25
+  - Stat: 11
+    Type: 1
+    Value: -0.25
+  - Stat: 12
+    Type: 1
+    Value: -0.25
   isInitialized: 1
