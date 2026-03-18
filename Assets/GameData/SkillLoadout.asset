@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerLoadout: {fileID: 0}
   EquippedSkills:
-  - {fileID: 11400000, guid: 44a8f2a09c757f6458b6d9a13424ce85, type: 2}
-  - {fileID: 11400000, guid: 2efdbd2e5d0399f4abbb243bd02caf50, type: 2}
-  - {fileID: 11400000, guid: 53afe38ce1285e54287617797959002c, type: 2}
-  - {fileID: 11400000, guid: 4bd1944dee0dc0546b6ebb0694370c7d, type: 2}
-  - {fileID: 11400000, guid: 8b066cdf94c41a742b2ff2c73b9cf414, type: 2}
+  - {fileID: 11400000, guid: 9dd6f04a00f2dd34eba5dedc1f624476, type: 2}
+  - {fileID: 11400000, guid: 0d36abd1ab093284ca46b9745dfee778, type: 2}
+  - {fileID: 11400000, guid: e934a12691db83941bcfc8d9e5a9d0c3, type: 2}
+  - {fileID: 11400000, guid: 9dcbebc88d374ee478a8a54d324fe8f3, type: 2}
+  - {fileID: 11400000, guid: c05fd8fb6480d4a458ede02594e01f09, type: 2}
