@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
   m_Name: 2Wild Cleave
   m_EditorClassIdentifier: 
+  skillID: 2
   skillName: Wild Cleave
   description: Deal Physical DMG equal to 110% of the player's ATK to all enemies.
   skillIcon: {fileID: 21300000, guid: 1f1aaf4286d2c4ea495a95b2bba8abaa, type: 3}

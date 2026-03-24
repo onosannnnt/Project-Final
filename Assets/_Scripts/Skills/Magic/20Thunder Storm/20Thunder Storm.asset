@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
   m_Name: 20Thunder Storm
   m_EditorClassIdentifier: 
+  skillID: 20
   skillName: Thunder Storm
   description: "Deal Lightning DMG equal to 110% of the player's MATK to all enemies
     and increase the caster\u2019s Magic Power."

@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class HealthbarUI : Singleton<HealthbarUI>
 {
+    [SerializeField] private StatInfoUI statInfoUI;
+    [SerializeField] private Button HealthbarButton;
     [SerializeField] private Image HealthForeground;
     [SerializeField] private Image SPForeground;
     [SerializeField] private TextMeshProUGUI HealthInfo;
@@ -18,6 +20,8 @@ public class HealthbarUI : Singleton<HealthbarUI>
     private PlayerCombat player;
     private void Start()
     {
+        HealthbarButton.onClick.AddListener(OnHealthbarClicked);
+
         if (HealthForeground == null)
         {
             Debug.LogError("HealthForeground image is not assigned in the inspector.");
@@ -41,7 +45,7 @@ public class HealthbarUI : Singleton<HealthbarUI>
         float spPercent = (float)player.CurrentSP / PlayerCombat.instance.Stats.MaxSkillPoint;
         SPForeground.rectTransform.sizeDelta = new Vector2(ForegroundInitialWidth * spPercent, SPForeground.rectTransform.sizeDelta.y);
 
-        HealthInfo.text = $"HP {Math.Max(0, player.CurrentHealth)} | SP {Math.Max(0, player.CurrentSP)}";
+        HealthInfo.text = $"HP {Math.Max(0, player.CurrentHealth):F2} | SP {Math.Max(0, player.CurrentSP):F2}";
 
         SetBuffs();
         SetStatusBuff();
@@ -54,7 +58,7 @@ public class HealthbarUI : Singleton<HealthbarUI>
             Destroy(child.gameObject);
         }
         if (PlayerCombat.instance == null) return;
-        List<Buff> Buffs = player.buffController.GetBuffsByType(BuffType.CrowdControl);
+        List<Buff> Buffs = player.buffController.GetBuffsByType(BuffType.Buff);
         if (Buffs.Count == 0) BuffParent.gameObject.SetActive(false);
         else BuffParent.gameObject.SetActive(true);
         foreach (var buff in Buffs)
@@ -91,5 +95,10 @@ public class HealthbarUI : Singleton<HealthbarUI>
             return "<color=yellow>";
         else
             return "<color=red>";
+    }
+    private void OnHealthbarClicked()
+    {
+        statInfoUI.SetEntity(player);
+        statInfoUI.gameObject.SetActive(true);
     }
 }

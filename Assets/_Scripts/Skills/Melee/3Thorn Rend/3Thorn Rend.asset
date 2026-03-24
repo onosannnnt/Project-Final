@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
   m_Name: 3Thorn Rend
   m_EditorClassIdentifier: 
+  skillID: 3
   skillName: Thorn Rend
   description: Deal Physical DMG equal to 130% of the player's ATK to a selected
     enemy and inflict Bleed for 3 turns.

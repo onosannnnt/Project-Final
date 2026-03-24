@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class BuffManager
@@ -11,9 +10,19 @@ public class BuffManager
     {
         this.owner = owner;
     }
-    public List<Buff> GetBuff()
+    public List<Buff> GetAllBuffs()
     {
         return activeBuffs;
+    }
+    public List<Buff> GetBuffs()
+    {
+        List<Buff> buffs = activeBuffs.FindAll(b => b.buffType == BuffType.Buff);
+        return buffs;
+    }
+    public List<Buff> GetDebuffs()
+    {
+        List<Buff> debuffs = activeBuffs.FindAll(b => b.buffType == BuffType.Debuff);
+        return debuffs;
     }
 
     public void AddBuff(Buff buff)

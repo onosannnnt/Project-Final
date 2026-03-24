@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
   m_Name: 31Rejuvenation
   m_EditorClassIdentifier: 
+  skillID: 31
   skillName: Rejuvenation
   description: Restore 10% of your Max HP over 3 turns.
   skillIcon: {fileID: 21300000, guid: ea61475f2ca0f4eeba50601040774701, type: 3}
@@ -23,4 +24,4 @@ MonoBehaviour:
   SkillPointRestore: 0
   TargetType: 0
   SkillEffects:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: e1998ae3715f6433ca5c63014680d6ea, type: 2}

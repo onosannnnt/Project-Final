@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 712068ecc01d545b9a31d14ba66c3665, type: 3}
   m_Name: SkillLoadout
   m_EditorClassIdentifier: 
-  playerLoadout: {fileID: 0}
   EquippedSkills:
-  - {fileID: 11400000, guid: 44a8f2a09c757f6458b6d9a13424ce85, type: 2}
-  - {fileID: 11400000, guid: 2efdbd2e5d0399f4abbb243bd02caf50, type: 2}
-  - {fileID: 11400000, guid: 53afe38ce1285e54287617797959002c, type: 2}
-  - {fileID: 11400000, guid: 4bd1944dee0dc0546b6ebb0694370c7d, type: 2}
-  - {fileID: 11400000, guid: 8b066cdf94c41a742b2ff2c73b9cf414, type: 2}
+  - {fileID: 11400000, guid: 3c99df0d082a8ea428380d9d53f82b5e, type: 2}
+  - {fileID: 11400000, guid: 357e42a08072c2e4babbd8e1bbb30d5e, type: 2}
+  - {fileID: 11400000, guid: 19cb22f93bf5a1c4ca1414b756893720, type: 2}
+  - {fileID: 11400000, guid: d1d7bf7fd56556848ac6ee49bb0f418e, type: 2}
+  - {fileID: 11400000, guid: 4d856dc05f935e84a84b8e7bccc23b2a, type: 2}

@@ -181,8 +181,11 @@ MonoBehaviour:
   DamageCanvas: {fileID: 3992123013372977322}
   FloatSpeed: 0.5
   FloatDuration: 1
+  SpreadAmount: 0.3
+  RandomSpawnOffset: 0.1
   stats: {fileID: 0}
-  skills: []
+  skills: {fileID: 0}
+  userData: {fileID: 0}
 --- !u!1 &8764232415643294593
 GameObject:
   m_ObjectHideFlags: 0

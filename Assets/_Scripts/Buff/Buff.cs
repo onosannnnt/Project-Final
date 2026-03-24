@@ -22,6 +22,7 @@ public class StatModifier
 public enum BuffType
 {
     Buff,
+    Debuff,
     CrowdControl,
 }
 public enum BuffOrder

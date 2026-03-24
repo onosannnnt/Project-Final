@@ -21,6 +21,7 @@ public enum SkillTag
 public class Skill : ScriptableObject
 {
     [Header("Skill Info")]
+    public int skillID;
     public string skillName;
     [TextArea(3, 10)]
     public string description;

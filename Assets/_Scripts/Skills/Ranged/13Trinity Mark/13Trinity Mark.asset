@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
   m_Name: 13Trinity Mark
   m_EditorClassIdentifier: 
+  skillID: 13
   skillName: Trinity Mark
   description: Deal Fire, Ice, and Lightning DMG equal to 120% of the player's ATK
     to a selected enemy.

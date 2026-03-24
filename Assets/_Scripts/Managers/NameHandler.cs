@@ -8,6 +8,7 @@ public class NameHandler : MonoBehaviour
     [Header("UI References")]
     public TMP_InputField nameInputField;
     public Button startButton;
+    [SerializeField] private UserData userData;
 
     [Header("Scene Settings")]
     public string nextSceneName = "GameScene";
@@ -17,7 +18,7 @@ public class NameHandler : MonoBehaviour
         // ปิดการกดปุ่ม Start ไว้ก่อนจนกว่าจะพิมพ์ชื่อ (ตัวเลือกเสริม)
         if (startButton != null)
             startButton.interactable = false;
-            
+
         // เพิ่ม Listener ตรวจสอบการพิมพ์
         nameInputField.onValueChanged.AddListener(ValidateInput);
     }
@@ -28,7 +29,7 @@ public class NameHandler : MonoBehaviour
         startButton.interactable = input.Length > 0;
     }
 
-    public void StartGame()
+    public async void StartGame()
     {
         string playerName = nameInputField.text;
 
@@ -36,7 +37,12 @@ public class NameHandler : MonoBehaviour
         {
             // บันทึกชื่อเก็บไว้ (ใช้ PlayerPrefs เพื่อดึงไปใช้ใน Scene อื่นได้ง่าย)
             PlayerPrefs.SetString("PlayerName", playerName);
+            userData.Username = playerName;
+            UserResponse response = await NetworkManager.SavePlayerData(userData);
+            userData.ID = response.ID;
+            userData.Username = response.Username;
             PlayerPrefs.Save();
+
 
             Debug.Log("Player Name Saved: " + playerName);
 
