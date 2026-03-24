@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class CombatActionLog
 {
     public int CombatID;
+    public int WaveID;
     public int TurnID;
     public int ActionID;
     public int CasterID;

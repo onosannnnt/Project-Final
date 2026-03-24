@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
   m_Name: 6Primal Surge
   m_EditorClassIdentifier: 
+  skillID: 6
   skillName: Primal Surge
   description: Deal Fire, Ice, and Lightning DMG equal to 150% of the player's MATK
     to all enemies.

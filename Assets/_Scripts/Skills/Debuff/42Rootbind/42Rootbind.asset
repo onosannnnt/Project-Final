@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
   m_Name: 42Rootbind
   m_EditorClassIdentifier: 
+  skillID: 42
   skillName: Rootbind
   description: Decrease Evasion Rate by 25% for 2 turns.
   skillIcon: {fileID: 21300000, guid: ea3b8a61f4add494c84dfcffa4d9cc32, type: 3}

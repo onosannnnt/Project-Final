@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
   m_Name: 32Spirit Renewal
   m_EditorClassIdentifier: 
+  skillID: 32
   skillName: Spirit Renewal
   description: Restore 30 Skill Points.
   skillIcon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}

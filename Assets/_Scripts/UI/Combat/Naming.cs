@@ -1,8 +1,5 @@
-using System.Runtime.CompilerServices;
 using TMPro;
-using UnityEditor.Compilation;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class NameingUI : Singleton<NameingUI>

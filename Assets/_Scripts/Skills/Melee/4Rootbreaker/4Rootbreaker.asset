@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
   m_Name: 4Rootbreaker
   m_EditorClassIdentifier: 
+  skillID: 4
   skillName: Rootbreaker
   description: Deal Physical DMG equal to 100% of the player's ATK to all enemies
     and inflict Armor Break for 2 turns.

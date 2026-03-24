@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
   m_Name: 7Barrage
   m_EditorClassIdentifier: 
+  skillID: 7
   skillName: Barrage
   description: Deal Physical DMG equal to 60% of the player's ATK to a selected enemy
     3 times.

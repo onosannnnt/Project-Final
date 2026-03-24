@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
   m_Name: 30Verdant Heal
   m_EditorClassIdentifier: 
+  skillID: 30
   skillName: Verdant Heal
   description: Instantly restore 20% of your Max HP.
   skillIcon: {fileID: 21300000, guid: ea61475f2ca0f4eeba50601040774701, type: 3}

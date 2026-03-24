@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
   m_Name: "23Nature\u2019s Might"
   m_EditorClassIdentifier: 
+  skillID: 23
   skillName: "Nature\u2019s Might"
   description: Increase your Attack by 35% for 2 turns.
   skillIcon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}

@@ -80,4 +80,21 @@ public class NetworkManager : SingletonPersistent<NetworkManager>
             throw;
         }
     }
+    public static async Task SaveCombatSkillLoadoutLogs(object data)
+    {
+        try
+        {
+            string json = JsonUtility.ToJson(data);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            string uri = LoadEnv.apiKey + "/combat-skill-loadouts";
+            HttpResponseMessage response = await client.PostAsync(uri, content);
+            response.EnsureSuccessStatusCode();
+
+        }
+        catch (HttpRequestException e)
+        {
+            Debug.LogError($"Error: {e.Message}");
+            throw;
+        }
+    }
 }

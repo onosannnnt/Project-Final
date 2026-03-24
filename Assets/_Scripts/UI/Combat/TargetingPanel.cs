@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class TargetingPanel : MonoBehaviour
 {
+    [SerializeField] private StatInfoUI statInfoUI;
+    [SerializeField] private Button DetailPanel;
     [SerializeField] private TextMeshProUGUI TargetingNameText;
     [SerializeField] private TextMeshProUGUI LevelText;
     [SerializeField] private Image Icon;
@@ -13,7 +15,6 @@ public class TargetingPanel : MonoBehaviour
     [SerializeField] private Transform StatusBuffParent;
     [SerializeField] private GameObject StatusBuffPrefab;
     private Entity currentTarget;
-    private float maxhealthBarForegroundWidth;
     public static TargetingPanel instance;
     private void Awake()
     {
@@ -29,6 +30,7 @@ public class TargetingPanel : MonoBehaviour
     private void Start()
     {
         gameObject.SetActive(false);
+        DetailPanel.onClick.AddListener(OnPanelClicked);
     }
     private void Update()
     {
@@ -65,7 +67,7 @@ public class TargetingPanel : MonoBehaviour
             Destroy(child.gameObject);
         }
         if (currentTarget == null) return;
-        List<Buff> Buffs = currentTarget.buffController.GetBuffsByType(BuffType.CrowdControl);
+        List<Buff> Buffs = currentTarget.buffController.GetBuffsByType(BuffType.Buff);
         if (Buffs.Count == 0) BuffParent.gameObject.SetActive(false);
         else BuffParent.gameObject.SetActive(true);
         foreach (var buff in Buffs)
@@ -102,5 +104,10 @@ public class TargetingPanel : MonoBehaviour
             return "<color=yellow>";
         else
             return "<color=red>";
+    }
+    private void OnPanelClicked()
+    {
+        statInfoUI.SetEntity(currentTarget);
+        statInfoUI.gameObject.SetActive(true);
     }
 }

@@ -17,5 +17,9 @@ public class LoadEnv : SingletonPersistent<LoadEnv>
         // Read the variable
         string apiKey = Environment.GetEnvironmentVariable("API_URL");
         LoadEnv.apiKey = apiKey;
+        if (string.IsNullOrEmpty(apiKey))
+        {
+            LoadEnv.apiKey = "http://localhost:8080";
+        }
     }
 }

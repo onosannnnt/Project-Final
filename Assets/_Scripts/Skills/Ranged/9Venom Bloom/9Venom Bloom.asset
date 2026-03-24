@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
   m_Name: 9Venom Bloom
   m_EditorClassIdentifier: 
+  skillID: 9
   skillName: Venom Bloom
   description: Deal Physical DMG equal to 95% of the player's ATK to all enemies
     and inflict Poison for 3 turns.

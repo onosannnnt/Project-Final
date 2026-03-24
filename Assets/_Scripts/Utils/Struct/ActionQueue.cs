@@ -1,6 +1,4 @@
-using UnityEngine;
-
-public struct ActionQueue
+public class ActionQueue
 {
     public Entity Caster;
     public Entity Target;

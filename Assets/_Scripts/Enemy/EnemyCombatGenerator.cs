@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnemyGenerator : MonoBehaviour
+public class EnemyGenerator : Singleton<EnemyGenerator>
 {
     [SerializeField] private GameObject Enemy;
     [SerializeField] private Transform worldParent;
@@ -38,7 +38,7 @@ public class EnemyGenerator : MonoBehaviour
     new Vector3(-0.91f, -0.21f, 0.72f)  // ตำแหน่งที่ 3
     };
 
-    private void GenerateEnemy()
+    public void GenerateEnemy()
     {
         // แก้ให้สุ่มตั้งแต่ 1 ถึงค่า enemy (ตามคอมเมนต์ของคุณ)
         int enemyCount = Random.Range(3, enemy + 1);

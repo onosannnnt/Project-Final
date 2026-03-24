@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
   m_Name: Normal Attack
   m_EditorClassIdentifier: 
-  ID: 0
-  Name: Normal Attack
-  Description: 
+  skillID: 100
+  skillName: NormalAttack
+  description: 
+  skillIcon: {fileID: 0}
   Level: 0
   Strength: 0
   Agility: 0

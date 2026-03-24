@@ -85,7 +85,7 @@ public abstract class Entity : MonoBehaviour
         float flatStat = 0;
         float MultiplierStat = 1f;
 
-        foreach (var buff in buffController.GetBuff())
+        foreach (var buff in buffController.GetAllBuffs())
         {
             foreach (var modifier in buff.modifiers)
             {
@@ -137,7 +137,7 @@ public abstract class Entity : MonoBehaviour
     protected abstract void Die();
     public virtual bool CanAction()
     {
-        foreach (var buff in buffController.GetBuff())
+        foreach (var buff in buffController.GetAllBuffs())
         {
             if (buff.buffType == BuffType.CrowdControl)
             {
@@ -211,4 +211,5 @@ public abstract class Entity : MonoBehaviour
 
         Destroy(damageTextObj);
     }
+
 }

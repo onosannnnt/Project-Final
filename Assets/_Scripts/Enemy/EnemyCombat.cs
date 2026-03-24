@@ -26,7 +26,8 @@ public class EnemyCombat : Entity
     {
         gameObject.SetActive(false);
         isDead = true;
-        // Destroy(gameObject);
+        TurnManager.Instance.RemoveActionQueue(this);
+        Destroy(gameObject);
     }
     public override void TakeDamage(Damage damage)
     {
@@ -43,11 +44,7 @@ public class EnemyCombat : Entity
             Die();
         }
     }
-    public void Highlight(Color color)
-    {
-        GameObject EnemyVisual = transform.Find("EnemyVisual").gameObject;
-        EnemyVisual.GetComponent<SpriteRenderer>().color = color;
-    }
+
     public void OnMouseDown()
     {
         if (PlayerCombat.instance.GetPlayerState != PlayerActionState.Targeting) return;
@@ -62,5 +59,10 @@ public class EnemyCombat : Entity
     public bool IsDead()
     {
         return isDead;
+    }
+    public void Highlight(Color color)
+    {
+        GameObject EnemyVisual = transform.Find("EnemyVisual").gameObject;
+        EnemyVisual.GetComponent<SpriteRenderer>().color = color;
     }
 }
