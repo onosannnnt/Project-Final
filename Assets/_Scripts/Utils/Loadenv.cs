@@ -15,7 +15,7 @@ public class LoadEnv : SingletonPersistent<LoadEnv>
     void Start()
     {
         // Read the variable
-        string apiKey = Environment.GetEnvironmentVariable("API_URL");
+        // string apiKey = Environment.GetEnvironmentVariable("API_URL");
         LoadEnv.apiKey = apiKey;
         if (string.IsNullOrEmpty(apiKey))
         {
