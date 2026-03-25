@@ -19,8 +19,8 @@ MonoBehaviour:
   Strength: 5
   Intelligence: 1
   Agility: 1
-  MaxHealth: 100
-  MaxSkillPoint: 10
+  MaxHealth: 300
+  MaxSkillPoint: 300
   MaxSkillSlot: 5
   PhysicalAttack: 20
   MagicAttack: 20
