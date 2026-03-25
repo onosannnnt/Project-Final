@@ -2714,7 +2714,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 35.97, y: -15.11715}
-  m_SizeDelta: {x: 0, y: 30.234}
+  m_SizeDelta: {x: 71.94, y: 30.234}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &111684561
 MonoBehaviour:
@@ -2916,7 +2916,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 118424314}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1798345017}
+        m_TargetAssemblyTypeName: InventoryUIController, Assembly-CSharp
+        m_MethodName: FilterBySlot
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &118424314
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7998,7 +8010,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 329462724}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1798345017}
+        m_TargetAssemblyTypeName: InventoryUIController, Assembly-CSharp
+        m_MethodName: FilterBySlot
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 5
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &329462724
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10796,7 +10820,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 477393730}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1798345017}
+        m_TargetAssemblyTypeName: InventoryUIController, Assembly-CSharp
+        m_MethodName: FilterBySlot
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 4
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &477393730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16985,7 +17021,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 84.285, y: -15.11715}
-  m_SizeDelta: {x: 0, y: 30.234}
+  m_SizeDelta: {x: 15.69, y: 30.234}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &717387026
 MonoBehaviour:
@@ -17623,7 +17659,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 734964804}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1798345017}
+        m_TargetAssemblyTypeName: InventoryUIController, Assembly-CSharp
+        m_MethodName: FilterBySlot
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &734964804
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20750,7 +20798,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1933285138}
   m_HandleRect: {fileID: 1933285137}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -21972,7 +22020,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 903853591}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1798345017}
+        m_TargetAssemblyTypeName: InventoryUIController, Assembly-CSharp
+        m_MethodName: FilterBySlot
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 2
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &903853591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26164,7 +26224,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 948382727}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.5653671
+  m_Size: 0.56536704
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -40107,7 +40167,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 133.41, y: -15.11715}
-  m_SizeDelta: {x: 0, y: 30.234}
+  m_SizeDelta: {x: 73.56, y: 30.234}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1715263860
 MonoBehaviour:
@@ -40954,7 +41014,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1749009834}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1798345017}
+        m_TargetAssemblyTypeName: InventoryUIController, Assembly-CSharp
+        m_MethodName: FilterBySlot
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 3
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1749009834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -41846,10 +41918,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e371f5c923bf45e389cbab4ba4dec1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  database: {fileID: 11400000, guid: 484a4b11fb8cf422a85dd1d0511fe696, type: 2}
   MaxEquipmentCapacity: 50
-  equipmentInventory: []
   testTemplates:
   - {fileID: 11400000, guid: 50b733e8a66ea400db6d1658e1089c1c, type: 2}
+  - {fileID: 11400000, guid: abe2ac18b9d7447b38ecda3f77b920f1, type: 2}
+  - {fileID: 11400000, guid: 4f164558b56504898a1c72fb567ae0c6, type: 2}
+  - {fileID: 11400000, guid: 2091d8e13c5c74605a1da7225167145d, type: 2}
+  - {fileID: 11400000, guid: 6b40fea9874954e779466e42475ee42a, type: 2}
+  - {fileID: 11400000, guid: 25ad465c1b8224dda8ee919579df46a9, type: 2}
 --- !u!114 &1798345017
 MonoBehaviour:
   m_ObjectHideFlags: 0
