@@ -120,21 +120,45 @@ public class TurnManager : Singleton<TurnManager>
             Skill skill = currentAction.Skill;
             Entity target = currentAction.Target;
             Debug.Log(entity.gameObject.name + " is taking action with " + currentAction.ActionSpeed + " speed.");
-            PlayerActionQueueUI.SetActionQueue(null);
-            EnemyActionQueueUI.SetActionQueue(null);
+            // PlayerActionQueueUI.SetActionQueue(null);
+            // EnemyActionQueueUI.SetActionQueue(null);
+            PlayerActionQueueUI?.SetActionQueue(null);
+            EnemyActionQueueUI?.SetActionQueue(null);
+            // CombatActionLog log = new()
+            // {
+            //     CombatID = combatID,
+            //     TurnID = turnRound,
+            //     ActionID = actionID++,
+            //     CasterID = entity.GetEntityID(),
+            //     CasterName = entity.Stats.EntityName,
+            //     TargetID = target.GetEntityID(),
+            //     TargetName = target.Stats.EntityName,
+            //     SkillID = skill.skillID,
+            //     SkillName = skill.skillName,
+            //     ActionPointUsed = skill.SkillPoint,
+            //     ActionPointRecovery = skill.SkillPointRestore,
+            //     ActionSpeed = currentAction.ActionSpeed,
+            //     DamageEffectLogs = new(),
+            //     BuffEffectLogs = new(),
+            //     HealEffectLogs = new(),
+            //     EntityLogs = new()
+            // };
             CombatActionLog log = new()
             {
                 CombatID = combatID,
                 TurnID = turnRound,
                 ActionID = actionID++,
-                CasterID = entity.GetEntityID(),
-                CasterName = entity.Stats.EntityName,
-                TargetID = target.GetEntityID(),
-                TargetName = target.Stats.EntityName,
-                SkillID = skill.skillID,
-                SkillName = skill.skillName,
-                ActionPointUsed = skill.SkillPoint,
-                ActionPointRecovery = skill.SkillPointRestore,
+                CasterID = entity != null ? entity.GetEntityID() : -1,
+                CasterName = entity?.Stats?.EntityName ?? "Unknown Caster", // ถ้า entity หรือ stats เป็น null จะใช้ชื่อนี้แทน
+                
+                TargetID = target != null ? target.GetEntityID() : -1,
+                TargetName = target?.Stats?.EntityName ?? "No Target", // ป้องกันกรณีเป้าหมายไม่มี/ตายไปแล้ว
+                
+                SkillID = skill != null ? skill.skillID : -1,
+                SkillName = skill?.skillName ?? "Unknown Skill",
+                
+                ActionPointUsed = skill?.SkillPoint ?? 0,
+                ActionPointRecovery = skill?.SkillPointRestore ?? 0,
                 ActionSpeed = currentAction.ActionSpeed,
                 DamageEffectLogs = new(),
                 BuffEffectLogs = new(),
@@ -160,11 +184,15 @@ public class TurnManager : Singleton<TurnManager>
             else if (entity.CompareTag("Enemy"))
             {
                 EnemyCombat enemyCombat = entity.GetComponent<EnemyCombat>();
-                enemyCombat.buffController.OnTurnStart(enemyCombat, log);
+                if (enemyCombat != null) {
+                    enemyCombat.buffController.OnTurnStart(enemyCombat, log);
+                }
+                // enemyCombat.buffController.OnTurnStart(enemyCombat, log);
                 if (entity.CanAction() == true) enemyCombat.skillManager.UseSkill(skill, playerCombat, log);
                 EnemyActionQueueUI.SetActionQueue(currentAction);
             }
-            actionQueue.RemoveAt(0);
+            // actionQueue.RemoveAt(0);
+            actionQueue.Remove(currentAction);
             ShowLog(log);
             NetworkManager.SaveCombatActionLogs(log);
             // SaveLogJson(log);
