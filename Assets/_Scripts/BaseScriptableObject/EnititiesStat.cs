@@ -3,26 +3,31 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "EntitiesStat", menuName = "ScriptableObjects/EntitiesStat", order = 1)]
 public class EntitiesBaseStat : ScriptableObject
 {
+    [Header("Basic Information")]
     [Tooltip("Name of the Player")]
     public string entityName;
     [Tooltip("Icon of the Player")]
     public Sprite Icon;
+    
+    [Header("Core Attributes")]
     [Tooltip("Level of the Player")]
     public int Level;
-    [Tooltip("Experience Points of the Player")]
-    public float ExperiencePoints;
     [Tooltip("Strength Attribute of the Player")]
     public int Strength;
     [Tooltip("Intelligence Attribute of the Player")]
     public int Intelligence;
     [Tooltip("Agility Attribute of the Player")]
     public int Agility;
+
+    [Header("Base Stats")]
+    [Tooltip("Current Experience Points of the Player")]
+    public float ExperiencePoints;
+    [Tooltip("Maximum Experience Points of the Player")]
+    public float MaxExperiencePoints;
     [Tooltip("Maximum Health of the Player")]
     public float MaxHealth;
     [Tooltip("Maximum Skill Points of the Player")]
     public int MaxSkillPoint;
-    [Tooltip("Max skill slot of the Player")]
-    public int MaxSkillSlot;
     [Tooltip("Physical Attack Power of the Player")]
     public float PhysicalAttack;
     [Tooltip("Magic Attack Power of the Player")]
@@ -31,7 +36,7 @@ public class EntitiesBaseStat : ScriptableObject
     public float FireDamageMultiplier;
     [Tooltip("Cold Damage multiplier of the Player divided by 100")]
     public float ColdDamageMultiplier;
-    [Tooltip("Lightning Damage multiplier of the Player")]
+    [Tooltip("Lightning Damage multiplier of the Player divided by 100")]
     public float LightningDamageMultiplier;
     [Tooltip("Physical Defense of the Player")]
     public float Armour;
@@ -55,86 +60,81 @@ public class EntitiesBaseStat : ScriptableObject
     public float StatusEffectResistance;
     [Tooltip("Status Hit Chance of the Player (in percentage)")]
     public float StatusHitChance;
+
+    [Header("Scaling Multipliers")]
+    public float hpPerLevel = 10f;
+    public float hpPerStr = 5f;
+    public float spPerLevel = 5f;
+    public float spPerInt = 3f;
+    public float atkPerLevel = 2f;
+    public float matkPerLevel = 2f;
+    public float speedPerAgi = 0.5f;
+
     public float GetBase(StatType stat)
     {
         switch (stat)
         {
-            case StatType.Level:
-                return Level;
-
-            case StatType.ExperiencePoints:
-                return ExperiencePoints;
-
-            case StatType.MaxHealth:
-                return MaxHealth;
-
-            case StatType.MaxSkillPoint:
-                return MaxSkillPoint;
-
-            case StatType.PhysicalAttack:
-                return PhysicalAttack;
-
-            case StatType.MagicAttack:
-                return MagicAttack;
-
-            case StatType.Armour:
-                return Armour;
-
-            case StatType.FireResistance:
-                return FireResistance;
-
-            case StatType.ColdResistance:
-                return ColdResistance;
-
-            case StatType.LightningResistance:
-                return LightningResistance;
-
-            case StatType.FireDamageMultiplier:
-                return FireDamageMultiplier;
-
-            case StatType.ColdDamageMultiplier:
-                return ColdDamageMultiplier;
-
-            case StatType.LightningDamageMultiplier:
-                return LightningDamageMultiplier;
-
-            case StatType.ActionSpeed:
-                return ActionSpeed;
-
-            case StatType.CriticalHitChance:
-                return CriticalHitChance;
-
-            case StatType.CriticalDamageMultiplier:
-                return CriticalHitDamageMultiplier;
-
-            case StatType.Accuracy:
-                return Accuracy;
-
-            case StatType.EvasionRate:
-                return EvasionRate;
-
-            case StatType.StatusEffectResistance:
-                return StatusEffectResistance;
-
-            case StatType.StatusHitChance:
-                return StatusHitChance;
-
+            case StatType.Level: return Level;
+            case StatType.ExperiencePoints: return ExperiencePoints;
+            case StatType.MaxExperiencePoints: return MaxExperiencePoints;
+            case StatType.Strength: return Strength;
+            case StatType.Intelligence: return Intelligence;
+            case StatType.Agility: return Agility;
+            case StatType.MaxHealth: return MaxHealth;
+            case StatType.MaxSkillPoint: return MaxSkillPoint;
+            case StatType.PhysicalAttack: return PhysicalAttack;
+            case StatType.MagicAttack: return MagicAttack;
+            case StatType.Armour: return Armour;
+            case StatType.FireResistance: return FireResistance;
+            case StatType.ColdResistance: return ColdResistance;
+            case StatType.LightningResistance: return LightningResistance;
+            case StatType.FireDamageMultiplier: return FireDamageMultiplier;
+            case StatType.ColdDamageMultiplier: return ColdDamageMultiplier;
+            case StatType.LightningDamageMultiplier: return LightningDamageMultiplier;
+            case StatType.ActionSpeed: return ActionSpeed;
+            case StatType.CriticalHitChance: return CriticalHitChance;
+            case StatType.CriticalDamageMultiplier: return CriticalHitDamageMultiplier;
+            case StatType.Accuracy: return Accuracy;
+            case StatType.EvasionRate: return EvasionRate;
+            case StatType.StatusEffectResistance: return StatusEffectResistance;
+            case StatType.StatusHitChance: return StatusHitChance;
             default:
-                Debug.LogWarning($"Stat {stat} not handled");
+                Debug.LogWarning($"Stat {stat} not handled in GetBase");
                 return 0f;
         }
     }
+
+    public float GetCalculatedStat(StatType stat)
+    {
+        float baseValue = GetBase(stat);
+
+        switch (stat)
+        {
+            case StatType.MaxHealth:
+                return baseValue + (Level * hpPerLevel) + (Strength * hpPerStr);
+
+            case StatType.MaxSkillPoint:
+                return baseValue + (Level * spPerLevel) + (Intelligence * spPerInt);
+
+            case StatType.PhysicalAttack:
+                return baseValue + (Level * atkPerLevel);
+
+            case StatType.MagicAttack:
+                return baseValue + (Level * matkPerLevel);
+
+            case StatType.ActionSpeed:
+                return baseValue + (Agility * speedPerAgi);
+
+            default:
+                return baseValue;
+        }
+    }
+
     public EntitiesBaseStat Clone()
     {
-        EntitiesBaseStat clone = Instantiate(this);
-        return clone;
+        return Instantiate(this);
     }
-    public string GetName()
-    {
-        return entityName;
-    }
-    public Sprite GetIcon()
-    {
-        return Icon;
-    }
+
+    public string GetName() => entityName;
+    public Sprite GetIcon() => Icon;
 }

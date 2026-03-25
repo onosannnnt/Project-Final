@@ -13,9 +13,4 @@ MonoBehaviour:
   m_Name: SkillLoadout
   m_EditorClassIdentifier: 
   playerLoadout: {fileID: 0}
-  EquippedSkills:
-  - {fileID: 11400000, guid: 9dd6f04a00f2dd34eba5dedc1f624476, type: 2}
-  - {fileID: 11400000, guid: 0d36abd1ab093284ca46b9745dfee778, type: 2}
-  - {fileID: 11400000, guid: e934a12691db83941bcfc8d9e5a9d0c3, type: 2}
-  - {fileID: 11400000, guid: 9dcbebc88d374ee478a8a54d324fe8f3, type: 2}
-  - {fileID: 11400000, guid: c05fd8fb6480d4a458ede02594e01f09, type: 2}
+  EquippedSkills: []

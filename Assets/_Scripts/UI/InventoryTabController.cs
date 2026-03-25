@@ -20,6 +20,7 @@ public class InventoryTabController : MonoBehaviour
     public GameObject listBackground;
 
     public SkillListManager skillManager;
+    public InventoryUIController InventoryUIController;
 
     void Start()
     {
@@ -74,6 +75,11 @@ public class InventoryTabController : MonoBehaviour
         if (allTabs[index].name == "Skill" && skillManager != null)
         {
             skillManager.LogSimpleLoadout();
+        }
+
+        if (allTabs[index].name == "Equipment" && skillManager != null)
+        {
+            InventoryUIController.RefreshInventoryUI();
         }
 
         if (listBackground != null)

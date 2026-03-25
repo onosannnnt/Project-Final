@@ -10,6 +10,7 @@ public enum StatType
     None, //for Default in switch case
     Level,
     ExperiencePoints,
+    MaxExperiencePoints,
     Strength,
     Intelligence,
     Agility,
