@@ -14,23 +14,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityName: 
   Icon: {fileID: 0}
-  Level: 1
-  ExperiencePoints: 0
-  Strength: 5
+  Level: 10
+  Strength: 1
   Intelligence: 1
   Agility: 1
+  ExperiencePoints: 1100
+  MaxExperiencePoints: 1200
   MaxHealth: 100
   MaxSkillPoint: 100
-  MaxSkillSlot: 2
   PhysicalAttack: 30
-  MagicAttack: 10
-  FireDamageMultiplier: 0.1
+  MagicAttack: 30
+  FireDamageMultiplier: 0
   ColdDamageMultiplier: 0
   LightningDamageMultiplier: 0
-  Armour: 0
-  FireResistance: 0
-  ColdResistance: 0
-  LightningResistance: 0
+  Armour: 300
+  FireResistance: 0.1
+  ColdResistance: 0.1
+  LightningResistance: 0.1
   ActionSpeed: 50
   CriticalHitChance: 0.05
   CriticalHitDamageMultiplier: 1.5
@@ -38,3 +38,10 @@ MonoBehaviour:
   EvasionRate: 10
   StatusEffectResistance: 0.1
   StatusHitChance: 1
+  hpPerLevel: 10
+  hpPerStr: 5
+  spPerLevel: 5
+  spPerInt: 3
+  atkPerLevel: 2
+  matkPerLevel: 2
+  speedPerAgi: 0.5
