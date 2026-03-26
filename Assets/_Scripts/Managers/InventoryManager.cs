@@ -43,11 +43,54 @@ public class InventoryManager : MonoBehaviour
     {
         if (database.items.Count >= MaxEquipmentCapacity)
         {
-            Debug.LogWarning("กระเป๋าเต็มแล้ว!");
+            // ทำแจ้งเตือนสีแดงตัวหนาเวลาของเต็ม
+            Debug.LogWarning("<b><color=#FF5555>⚠️ กระเป๋าเต็มแล้ว!</color></b> ไม่สามารถเก็บไอเทมเพิ่มได้");
             return false;
         }
+        
         database.items.Add(item);
-        Debug.Log($"ได้รับ: {item.BaseItem.ItemName} | Rarity: {item.Rarity}");
+
+        // 1. ตั้งค่าสีตามระดับความหายาก (Rarity)
+        string rarityColor = "#FFFFFF"; // สีขาว (Normal)
+        switch (item.Rarity)
+        {
+            case EquipmentRarity.Magic: rarityColor = "#00BFFF"; break; // สีฟ้า
+            case EquipmentRarity.Rare: rarityColor = "#FFD700"; break;  // สีทอง
+        }
+
+        // 2. จัดรูปแบบ Affix แต่ละอันให้อ่านง่าย
+        string affixDetails = "";
+        if (item.Affixes.Count > 0)
+        {
+            List<string> affixList = new List<string>();
+            foreach (var affix in item.Affixes)
+            {
+                string sign = affix.Value >= 0 ? "+" : "";
+                string percentMark = affix.Type == ModifierType.Percent ? "%" : "";
+                
+                // ถ้าค่าเป็นบวกให้ใช้สีเขียว ถ้าติดลบให้ใช้สีแดง
+                string valueColor = affix.Value >= 0 ? "#55FF55" : "#FF5555"; 
+                
+                // ประกอบร่างข้อความย่อย เช่น <color=#55FF55>+15%</color> ActionSpeed
+                string formattedAffix = $"<b><color={valueColor}>{sign}{affix.Value}{percentMark}</color></b> {affix.Stat}";
+                affixList.Add(formattedAffix);
+            }
+            
+            // เอามาต่อกัน คั่นด้วยเส้นตรง ( | ) จะดูสะอาดตากว่าลูกน้ำ
+            affixDetails = string.Join(" | ", affixList);
+        }
+        else
+        {
+            affixDetails = "<color=grey><i>ไม่มีออฟชั่นเสริม</i></color>";
+        }
+
+        // 3. ประกอบร่างข้อความ Log หลัก แบ่งเป็น 2 บรรทัดให้ไม่อึดอัด
+        string logMessage = $"📦 <b><color=#00FF00>ได้รับไอเทม:</color></b> <b><color=#00FFFF>{item.BaseItem.ItemName}</color></b> " +
+                            $"[<b><color={rarityColor}>{item.Rarity}</color></b>]\n" +
+                            $"✨ <b>ออฟชั่น ({item.Affixes.Count}):</b> {affixDetails}";
+
+        Debug.Log(logMessage);
+        
         return true;
     }
 

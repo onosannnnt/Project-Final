@@ -1,50 +1,3 @@
-// using UnityEngine;
-// using System.Collections.Generic;
-
-// public class InventoryUIController : MonoBehaviour
-// {
-//     [Header("Data References")]
-//     [Tooltip("ลากระบบกระเป๋าที่มีข้อมูลไอเทมมาใส่")]
-//     public InventoryManager inventoryManager;
-
-//     [Header("UI References")]
-//     [Tooltip("ลาก GameObject ชื่อ Content ที่อยู่ใน Scroll View มาใส่ตรงนี้")]
-//     public Transform contentPanel; 
-    
-//     [Tooltip("ลาก Prefab ของช่องไอเทม (ที่มีสคริปต์ EquipmentSlotUI) มาใส่ตรงนี้")]
-//     public GameObject slotPrefab; 
-
-//     // ฟังก์ชันนี้ให้เรียกใช้ตอน "เปิดหน้าต่างกระเป๋า" หรือ "ตอนได้ของใหม่"
-//     [ContextMenu("รีเฟรชหน้ากระเป๋า (Refresh UI)")]
-//     public void RefreshInventoryUI()
-//     {
-//         // 1. ล้างของเก่าใน Scroll View ทิ้งก่อน (ป้องกันการแสดงผลซ้ำซ้อน)
-//         foreach (Transform child in contentPanel)
-//         {
-//             Destroy(child.gameObject);
-//         }
-
-//         // 2. ดึงข้อมูลไอเทมทั้งหมดในกระเป๋ามา
-//         List<EquipmentInstance> allItems = inventoryManager.GetAllEquipments();
-
-//         // 3. วนลูปสร้าง Prefab ลงใน Scroll View ทีละชิ้น
-//         foreach (EquipmentInstance item in allItems)
-//         {
-//             // สร้าง GameObject ใหม่ โดยให้ไปอยู่ใต้ contentPanel
-//             GameObject newSlotObj = Instantiate(slotPrefab, contentPanel, false);
-
-//             // ดึงสคริปต์ EquipmentSlotUI ที่เราเขียนไว้ก่อนหน้านี้มาทำงาน
-//             EquipmentSlotUI slotUI = newSlotObj.GetComponent<EquipmentSlotUI>();
-//             if (slotUI != null)
-//             {
-//                 // ส่งข้อมูลไอเทมชิ้นนี้ ไปให้ UI จัดการแสดงรูปและสีกรอบ
-//                 slotUI.SetupSlot(item);
-//             }
-//         }
-//     }
-// }
-
-
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -52,54 +5,73 @@ public class InventoryUIController : MonoBehaviour
 {
     [Header("Data References")]
     public InventoryManager inventoryManager;
+    public EquipmentManager equipmentManager; // เพิ่มตัวนี้เข้ามา
 
     [Header("UI References")]
     public Transform contentPanel; 
     public GameObject slotPrefab; 
 
-    // เพิ่มตัวแปรเก็บว่าตอนนี้กำลังดูแท็บไหนอยู่ (เผื่อกด Refresh จะได้อยู่ที่แท็บเดิม)
-    private EquipmentSlot currentActiveSlot = EquipmentSlot.Helmet;
+    [Header("ช่องใส่ของด้านบน (ลากกล่องบน 6 กล่องมาใส่)")]
+    public List<EquippedSlotUI> topEquippedSlots; 
 
-    // ==========================================
-    // ฟังก์ชันใหม่: สำหรับให้ปุ่ม UI เรียกใช้
-    // ==========================================
+    private EquipmentSlot currentActiveSlot = EquipmentSlot.Helmet;
+    private List<EquipmentSlotUI> currentBottomSlots = new List<EquipmentSlotUI>();
+
+    private void Start()
+    {
+        // สั่งให้กล่องด้านบนทั้ง 6 กล่อง เริ่มทำงานและเชื่อมกับ EquipmentManager
+        foreach (var slot in topEquippedSlots)
+        {
+            slot.Initialize(equipmentManager);
+        }
+
+        // เมื่อมีการใส่/ถอดของ ให้รีเฟรชติ๊กถูกของกล่องด้านล่างทั้งหมด
+        equipmentManager.OnEquipmentChanged += RefreshAllCheckmarks;
+    }
+
+    private void OnDestroy()
+    {
+        if (equipmentManager != null) equipmentManager.OnEquipmentChanged -= RefreshAllCheckmarks;
+    }
+
     public void FilterBySlot(int slotIndex)
     {
-        // แปลงตัวเลข int ให้กลับเป็น Enum EquipmentSlot
         currentActiveSlot = (EquipmentSlot)slotIndex;
-
-        // เรียกฟังก์ชันวาด UI
         UpdateUI();
     }
 
-    // แก้ไขฟังก์ชันรีเฟรช ให้มาเรียก UpdateUI แทน
     [ContextMenu("รีเฟรชหน้ากระเป๋า (Refresh UI)")]
     public void RefreshInventoryUI()
     {
         UpdateUI();
     }
 
-    // ฟังก์ชันหลักที่ใช้วาด UI ลงใน Scroll View
     private void UpdateUI()
     {
-        // 1. ล้างของเก่าทิ้ง
-        foreach (Transform child in contentPanel)
-        {
-            Destroy(child.gameObject);
-        }
+        foreach (Transform child in contentPanel) Destroy(child.gameObject);
+        currentBottomSlots.Clear();
 
-        // 2. ดึงของมา **เฉพาะประเภทที่เลือก (currentActiveSlot)**
         List<EquipmentInstance> filteredItems = inventoryManager.GetEquipmentsBySlot(currentActiveSlot);
 
-        // 3. วาด UI ใหม่
         foreach (EquipmentInstance item in filteredItems)
         {
             GameObject newSlotObj = Instantiate(slotPrefab, contentPanel, false);
             EquipmentSlotUI slotUI = newSlotObj.GetComponent<EquipmentSlotUI>();
             if (slotUI != null)
             {
-                slotUI.SetupSlot(item);
+                // ส่ง EquipmentManager ไปให้ปุ่มด้านล่างรู้จักด้วย
+                slotUI.SetupSlot(item, equipmentManager);
+                currentBottomSlots.Add(slotUI);
             }
+        }
+    }
+
+    // ฟังก์ชันสั่งอัปเดตติ๊กถูก
+    private void RefreshAllCheckmarks()
+    {
+        foreach (var slotUI in currentBottomSlots)
+        {
+            slotUI.RefreshCheckmark();
         }
     }
 }

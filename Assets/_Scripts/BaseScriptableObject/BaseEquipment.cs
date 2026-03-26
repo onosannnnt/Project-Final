@@ -11,6 +11,17 @@ public enum EquipmentSlot
     Mainhand
 }
 
+public enum CharacterSlot
+{
+    Helmet,
+    Armor,
+    LeftRing,   // วงซ้าย
+    RightRing,  // วงขวา
+    Boot,
+    Offhand,
+    MainHand
+}
+
 public enum EquipmentRarity
 {
     Normal,

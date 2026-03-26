@@ -3,29 +3,60 @@ using UnityEngine.UI;
 
 public class EquipmentSlotUI : MonoBehaviour
 {
-    [Header("UI References (ลาก UI Image มาใส่)")]
-    public Image frameImage; // ลาก Image ที่เป็นพื้นหลัง/กรอบมาใส่
-    public Image itemIcon;   // ลาก Image ที่อยู่ตรงกลาง (รูปรองเท้า/หมวก) มาใส่
-
-    [Header("Global Settings")]
-    [Tooltip("ลากไฟล์ GlobalRaritySettings ที่เราเพิ่งสร้างมาใส่ตรงนี้")]
+    public Image frameImage; 
+    public Image itemIcon;   
     public RarityVisualSettings visualSettings;
 
-    public void SetupSlot(EquipmentInstance equipment)
+    [Header("UI ใหม่")]
+    public GameObject checkmarkIcon; // ลากรูปติ๊กถูกมาใส่
+
+    private EquipmentInstance myItem;
+    private EquipmentManager eqManager; // ตัวจัดการระบบใส่ของ
+
+    // รับ EquipmentManager เข้ามาด้วย เพื่อให้มันทำงานร่วมกันได้
+    public void SetupSlot(EquipmentInstance equipment, EquipmentManager manager)
     {
-        // if (equipment == null)
-        // {
-        //     // ถ้าไม่มีของใส่ ให้ปิดรูปทิ้งไป
-        //     itemIcon.gameObject.SetActive(false);
-        //     frameImage.sprite = visualSettings.NormalFrame; // กลับเป็นกรอบเปล่าๆ
-        //     return;
-        // }
+        myItem = equipment;
+        eqManager = manager;
 
-        // 1. เปิดการแสดงผลรูปรถ/หมวก
+        if (equipment == null)
+        {
+            itemIcon.gameObject.SetActive(false);
+            checkmarkIcon.SetActive(false);
+            frameImage.sprite = visualSettings.NormalFrame;
+            return;
+        }
+
         itemIcon.gameObject.SetActive(true);
-        itemIcon.sprite = equipment.BaseItem.Icon; // ดึงรูป "รองเท้า/หมวก" จาก BaseEquipment มาใส่
+        itemIcon.sprite = equipment.BaseItem.Icon; 
+        frameImage.sprite = visualSettings.GetFrameByRarity(equipment.Rarity); 
+        
+        // เช็คว่าใส่อยู่หรือเปล่า ถ้าใส่ก็เปิดติ๊กถูก
+        RefreshCheckmark();
+    }
 
-        // 2. เปลี่ยนสีกรอบตามระดับความหายาก (Rarity)
-        frameImage.sprite = visualSettings.GetFrameByRarity(equipment.Rarity); // ดึง "กรอบทอง/ม่วง" มาใส่
+    public void RefreshCheckmark()
+    {
+        if (myItem == null || eqManager == null) return;
+        
+        // ถาม EquipmentManager ว่าของชิ้นนี้ใส่อยู่ไหม
+        bool isEquipped = eqManager.IsEquipped(myItem);
+        checkmarkIcon.SetActive(isEquipped);
+    }
+
+    // เอาฟังก์ชันนี้ไปผูกกับปุ่ม (On Click) ของ Prefab ไอเทมนี้
+    public void OnSlotClicked()
+    {
+        if (myItem == null || eqManager == null) return;
+
+        if (eqManager.IsEquipped(myItem))
+        {
+            // เปลี่ยนเป็นเรียกใช้ตัวนี้แทน
+            eqManager.UnequipByItem(myItem);
+        }
+        else
+        {
+            eqManager.Equip(myItem);
+        }
     }
 }
