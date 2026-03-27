@@ -34,6 +34,13 @@ public class SkillPanelUI : Singleton<SkillPanelUI>
         {
             GameObject skillButton = Instantiate(SkillButtonPrefab, SkillPanel.transform);
             skillButton.GetComponentInChildren<TextMeshProUGUI>().text = skill.skillName;
+
+            CombatSkillHoverHandler hoverHandler = skillButton.GetComponent<CombatSkillHoverHandler>();
+            if (hoverHandler != null)
+            {
+                hoverHandler.SetSkillData(skill); // ส่งข้อมูลสกิลให้สคริปต์ Hover รู้จัก!
+            }           
+            
             if (playerCombat.CurrentSP < skill.SkillPoint)
             {
                 skillButton.GetComponent<Button>().interactable = false;

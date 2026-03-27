@@ -49,15 +49,24 @@ public class Buff : ScriptableObject
     public TargetType targetType;
     public List<StatModifier> modifiers = new List<StatModifier>();
     public bool isInitialized = true;
+    [HideInInspector] public bool wasReappliedThisTurn = false;
 
     public virtual void OnApply(Entity owner) { }
-    public virtual void OnTurnStart(Entity owner, CombatActionLog log) { }
+    public virtual void OnTurnStart(Entity owner, CombatActionLog log)
+    {
+        wasReappliedThisTurn = false;
+    }
     public virtual void OnTurnEnd(Entity owner)
     {
         if (isInitialized)
         {
             Debug.Log("Buff duration countdown started");
             isInitialized = false;
+            return;
+        }
+        if (wasReappliedThisTurn)
+        {
+            Debug.Log("Buff was reapplied this turn, skipping duration decrease");
             return;
         }
         Duration -= 1;

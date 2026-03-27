@@ -34,11 +34,19 @@ public class TargetingPanel : MonoBehaviour
     }
     private void Update()
     {
-        if (PlayerCombat.instance.GetPlayerState == PlayerActionState.Targeting && currentTarget != null && TurnManager.Instance.GetTurnState() == TurnState.PlayerTurnState && PlayerCombat.instance.GetSelectedSkill.TargetType != TargetType.Self)
+        // เช็คเงื่อนไขว่า "ควรจะแสดงแผง UI หรือไม่"
+        bool shouldBeActive = PlayerCombat.instance.GetPlayerState == PlayerActionState.Targeting 
+                              && currentTarget != null 
+                              && TurnManager.Instance.GetTurnState() == TurnState.PlayerTurnState 
+                              && PlayerCombat.instance.GetSelectedSkill.TargetType != TargetType.Self;
+
+        // ถ้ายอมให้แสดงผล แต่ตัว GameObject ยังปิดอยู่ ค่อยสั่งเปิด (จะทำแค่ครั้งเดียว ไม่รัว)
+        if (shouldBeActive && !gameObject.activeSelf)
         {
             SetActivePanel(true);
         }
-        else
+        // ถ้าไม่ให้แสดงผล แต่ GameObject ยังเปิดอยู่ ค่อยสั่งปิด
+        else if (!shouldBeActive && gameObject.activeSelf)
         {
             SetActivePanel(false);
         }
@@ -46,6 +54,7 @@ public class TargetingPanel : MonoBehaviour
     public void SetActivePanel(bool active)
     {
         gameObject.SetActive(active);
+        if (currentTarget == null) return;
         SetBuffs();
         SetStatusBuff();
         TargetingNameText.text = currentTarget.Stats.GetName();

@@ -14,12 +14,31 @@ public class EnemyCombat : Entity
     }
     private void Update()
     {
-        if (PlayerCombat.instance.GetEnemyTarget() == this && PlayerCombat.instance.GetPlayerState == PlayerActionState.Targeting && PlayerCombat.instance.GetSelectedSkill.TargetType != TargetType.Self)
-            Highlight(Color.red);
-        else if (PlayerCombat.instance.GetPlayerState == PlayerActionState.Targeting && PlayerCombat.instance.GetSelectedSkill.TargetType != TargetType.Self)
-            Highlight(Color.yellow);
-        else
+        if (PlayerCombat.instance.GetPlayerState != PlayerActionState.Targeting || PlayerCombat.instance.GetSelectedSkill == null)
+        {
             Highlight(Color.white);
+            return;
+        }
+
+        if (PlayerCombat.instance.GetSelectedSkill.TargetType == TargetType.Self)
+        {
+            Highlight(Color.white);
+            return;
+        }
+
+        // If the selected skill targets all enemies, highlight all in red
+        if (PlayerCombat.instance.GetSelectedSkill.TargetType == TargetType.AllEnemies)
+        {
+            Highlight(Color.red);
+        }
+        // If the selected skill targets a single enemy
+        else if (PlayerCombat.instance.GetSelectedSkill.TargetType == TargetType.SingleEnemy)
+        {
+            if (PlayerCombat.instance.GetEnemyTarget() == this)
+                Highlight(Color.red);
+            else
+                Highlight(Color.yellow);
+        }
     }
 
     protected override void Die()

@@ -25,12 +25,13 @@ MonoBehaviour:
   targetType: 1
   modifiers:
   - Stat: 14
-    Type: 1
+    Type: 0
     Value: -0.3
   - Stat: 15
-    Type: 1
+    Type: 0
     Value: -0.3
   - Stat: 16
-    Type: 1
+    Type: 0
     Value: -0.3
   isInitialized: 1
+  wasReappliedThisTurn: 0

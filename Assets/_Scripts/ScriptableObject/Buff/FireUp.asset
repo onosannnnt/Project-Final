@@ -25,6 +25,7 @@ MonoBehaviour:
   targetType: 0
   modifiers:
   - Stat: 10
-    Type: 1
+    Type: 0
     Value: 0.25
   isInitialized: 1
+  wasReappliedThisTurn: 0

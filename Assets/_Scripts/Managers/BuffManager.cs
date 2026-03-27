@@ -31,7 +31,8 @@ public class BuffManager
 
         if (existingBuff != null)
         {
-            existingBuff.Duration = Mathf.Max(existingBuff.Duration, buff.Duration);
+            existingBuff.Duration = buff.Duration;
+            existingBuff.wasReappliedThisTurn = true;
 
             if (existingBuff.isStackable)
             {

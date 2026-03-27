@@ -28,3 +28,4 @@ MonoBehaviour:
     Type: 1
     Value: 0.35
   isInitialized: 1
+  wasReappliedThisTurn: 0

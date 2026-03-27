@@ -15,7 +15,7 @@ MonoBehaviour:
   BuffName: Stun
   Description: 
   Icon: {fileID: 0}
-  buffType: 1
+  buffType: 2
   Duration: 1
   isStackable: 0
   Stack: 1
@@ -25,3 +25,4 @@ MonoBehaviour:
   targetType: 1
   modifiers: []
   isInitialized: 1
+  wasReappliedThisTurn: 0

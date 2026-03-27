@@ -101,10 +101,7 @@ public class PlayerCombat : Entity
                 Highlight(Color.white);
                 foreach (var enemy in FindObjectsOfType<EnemyCombat>())
                 {
-                    if (enemy == enemyTarget)
-                        enemy.Highlight(Color.red);
-                    else
-                        enemy.Highlight(Color.yellow);
+                    enemy.Highlight(Color.red);
                 }
                 SetPlayerState(PlayerActionState.Targeting);
                 break;

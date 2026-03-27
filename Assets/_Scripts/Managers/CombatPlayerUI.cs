@@ -67,6 +67,7 @@ public class CombatPlayerUI : Singleton<CombatPlayerUI>
             GameObject skillButton = Instantiate(SkillPrefab, SkillPanel.transform);
             skillButton.GetComponent<RectTransform>().localPosition = new Vector3(x, 0, 0);
             skillButton.GetComponentInChildren<TextMeshProUGUI>().text = skill.name;
+            
             if (playerCombat.CurrentSP < skill.SkillPoint)
             {
                 skillButton.GetComponent<Button>().interactable = false;

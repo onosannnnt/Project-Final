@@ -175,7 +175,7 @@ public abstract class Entity : MonoBehaviour
             textComponent.text += "!!";
         }
 
-        if (damageTextObj != null)
+        if (damageTextObj != null && gameObject.activeInHierarchy)
         {
             StartCoroutine(FloatAndFade(damageTextObj));
         }
