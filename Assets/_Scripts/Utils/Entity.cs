@@ -64,7 +64,23 @@ public abstract class Entity : MonoBehaviour
         Debug.Log($"{gameObject.name} took {damage.Amount} damage, current health: {CurrentHealth}/{GetStat(StatType.MaxHealth)}");
         ShowDamage((int)damage.Amount, Utils.GetDamageColor(damage.Type), damage.IsCriticalHit);
         if (currentHealth <= 0)
-            Die();
+        {
+            // Mark as dead immediately so wave checks work
+            MarkAsDead();
+            // Defer destruction until after damage text animation
+            StartCoroutine(DestroyAfterDelay());
+        }
+    }
+
+    protected virtual void MarkAsDead()
+    {
+        // Override in subclasses to add specific death behavior
+    }
+
+    private System.Collections.IEnumerator DestroyAfterDelay()
+    {
+        yield return new WaitForSeconds(FloatDuration);
+        Die();
     }
 
     public virtual void Heal(float amount)

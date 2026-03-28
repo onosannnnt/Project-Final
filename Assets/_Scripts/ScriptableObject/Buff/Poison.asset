@@ -25,7 +25,8 @@ MonoBehaviour:
   targetType: 2
   modifiers: []
   isInitialized: 1
-  value: 4
+  wasReappliedThisTurn: 0
+  value: 0.3
   statScale: 0
   damageModifierType: 1
   damageType: 0

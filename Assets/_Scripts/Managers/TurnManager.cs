@@ -73,6 +73,7 @@ public class TurnManager : Singleton<TurnManager>
         ActionBarUI.Instance.gameObject.SetActive(true);
         turnRound++;
         List<GameObject> remainingEnemies = GetAllEnemies();
+        remainingEnemies.RemoveAll(enemy => enemy.GetComponent<EnemyCombat>().IsDead());
         if (remainingEnemies.Count == 0)
         {
             Debug.Log("Generating new enemies for wave " + currentWave);
@@ -94,6 +95,7 @@ public class TurnManager : Singleton<TurnManager>
         // };
         actionQueue.Add(playerAction);
         List<GameObject> enemies = GetAllEnemies();
+        enemies.RemoveAll(enemy => enemy.GetComponent<EnemyCombat>().IsDead());
         foreach (GameObject enemy in enemies)
         {
             Entity enemyEntity = enemy.GetComponent<EnemyCombat>();
@@ -240,7 +242,13 @@ public class TurnManager : Singleton<TurnManager>
     {
         var enemies = FindObjectsOfType<EnemyCombat>();
         if (enemies.Length == 0) return null;
-        return enemies[0];
+        // Return the first alive enemy
+        foreach (var enemy in enemies)
+        {
+            if (!enemy.IsDead())
+                return enemy;
+        }
+        return null;
     }
     public TurnState GetTurnState()
     {

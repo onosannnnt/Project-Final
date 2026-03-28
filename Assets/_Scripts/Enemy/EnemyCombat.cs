@@ -48,6 +48,12 @@ public class EnemyCombat : Entity
         TurnManager.Instance.RemoveActionQueue(this);
         Destroy(gameObject);
     }
+
+    protected override void MarkAsDead()
+    {
+        isDead = true;
+        TurnManager.Instance.RemoveActionQueue(this);
+    }
     public override void TakeDamage(Damage damage)
     {
         base.TakeDamage(damage);
@@ -57,10 +63,6 @@ public class EnemyCombat : Entity
         {
             float healthPercent = CurrentHealth / GetStat(StatType.MaxHealth);
             healthBarForeground.GetComponent<RectTransform>().sizeDelta = new Vector2(maxhealthBarForegroundWidth * healthPercent, healthBarForeground.GetComponent<RectTransform>().sizeDelta.y);
-        }
-        if (CurrentHealth <= 0)
-        {
-            Die();
         }
     }
 

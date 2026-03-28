@@ -43,10 +43,6 @@ public class PlayerCombat : Entity
     {
         base.TakeDamage(damage);
         // HealthbarUI.Instance.UpdateHealthBar();
-        if (CurrentHealth <= 0)
-        {
-            Die();
-        }
     }
     public void SelectSkill(Skill skill)
     {
