@@ -11,12 +11,6 @@ public class EntitiesBaseStat : ScriptableObject
     public int Level;
     [Tooltip("Experience Points of the Player")]
     public float ExperiencePoints;
-    [Tooltip("Strength Attribute of the Player")]
-    public int Strength;
-    [Tooltip("Intelligence Attribute of the Player")]
-    public int Intelligence;
-    [Tooltip("Agility Attribute of the Player")]
-    public int Agility;
     [Tooltip("Maximum Health of the Player")]
     public float MaxHealth;
     [Tooltip("Maximum Skill Points of the Player")]
