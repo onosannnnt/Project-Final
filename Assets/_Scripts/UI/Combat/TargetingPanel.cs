@@ -59,7 +59,7 @@ public class TargetingPanel : MonoBehaviour
         SetStatusBuff();
         TargetingNameText.text = currentTarget.Stats.GetName();
         Icon.sprite = currentTarget.Stats.GetIcon();
-        LevelText.text = $"Lv.{currentTarget.Stats.Level}";
+        if (LevelText != null) LevelText.text = ""; // Level removed
     }
     public void SetEnemyTargetPanel(Entity enemy)
     {

@@ -26,11 +26,6 @@ public class Skill : ScriptableObject
     [TextArea(3, 10)]
     public string description;
     public Sprite skillIcon;
-    [Header("Requirement")]
-    public int Level;
-    public int Strength;
-    public int Agility;
-    public int Intelligence;
     [Header("Cost")]
     public int SkillPoint;
     public int SkillPointRestore;

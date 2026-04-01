@@ -4,40 +4,27 @@ using UnityEngine;
 
 public class HealOverTimeEffect : Buff
 {
-    public float healAmount;
-    public StatScale healScale;
-    public ModifierType healModifierType;
+    [Tooltip("Base Heal amount applied each turn")]
+    public float BaseHeal;
 
     public override void OnTurnStart(Entity owner, CombatActionLog log)
     {
         float totalHeal = 0f;
-        StatType scalingStat = Utils.GetScalingStat(healScale);
-        float baseStat = owner.GetStat(scalingStat);
 
         if (StackCalculationType == StackMultiplierType.Linear)
         {
-            if (healModifierType == ModifierType.Flat)
-            {
-                totalHeal = healAmount * Stack;
-            }
-            else if (healModifierType == ModifierType.Percent)
-            {
-                totalHeal = baseStat * healAmount * Stack;
-            }
+            totalHeal = BaseHeal * Stack;
         }
         else if (StackCalculationType == StackMultiplierType.DiminishingReturn)
         {
             float effectiveStack = Stack / (Stack + Mathf.Max(Threshold, 1));
-
-            if (healModifierType == ModifierType.Flat)
-            {
-                totalHeal = healAmount * effectiveStack;
-            }
-            else if (healModifierType == ModifierType.Percent)
-            {
-                totalHeal = baseStat * healAmount * effectiveStack;
-            }
+            totalHeal = BaseHeal * effectiveStack;
         }
+        
+        // Add +- 15% variance per tick!
+        float variance = Random.Range(0.85f, 1.15f);
+        totalHeal *= variance;
+
         Debug.Log($"{owner.gameObject.name} heals {totalHeal} HP from {name} HOT.");
         log.AddHealEffectLog(new HealEffectLog
         {

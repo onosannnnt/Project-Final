@@ -10,8 +10,6 @@ public enum DamageType
 }
 public enum StatScale
 {
-    PhysicalAttack,
-    MagicAttack,
     Health,
     SkillPoint,
     ActionSpeed
@@ -45,8 +43,6 @@ public static class Utils
     {
         return type switch
         {
-            StatScale.PhysicalAttack => StatType.PhysicalAttack,
-            StatScale.MagicAttack => StatType.MagicAttack,
             StatScale.Health => StatType.MaxHealth,
             StatScale.SkillPoint => StatType.MaxSkillPoint,
             StatScale.ActionSpeed => StatType.ActionSpeed,
@@ -55,13 +51,7 @@ public static class Utils
     }
     public static StatType GetDamageMultiplierStat(DamageType type)
     {
-        return type switch
-        {
-            DamageType.Fire => StatType.FireDamageMultiplier,
-            DamageType.Cold => StatType.ColdDamageMultiplier,
-            DamageType.Lightning => StatType.LightningDamageMultiplier,
-            _ => StatType.None
-        };
+        return StatType.None;
     }
     public static Color GetDamageColor(DamageType type)
     {

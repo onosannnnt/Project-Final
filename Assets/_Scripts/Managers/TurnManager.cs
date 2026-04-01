@@ -213,6 +213,17 @@ public class TurnManager : Singleton<TurnManager>
             SetState(TurnState.Lose);
             yield break;
         }
+
+        // Progress enemy break states at the end of the round
+        foreach (GameObject enemy in GetAllEnemies())
+        {
+            var combat = enemy.GetComponent<EnemyCombat>();
+            if (combat != null && !combat.IsDead())
+            {
+                combat.AdvanceBreakState();
+            }
+        }
+
         SetState(TurnState.PlayerTurnState);
         yield break;
     }

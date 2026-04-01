@@ -1,16 +1,62 @@
 using UnityEngine;
 
+public enum BreakState
+{
+    Normal,
+    JustBroken,
+    Vulnerable
+}
+
 public class EnemyCombat : Entity
 {
     [SerializeField] private GameObject healthBarForeground;
+    [SerializeField] private TMPro.TextMeshProUGUI breakArmorText; // Add this for UI
     private float maxhealthBarForegroundWidth;
     private bool isDead;
+
+    public BreakState currentBreakState = BreakState.Normal;
+    public int currentBreakArmor;
+
+    private class BreakDamageModifier : IDamageModifier
+    {
+        private EnemyCombat owner;
+        public BreakDamageModifier(EnemyCombat owner) { this.owner = owner; }
+        public void Modify(DamageCtx ctx)
+        {
+            if (owner.currentBreakState == BreakState.Vulnerable)
+            {
+                ctx.Damage.Amount *= 1.15f; // take 15% more damage
+            }
+        }
+    }
 
     protected override void Start()
     {
         base.Start();
         maxhealthBarForegroundWidth = healthBarForeground.GetComponent<RectTransform>().sizeDelta.x;
         if (PlayerCombat.instance.GetEnemyTarget() == this) TargetingPanel.instance.SetEnemyTargetPanel(this);
+
+        currentBreakArmor = Stats.MaxBreakArmor;
+        IncomingModifiers.Add(new BreakDamageModifier(this));
+        
+        UpdateArmorUI();
+    }
+
+    private void UpdateArmorUI()
+    {
+        if (breakArmorText != null)
+        {
+            if (currentBreakState == BreakState.JustBroken || currentBreakState == BreakState.Vulnerable)
+            {
+                breakArmorText.text = "BROKEN";
+                breakArmorText.color = Color.red;
+            }
+            else
+            {
+                breakArmorText.text = $"{currentBreakArmor}/{Stats.MaxBreakArmor}";
+                breakArmorText.color = Color.white;
+            }
+        }
     }
     private void Update()
     {
@@ -39,6 +85,58 @@ public class EnemyCombat : Entity
             else
                 Highlight(Color.yellow);
         }
+    }
+
+    public void ReduceArmor(int amount)
+    {
+        if (currentBreakState != BreakState.Normal) return; // Only reduce armor if normal
+        
+        currentBreakArmor -= amount;
+        Debug.Log($"{gameObject.name} armor reduced by {amount}. Remaining Armor: {currentBreakArmor}");
+
+        if (currentBreakArmor <= 0)
+        {
+            currentBreakArmor = 0;
+            TriggerBreak();
+        }
+        
+        UpdateArmorUI();
+    }
+
+    private void TriggerBreak()
+    {
+        Debug.Log($"{gameObject.name} is BROKEN!");
+        currentBreakState = BreakState.JustBroken;
+        // Animation, sound effect, or floating text could go here
+    }
+
+    public void AdvanceBreakState()
+    {
+        if (currentBreakState == BreakState.JustBroken)
+        {
+            currentBreakState = BreakState.Vulnerable;
+            Debug.Log($"{gameObject.name} is now Vulnerable and will take 15% more damage.");
+        }
+        else if (currentBreakState == BreakState.Vulnerable)
+        {
+            // Recover logic
+            currentBreakState = BreakState.Normal;
+            currentBreakArmor = Stats.MaxBreakArmor;
+            Debug.Log($"{gameObject.name} has recovered. Armor reset to Max.");
+            // NOTE: In the future, you can add conditional logic here to prevent recovery 
+        }
+        
+        UpdateArmorUI();
+    }
+
+    public override bool CanAction()
+    {
+        // Skip action in the turn they are broken
+        if (currentBreakState == BreakState.JustBroken)
+        {
+            return false;
+        }
+        return base.CanAction();
     }
 
     protected override void Die()

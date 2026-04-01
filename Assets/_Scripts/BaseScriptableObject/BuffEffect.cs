@@ -9,14 +9,11 @@ public class BuffEffect : SkillEffect
 
     public override void Execute(Entity caster, Entity target, CombatActionLog log)
     {
-        bool isBuff =
-            Random.Range(0f, 100f) < caster.GetStat(StatType.StatusHitChance) * 100;
+        bool isBuff = true;
 
-        bool isResist =
-            Random.Range(0f, 100f) < target.GetStat(StatType.StatusEffectResistance);
-        Debug.Log(caster.gameObject.name + " used BuffEffect on " + target.gameObject.name +
-        (isBuff ? " and the buff landed!" : " but the buff missed!") +
-        (isResist ? " However, the target resisted the buff." : ""));
+        bool isResist = false;
+        
+        Debug.Log(caster.gameObject.name + " used BuffEffect on " + target.gameObject.name);
         foreach (var buff in buffs)
         {
             if (buff.targetType == TargetType.Self)

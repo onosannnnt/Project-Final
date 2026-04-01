@@ -91,7 +91,7 @@ public class StatInfoUI : MonoBehaviour
     private void SetupLevelText()
     {
         if (LevelText == null) return;
-        LevelText.text = $"Level: {Entity.GetStat(StatType.Level)}";
+        LevelText.text = "";
 
     }
     private void OnExitClicked()
