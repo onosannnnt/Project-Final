@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c46aedc9ed1084bb3abe687953decc10, type: 3}
   m_Name: DamageEffect
   m_EditorClassIdentifier: 
-  BaseDamage: 250
+  BaseDamage: 1000
   Element: 0
   Accuracy: 90
   CriticalHitChance: 10

@@ -17,7 +17,7 @@ public class DamageEffect : SkillEffect
         if (Random.Range(0f, 100f) > Accuracy)
         {
             Debug.Log($"{caster.gameObject.name}'s attack but missed!");
-            // Optional: you can show a "Miss" text here if you have a method for it.
+            target.ShowDamage(0, Color.white);
             return false; 
         }
 
@@ -29,7 +29,7 @@ public class DamageEffect : SkillEffect
         bool isCrit = Random.Range(0f, 100f) <= CriticalHitChance;
         if (isCrit)
         {
-            finalDamage *= 2f;
+            finalDamage *= 1.5f;
             Debug.Log($"Critical Hit!");
         }
 

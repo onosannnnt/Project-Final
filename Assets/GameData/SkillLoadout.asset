@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 712068ecc01d545b9a31d14ba66c3665, type: 3}
   m_Name: SkillLoadout
   m_EditorClassIdentifier: 
-  EquippedSkills: []
+  EquippedSkills:
+  - {fileID: 11400000, guid: 25ff8610d4d945d4fa36703e5a504cff, type: 2}

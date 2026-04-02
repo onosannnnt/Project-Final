@@ -1116,7 +1116,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1180751302}
   m_HandleRect: {fileID: 1180751301}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1900,7 +1900,7 @@ MonoBehaviour:
   groundDist: 0.35
   sr: {fileID: 862981788}
   userData: {fileID: 11400000, guid: bd7868a778b044575959e5160d52fa42, type: 2}
-  targetQuestPhase: 1
+  selectedQuestIndex: 4
 --- !u!54 &639893557
 Rigidbody:
   m_ObjectHideFlags: 0

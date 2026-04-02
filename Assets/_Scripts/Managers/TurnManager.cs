@@ -22,6 +22,12 @@ public class TurnManager : Singleton<TurnManager>
     {
         playerCombat = PlayerCombat.instance;
         ApplyPhaseStats();
+
+        if (EnemyGenerator.Instance != null && EnemyGenerator.Instance.GetCurrentQuest() != null)
+        {
+            wave = EnemyGenerator.Instance.GetCurrentQuest().waves.Length;
+        }
+
         SetState(TurnState.PlayerTurnState);
         combatID = await NetworkManager.GetLatestCombatID();
         List<SkillLogs> skillLogs = new List<SkillLogs>();

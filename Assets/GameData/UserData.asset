@@ -15,3 +15,4 @@ MonoBehaviour:
   ID: 0
   Username: test
   GamePhase: 1
+  SelectedQuestIndex: 4
