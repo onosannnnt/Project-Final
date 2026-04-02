@@ -12,15 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b03db1597306eae4db6869e334951f6d, type: 3}
   m_Name: Test
   m_EditorClassIdentifier: 
-  isTutorial: 1
+  isTutorial: 0
   waves:
   - enemies:
     - enemyPrefab: {fileID: 6702360306364772165, guid: e4dd33fc5de054c9f9059e4dffe6a311,
         type: 3}
       positionIndex: 0
-    - enemyPrefab: {fileID: 6702360306364772165, guid: e4dd33fc5de054c9f9059e4dffe6a311,
-        type: 3}
-      positionIndex: 1
-    - enemyPrefab: {fileID: 6702360306364772165, guid: e4dd33fc5de054c9f9059e4dffe6a311,
-        type: 3}
-      positionIndex: 2
