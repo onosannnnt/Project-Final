@@ -36,32 +36,6 @@ public class EntitiesBaseStat : ScriptableObject
         }
     }
 
-    public float GetCalculatedStat(StatType stat)
-    {
-        float baseValue = GetBase(stat);
-
-        switch (stat)
-        {
-            case StatType.MaxHealth:
-                return baseValue + (Level * hpPerLevel) + (Strength * hpPerStr);
-
-            case StatType.MaxSkillPoint:
-                return baseValue + (Level * spPerLevel) + (Intelligence * spPerInt);
-
-            case StatType.PhysicalAttack:
-                return baseValue + (Level * atkPerLevel);
-
-            case StatType.MagicAttack:
-                return baseValue + (Level * matkPerLevel);
-
-            case StatType.ActionSpeed:
-                return baseValue + (Agility * speedPerAgi);
-
-            default:
-                return baseValue;
-        }
-    }
-
     public EntitiesBaseStat Clone()
     {
         return Instantiate(this);
