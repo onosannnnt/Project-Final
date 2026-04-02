@@ -15,20 +15,24 @@ public class SkillManager
         Debug.Log(owner.gameObject.name + " is using skill: " + skill.skillName + " on " + target.gameObject.name);
         if (skill == null || target == null) return;
         
+        bool skillHit = skill.Execute(owner, target, log);
+
         // --- Break Mechanic ---
-        if (owner is PlayerCombat && target is EnemyCombat enemyTarget)
+        if (skillHit && owner is PlayerCombat && target is EnemyCombat enemyTarget)
         {
-            if (skill.TargetType == TargetType.SingleEnemy)
+            if (skill.TargetType == TargetType.Enemy)
             {
-                enemyTarget.ReduceArmor(2);
-            }
-            else if (skill.TargetType == TargetType.AllEnemies)
-            {
-                enemyTarget.ReduceArmor(1);
+                if (skill.TargetCount == TargetCount.Single)
+                {
+                    enemyTarget.ReduceArmor(2);
+                }
+                else if (skill.TargetCount == TargetCount.All)
+                {
+                    enemyTarget.ReduceArmor(1);
+                }
             }
         }
 
-        skill.Execute(owner, target, log);
         Debug.Log(owner.gameObject.name + " has " + owner.CurrentHealth + " HP and " + owner.CurrentSP + " SP after using skill: " + skill.skillName);
     }
     public List<Skill> GetSkills()

@@ -7,7 +7,6 @@ public class DOT : Buff
 {
     [Tooltip("Base Damage to be dealt each turn")]
     public float BaseDamage;
-    public DamageType damageType;
 
     public override void OnTurnStart(Entity owner, CombatActionLog log)
     {
@@ -27,8 +26,8 @@ public class DOT : Buff
         float variance = Random.Range(0.85f, 1.15f);
         totalDamage *= variance;
 
-        Debug.Log($"{owner.gameObject.name} takes {totalDamage} {damageType} damage from {name} DOT.");
-        Damage damage = new Damage(damageType, totalDamage);
+        Debug.Log($"{owner.gameObject.name} takes {totalDamage} damage from {name} DOT.");
+        Damage damage = new Damage(totalDamage, DamageElement.Physical); // Or appropriate element
         DamageCtx ctx = new DamageCtx(owner, owner, damage);
         DamageSystem.Process(ctx, log);
     }

@@ -3242,9 +3242,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0aca689229f340f2a53bfb2ebab92ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Enemy: {fileID: 6702360306364772165, guid: e4dd33fc5de054c9f9059e4dffe6a311, type: 3}
   worldParent: {fileID: 25655269}
-  enemy: 2
+  quests:
+  - {fileID: 11400000, guid: c9cb87fbd5e84ac4498ed65b7f907492, type: 2}
+  - {fileID: 11400000, guid: 059341551e3e05b43add792b5d64e74f, type: 2}
+  - {fileID: 11400000, guid: be5e6da865d545946a6c1b8c54f56d77, type: 2}
+  - {fileID: 11400000, guid: f165b5705d8ea8a4097f77b9e2e94a71, type: 2}
 --- !u!1 &294723866
 GameObject:
   m_ObjectHideFlags: 0
@@ -15885,7 +15888,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 985369182}
   m_Direction: 2
   m_Value: 1.0000002
-  m_Size: 0.73130476
+  m_Size: 0.7313047
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -18507,7 +18510,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1034876033}
   m_Direction: 2
   m_Value: 1.0000002
-  m_Size: 0.73130476
+  m_Size: 0.7313047
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -18662,6 +18665,9 @@ MonoBehaviour:
   wave: 3
   PlayerActionQueueUI: {fileID: 367059104}
   EnemyActionQueueUI: {fileID: 708008530}
+  phase1SPRestore: 10
+  phase2SPRestore: 20
+  phase3SPRestore: 30
   turnRound: 0
   combatID: 0
   currentWave: 1

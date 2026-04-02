@@ -4,24 +4,21 @@ using UnityEngine;
 public class DamageEffect : SkillEffect
 {
     [SerializeField] public float BaseDamage;
-    [SerializeField] public DamageType DamageType;
-    [Range(0f, 100f)]
+    [SerializeField] public DamageElement Element;
     [SerializeField] public float Accuracy = 100f;
     [Range(0f, 100f)]
     [SerializeField] public float CriticalHitChance = 5f;
-    [Tooltip("Critical Damage Multiplier (e.g. 1.5 = 150% damage)")]
-    [SerializeField] public float CriticalDamageMultiplier = 1.5f;
 
-    public override void Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
     {
-        Debug.Log(caster.gameObject.name + " used " + DamageType + " DamageEffect on " + target.gameObject.name);
+        Debug.Log(caster.gameObject.name + " dealt damage on " + target.gameObject.name);
 
         // 1. Accuracy Check
         if (Random.Range(0f, 100f) > Accuracy)
         {
-            Debug.Log($"{caster.gameObject.name}'s attack missed {target.gameObject.name}!");
+            Debug.Log($"{caster.gameObject.name}'s attack but missed!");
             // Optional: you can show a "Miss" text here if you have a method for it.
-            return; 
+            return false; 
         }
 
         // 2. Base Damage Calculation with +- 15% variance
@@ -32,14 +29,15 @@ public class DamageEffect : SkillEffect
         bool isCrit = Random.Range(0f, 100f) <= CriticalHitChance;
         if (isCrit)
         {
-            finalDamage *= CriticalDamageMultiplier;
-            Debug.Log($"Critical Hit! Damage Multiplied by {CriticalDamageMultiplier}");
+            finalDamage *= 2f;
+            Debug.Log($"Critical Hit!");
         }
 
         Debug.Log($"Base Damage: {BaseDamage}, Variance: {variance}, Final Damage: {finalDamage}");
 
-        Damage damage = new Damage(DamageType, finalDamage);
+        Damage damage = new Damage(finalDamage, Element, isCrit);
         DamageCtx ctx = new DamageCtx(caster, target, damage);
         DamageSystem.Process(ctx, log);
+        return true;
     }
 }

@@ -70,19 +70,21 @@ public class PlayerCombat : Entity
     public void HandleSelectSkill()
     {
         if (selectedSkill == null) return;
-        switch (selectedSkill.TargetType)
+        
+        if (selectedSkill.TargetType == TargetType.Self)
         {
-            case TargetType.Self:
-                Highlight(Color.yellow);
-                foreach (var enemy in FindObjectsOfType<EnemyCombat>())
-                {
-                    enemy.Highlight(Color.white);
-                }
-                SetPlayerState(PlayerActionState.Targeting);
-                break;
-
-            case TargetType.SingleEnemy:
-                Highlight(Color.white);
+            Highlight(Color.yellow);
+            foreach (var enemy in FindObjectsOfType<EnemyCombat>())
+            {
+                enemy.Highlight(Color.white);
+            }
+            SetPlayerState(PlayerActionState.Targeting);
+        }
+        else if (selectedSkill.TargetType == TargetType.Enemy)
+        {
+            Highlight(Color.white);
+            if (selectedSkill.TargetCount == TargetCount.Single)
+            {
                 foreach (var enemy in FindObjectsOfType<EnemyCombat>())
                 {
                     if (enemy == enemyTarget)
@@ -90,17 +92,15 @@ public class PlayerCombat : Entity
                     else
                         enemy.Highlight(Color.yellow);
                 }
-                SetPlayerState(PlayerActionState.Targeting);
-                break;
-
-            case TargetType.AllEnemies:
-                Highlight(Color.white);
+            }
+            else if (selectedSkill.TargetCount == TargetCount.All)
+            {
                 foreach (var enemy in FindObjectsOfType<EnemyCombat>())
                 {
                     enemy.Highlight(Color.red);
                 }
-                SetPlayerState(PlayerActionState.Targeting);
-                break;
+            }
+            SetPlayerState(PlayerActionState.Targeting);
         }
     }
     private void OnMouseEnter()
@@ -137,20 +137,23 @@ public class PlayerCombat : Entity
                 skillManager.UseSkill(selectedSkill, this, log);
                 break;
 
-            case TargetType.SingleEnemy:
-                Debug.Log("Player used " + selectedSkill.name + " on " + enemyTarget.gameObject.name);
-                skillManager.UseSkill(selectedSkill, enemyTarget, log);
-                break;
-
-            case TargetType.AllEnemies:
-                Debug.Log("Player used " + selectedSkill.name + " on all enemies");
-                foreach (var enemy in FindObjectsOfType<EnemyCombat>())
+            case TargetType.Enemy:
+                if (selectedSkill.TargetCount == TargetCount.Single)
                 {
-                    skillManager.UseSkill(selectedSkill, enemy, log);
+                    Debug.Log("Player used " + selectedSkill.name + " on " + enemyTarget.gameObject.name);
+                    skillManager.UseSkill(selectedSkill, enemyTarget, log);
+                }
+                else if (selectedSkill.TargetCount == TargetCount.All)
+                {
+                    Debug.Log("Player used " + selectedSkill.name + " on all enemies");
+                    foreach (var enemy in FindObjectsOfType<EnemyCombat>())
+                    {
+                        skillManager.UseSkill(selectedSkill, enemy, log);
+                    }
                 }
                 break;
         }
-        SetSP(selectedSkill.SkillPointRestore);
+        
         SetSelectedSkill(null);
         SetEnemyTarget(null);
         SetPlayerState(PlayerActionState.Idle);

@@ -1899,6 +1899,8 @@ MonoBehaviour:
   rb: {fileID: 639893557}
   groundDist: 0.35
   sr: {fileID: 862981788}
+  userData: {fileID: 11400000, guid: bd7868a778b044575959e5160d52fa42, type: 2}
+  targetQuestPhase: 1
 --- !u!54 &639893557
 Rigidbody:
   m_ObjectHideFlags: 0

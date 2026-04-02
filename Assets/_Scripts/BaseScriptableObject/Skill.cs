@@ -1,22 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum SkillTag
-{
-    Physical,
-    Magical,
-    Fire,
-    Cold,
-    Lightning,
-    Heal,
-    Buff,
-    Debuff,
-    SingleTarget,
-    MultiTarget,
-    DOT,
-    CrowdControl,
-}
-
 [CreateAssetMenu(fileName = "NewSkill", menuName = "ScriptableObjects/Utils/Skill")]
 public class Skill : ScriptableObject
 {
@@ -28,17 +12,24 @@ public class Skill : ScriptableObject
     public Sprite skillIcon;
     [Header("Cost")]
     public int SkillPoint;
-    public int SkillPointRestore;
     [Header("Attribute")]
     public TargetType TargetType;
+    public TargetCount TargetCount;
     public List<SkillEffect> SkillEffects;
 
-    public void Execute(Entity caster, Entity target, CombatActionLog log)
+    public bool Execute(Entity caster, Entity target, CombatActionLog log)
     {
+        bool hit = true;
         foreach (var effect in SkillEffects)
         {
             Debug.Log(effect.name + " effect is executed from skill " + skillName);
-            effect.Execute(caster, target, log);
+            bool effectHit = effect.Execute(caster, target, log);
+            if (!effectHit)
+            {
+                hit = false;
+                break; // Stop executing further effects if one misses
+            }
         }
+        return hit;
     }
 }

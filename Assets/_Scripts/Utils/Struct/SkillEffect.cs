@@ -10,5 +10,5 @@ public enum SkillEffectPhase
 [System.Serializable]
 public abstract class SkillEffect : ScriptableObject
 {
-    public abstract void Execute(Entity caster, Entity target, CombatActionLog log);
+    public abstract bool Execute(Entity caster, Entity target, CombatActionLog log);
 }

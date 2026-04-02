@@ -6,7 +6,7 @@ public class HealEffect : SkillEffect
 {
     [SerializeField] public float BaseHeal;
 
-    public override void Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
     {
         Debug.Log(caster.gameObject.name + " used HealEffect on " + target.gameObject.name);
         
@@ -23,5 +23,6 @@ public class HealEffect : SkillEffect
             AppliedTargetID = caster.GetEntityID(),
             HealAmount = finalHeal
         });
+        return true;
     }
 }

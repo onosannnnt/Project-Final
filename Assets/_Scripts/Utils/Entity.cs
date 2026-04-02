@@ -26,6 +26,7 @@ public abstract class Entity : MonoBehaviour
 
     protected virtual void Awake()
     {
+        if (stats != null) stats = stats.Clone();
         buffController = new BuffManager(this);
         skillManager = new SkillManager(this);
     }
@@ -62,7 +63,7 @@ public abstract class Entity : MonoBehaviour
 
         currentHealth = math.max(currentHealth - damage.Amount, 0);
         Debug.Log($"{gameObject.name} took {damage.Amount} damage, current health: {CurrentHealth}/{GetStat(StatType.MaxHealth)}");
-        ShowDamage((int)damage.Amount, Utils.GetDamageColor(damage.Type), damage.IsCriticalHit);
+        ShowDamage((int)damage.Amount, Utils.GetDamageColor(damage.Element), damage.IsCriticalHit);
         if (currentHealth <= 0)
         {
             // Mark as dead immediately so wave checks work

@@ -1,12 +1,12 @@
 using UnityEngine;
 
-public enum DamageType
+public enum DamageElement
 {
     Physical,
     Fire,
-    Cold,
+    Frost,
     Lightning,
-    Pure
+    Wind,
 }
 public enum StatScale
 {
@@ -26,14 +26,14 @@ public enum DamageColor
 [System.Serializable]
 public class Damage
 {
-    public DamageType Type;
     public float Amount;
+    public DamageElement Element;
     public bool IsCriticalHit;
 
-    public Damage(DamageType type, float amount, bool isCriticalHit = false)
+    public Damage(float amount, DamageElement element = DamageElement.Physical, bool isCriticalHit = false)
     {
-        Type = type;
         Amount = amount;
+        Element = element;
         IsCriticalHit = isCriticalHit;
     }
 }
@@ -49,18 +49,16 @@ public static class Utils
             _ => StatType.None
         };
     }
-    public static StatType GetDamageMultiplierStat(DamageType type)
+
+    public static Color GetDamageColor(DamageElement element)
     {
-        return StatType.None;
-    }
-    public static Color GetDamageColor(DamageType type)
-    {
-        return type switch
+        return element switch
         {
-            DamageType.Physical => Color.white,
-            DamageType.Fire => Color.red,
-            DamageType.Cold => Color.blue,
-            DamageType.Lightning => Color.yellow,
+            DamageElement.Physical => Color.white,
+            DamageElement.Fire => Color.red,
+            DamageElement.Frost => Color.cyan,
+            DamageElement.Lightning => Color.yellow,
+            DamageElement.Wind => Color.green,
             _ => Color.white
         };
     }

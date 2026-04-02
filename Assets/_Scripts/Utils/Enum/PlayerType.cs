@@ -1,8 +1,14 @@
 public enum TargetType
 {
     Self,
-    SingleEnemy,
-    AllEnemies,
+    Ally,
+    Enemy
+}
+
+public enum TargetCount
+{
+    Single,
+    All
 }
 
 public enum StatType

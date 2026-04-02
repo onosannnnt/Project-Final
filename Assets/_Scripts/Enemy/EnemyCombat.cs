@@ -73,17 +73,20 @@ public class EnemyCombat : Entity
         }
 
         // If the selected skill targets all enemies, highlight all in red
-        if (PlayerCombat.instance.GetSelectedSkill.TargetType == TargetType.AllEnemies)
+        if (PlayerCombat.instance.GetSelectedSkill.TargetType == TargetType.Enemy)
         {
-            Highlight(Color.red);
-        }
-        // If the selected skill targets a single enemy
-        else if (PlayerCombat.instance.GetSelectedSkill.TargetType == TargetType.SingleEnemy)
-        {
-            if (PlayerCombat.instance.GetEnemyTarget() == this)
+            if (PlayerCombat.instance.GetSelectedSkill.TargetCount == TargetCount.All)
+            {
                 Highlight(Color.red);
-            else
-                Highlight(Color.yellow);
+            }
+            // If the selected skill targets a single enemy
+            else if (PlayerCombat.instance.GetSelectedSkill.TargetCount == TargetCount.Single)
+            {
+                if (PlayerCombat.instance.GetEnemyTarget() == this)
+                    Highlight(Color.red);
+                else
+                    Highlight(Color.yellow);
+            }
         }
     }
 

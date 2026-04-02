@@ -69,13 +69,11 @@ public class HealEffectLog
 [Serializable]
 public class DamageEffectData
 {
-    public string Type;
     public float Amount;
     public bool IsCriticalHit;
 
     public DamageEffectData(Damage damage)
     {
-        Type = damage.Type.ToString(); // Convert enum to string
         Amount = damage.Amount;
         IsCriticalHit = damage.IsCriticalHit;
     }

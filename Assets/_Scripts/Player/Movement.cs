@@ -86,7 +86,13 @@ public class Movement : MonoBehaviour
 
     }
 
-        private void HandleInteraction()
+    [Header("Quest Configuration")]
+    [Tooltip("The UserData to update before starting the quest.")]
+    public UserData userData;
+    [Tooltip("The array index of the quest to play (0 for Tutorial, 1 for Quest 1, etc.)")]
+    public int selectedQuestIndex = 0;
+
+    private void HandleInteraction()
     {
         // float interactDistance = 3f;
 
@@ -107,6 +113,17 @@ public class Movement : MonoBehaviour
         if (skillManager != null) 
         {
             skillManager.SaveLoadout(); 
+        }
+
+        // --- NEW LOGIC: Update UserData before entering combat ---
+        if (userData != null)
+        {
+            userData.SelectedQuestIndex = selectedQuestIndex;
+            Debug.Log("Quest selected via 'F'! Updated UserData SelectedQuestIndex to: " + selectedQuestIndex);
+        }
+        else
+        {
+            Debug.LogWarning("UserData is not assigned in Movement! The game might not load the correct quest enemies.");
         }
 
         Loader.Load(Loader.Scenes.Combat);

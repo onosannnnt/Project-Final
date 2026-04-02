@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68a93d19ed5314d84a7a239a7de394af, type: 3}
   m_Name: UserData
   m_EditorClassIdentifier: 
-  ID: 
-  Username: 
+  ID: 0
+  Username: test
+  GamePhase: 1

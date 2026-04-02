@@ -7,7 +7,7 @@ public class BuffEffect : SkillEffect
 {
     public List<Buff> buffs;
 
-    public override void Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
     {
         bool isBuff = true;
 
@@ -31,5 +31,6 @@ public class BuffEffect : SkillEffect
                 Buff = new BuffEffectData(buff)
             });
         }
+        return true;
     }
 }

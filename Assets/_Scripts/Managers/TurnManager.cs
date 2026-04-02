@@ -8,6 +8,10 @@ public class TurnManager : Singleton<TurnManager>
     [SerializeField] private float wave = 3;
     [SerializeField] private ActionQueueUI PlayerActionQueueUI;
     [SerializeField] private ActionQueueUI EnemyActionQueueUI;
+    [Header("Skill Point Restoration per Phase")]
+    [SerializeField] private int phase1SPRestore = 10; // Restore X SP per turn in Phase 1
+    [SerializeField] private int phase2SPRestore = 20; // Restore Y SP per turn in Phase 2
+    [SerializeField] private int phase3SPRestore = 30; // Restore Z SP per turn in Phase 3
     private TurnState currentState;
     private List<ActionQueue> actionQueue = new List<ActionQueue>();
     private PlayerCombat playerCombat;
@@ -17,6 +21,7 @@ public class TurnManager : Singleton<TurnManager>
     private async void Start()
     {
         playerCombat = PlayerCombat.instance;
+        ApplyPhaseStats();
         SetState(TurnState.PlayerTurnState);
         combatID = await NetworkManager.GetLatestCombatID();
         List<SkillLogs> skillLogs = new List<SkillLogs>();
@@ -79,6 +84,7 @@ public class TurnManager : Singleton<TurnManager>
             Debug.Log("Generating new enemies for wave " + currentWave);
             EnemyGenerator.Instance.GenerateEnemy();
             currentWave += 1;
+            ApplyPhaseStats();
         }
     }
 
@@ -160,7 +166,7 @@ public class TurnManager : Singleton<TurnManager>
                 SkillName = skill?.skillName ?? "Unknown Skill",
                 
                 ActionPointUsed = skill?.SkillPoint ?? 0,
-                ActionPointRecovery = skill?.SkillPointRestore ?? 0,
+                ActionPointRecovery = 0,
                 ActionSpeed = currentAction.ActionSpeed,
                 DamageEffectLogs = new(),
                 BuffEffectLogs = new(),
@@ -224,6 +230,9 @@ public class TurnManager : Singleton<TurnManager>
             }
         }
 
+        // Restore skill points based on current phase
+        RestoreSkillPointsByPhase();
+
         SetState(TurnState.PlayerTurnState);
         yield break;
     }
@@ -264,6 +273,116 @@ public class TurnManager : Singleton<TurnManager>
     public TurnState GetTurnState()
     {
         return currentState;
+    }
+
+    public int GetCurrentPhase()
+    {
+        // Determine phase based on global game progression instead of wave
+        if (playerCombat != null && playerCombat.GetUserData() != null)
+        {
+            return playerCombat.GetUserData().GamePhase;
+        }
+        return 1; // Default to Phase 1 if UserData is not assigned
+    }
+
+    public float GetMaxWave()
+    {
+        return wave;
+    }
+
+    private void RestoreSkillPointsByPhase()
+    {
+        int currentPhase = GetCurrentPhase();
+        int spToRestore = 0;
+
+        switch (currentPhase)
+        {
+            case 1:
+                spToRestore = phase1SPRestore;
+                break;
+            case 2:
+                spToRestore = phase2SPRestore;
+                break;
+            case 3:
+                spToRestore = phase3SPRestore;
+                break;
+            default:
+                spToRestore = 0;
+                break;
+        }
+
+        if (spToRestore > 0)
+        {
+            // Restore SP to player
+            playerCombat.SetSP(spToRestore);
+            Debug.Log($"[Phase {currentPhase}] Player restored {spToRestore} SP at end of turn");
+
+            // Restore SP to all alive enemies
+            foreach (GameObject enemyObj in GetAllEnemies())
+            {
+                EnemyCombat enemy = enemyObj.GetComponent<EnemyCombat>();
+                if (enemy != null && !enemy.IsDead())
+                {
+                    enemy.SetSP(spToRestore);
+                    Debug.Log($"[Phase {currentPhase}] {enemy.gameObject.name} restored {spToRestore} SP at end of turn");
+                }
+            }
+        }
+    }
+
+    private void ApplyPhaseStats()
+    {
+        int phase = GetCurrentPhase();
+        if (playerCombat == null || playerCombat.Stats == null) return;
+
+        switch (phase)
+        {
+            case 1:
+                playerCombat.Stats.MaxHealth = 1000;
+                playerCombat.Stats.MaxSkillPoint = 100;
+                break;
+            case 2:
+                playerCombat.Stats.MaxHealth = 2000;
+                playerCombat.Stats.MaxSkillPoint = 200;
+                break;
+            case 3:
+                playerCombat.Stats.MaxHealth = 3000;
+                playerCombat.Stats.MaxSkillPoint = 300;
+                break;
+            default:
+                playerCombat.Stats.MaxHealth = 3000;
+                playerCombat.Stats.MaxSkillPoint = 300;
+                break;
+        }
+
+        // Heal to full HP/SP to reflect the new max values if it's the start of battle
+        // Or if it's a tutorial quest and not the last wave
+        bool isTutorial = false;
+        if (EnemyGenerator.Instance != null)
+        {
+            QuestEnemies currentQuest = EnemyGenerator.Instance.GetCurrentQuest();
+            if (currentQuest != null && currentQuest.isTutorial)
+            {
+                isTutorial = true;
+            }
+        }
+
+        // currentWave already got incremented in HandlePlayerTurn, so if it's wave 1, we haven't started.
+        // Wait, HandlePlayerTurn also calls this AFTER currentWave += 1, so the new wave is currentWave.
+        // E.g. at start currentWave is 1. We heal.
+        // After wave 1 finishes, currentWave becomes 2. We heal if we want to heal between waves.
+        bool isStartOfBattle = (currentWave == 1);
+        
+        if (isStartOfBattle || isTutorial)
+        {
+            playerCombat.Heal(playerCombat.Stats.MaxHealth);
+            playerCombat.SetSP(playerCombat.Stats.MaxSkillPoint);
+            Debug.Log($"[Phase {phase}] Player stats updated and healed -> Max HP: {playerCombat.Stats.MaxHealth}, Max SP: {playerCombat.Stats.MaxSkillPoint}");
+        }
+        else
+        {
+            Debug.Log($"[Phase {phase}] Player stats updated -> Max HP: {playerCombat.Stats.MaxHealth}, Max SP: {playerCombat.Stats.MaxSkillPoint}");
+        }
     }
     // private void ShowLog(CombatActionLog log)
     // {

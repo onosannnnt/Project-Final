@@ -9,12 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7401980dc50a04460a7ba2d9ba0a542f, type: 3}
-  m_Name: RacoonStat
+  m_Script: {fileID: 11500000, guid: b03db1597306eae4db6869e334951f6d, type: 3}
+  m_Name: Quest2
   m_EditorClassIdentifier: 
-  EntityName: Raccoon
-  Icon: {fileID: -1102573834, guid: 1281f6e90a34745d6b62e3a9fecdd0c1, type: 3}
-  MaxHealth: 800
-  MaxSkillPoint: 500
-  MaxBreakArmor: 3
-  ActionSpeed: 20
+  MobPrefabs: []
+  BossPrefab: {fileID: 0}
