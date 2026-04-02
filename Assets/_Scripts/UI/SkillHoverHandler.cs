@@ -5,6 +5,7 @@ using TMPro;
 
 public class SkillHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
+    [Header("UI References")]
     private Image bgImage;
     private Sprite originalBGSprite;
     private Image checkmarkImage;
@@ -88,7 +89,6 @@ public class SkillHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerEx
         if (triggerCheck) 
         {
             SkillListManager manager = Object.FindFirstObjectByType<SkillListManager>();
-            if (manager != null) manager.CheckForSetMatch();
         }
     }
 
