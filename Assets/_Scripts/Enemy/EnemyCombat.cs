@@ -172,8 +172,15 @@ public class EnemyCombat : Entity
         if (PlayerCombat.instance.GetPlayerState != PlayerActionState.Targeting) return;
         if (PlayerCombat.instance.GetSelectedSkill == null) return;
         if (PlayerCombat.instance.GetSelectedSkill.TargetType == TargetType.Self) return;
+        
         if (PlayerCombat.instance.GetEnemyTarget() == this)
-            TurnManager.Instance.SetState(TurnState.SpeedCompareState);
+        {
+            // Submit the action on behalf of whichever player is currently active in TurnManager
+            Entity currentActive = TurnManager.Instance.CurrentActivePlayer ?? PlayerCombat.instance;
+            TurnManager.Instance.SubmitPlayerAction(currentActive, this, PlayerCombat.instance.GetSelectedSkill);
+            return;
+        }
+
         PlayerCombat.instance.SetEnemyTarget(this);
         TargetingPanel.instance.SetEnemyTargetPanel(this);
 

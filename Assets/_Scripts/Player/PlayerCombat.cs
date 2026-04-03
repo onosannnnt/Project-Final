@@ -71,9 +71,13 @@ public class PlayerCombat : Entity
     {
         if (selectedSkill == null) return;
         
+        Entity activePlayer = TurnManager.Instance.CurrentActivePlayer ?? this;
+
         if (selectedSkill.TargetType == TargetType.Self)
         {
-            Highlight(Color.yellow);
+            if (activePlayer is PlayerCombat pc) pc.Highlight(Color.yellow);
+            else if (activePlayer is PlayerAlly pa) pa.Highlight(Color.yellow);
+            
             foreach (var enemy in FindObjectsOfType<EnemyCombat>())
             {
                 enemy.Highlight(Color.white);
@@ -82,7 +86,9 @@ public class PlayerCombat : Entity
         }
         else if (selectedSkill.TargetType == TargetType.Enemy)
         {
-            Highlight(Color.white);
+            if (activePlayer is PlayerCombat pc) pc.Highlight(Color.white);
+            else if (activePlayer is PlayerAlly pa) pa.Highlight(Color.white);
+
             if (selectedSkill.TargetCount == TargetCount.Single)
             {
                 foreach (var enemy in FindObjectsOfType<EnemyCombat>())
@@ -107,20 +113,22 @@ public class PlayerCombat : Entity
     {
         if (playerState != PlayerActionState.Targeting || selectedSkill == null) return;
         if (selectedSkill.TargetType != TargetType.Self) return;
-        Highlight(Color.green);
+        if (TurnManager.Instance.CurrentActivePlayer == this || TurnManager.Instance.CurrentActivePlayer == null) Highlight(Color.green);
     }
     private void OnMouseExit()
     {
         if (playerState != PlayerActionState.Targeting || selectedSkill == null) return;
         if (selectedSkill.TargetType != TargetType.Self) return;
-        Highlight(Color.yellow);
+        if (TurnManager.Instance.CurrentActivePlayer == this || TurnManager.Instance.CurrentActivePlayer == null) Highlight(Color.yellow);
     }
     private void OnMouseDown()
     {
         if (playerState != PlayerActionState.Targeting || selectedSkill == null) return;
         if (selectedSkill.TargetType != TargetType.Self) return;
         Highlight(Color.white);
-        TurnManager.Instance.SetState(TurnState.SpeedCompareState);
+        
+        Entity currentActive = TurnManager.Instance.CurrentActivePlayer ?? this;
+        TurnManager.Instance.SubmitPlayerAction(currentActive, currentActive, selectedSkill);
     }
     public void Action(CombatActionLog log)
     {

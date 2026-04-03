@@ -18,6 +18,15 @@ public class TurnManager : Singleton<TurnManager>
     public int turnRound = 0;
     public int combatID = 0;
     public int currentWave = 1;
+    
+    // --- Multiplayer Turn Variables ---
+    private int currentTeamMemberIndex = 0;
+    private List<ActionQueue> pendingPlayerActions = new List<ActionQueue>();
+    public Entity CurrentActivePlayer => 
+        (PlayerTeamManager.Instance != null && PlayerTeamManager.Instance.ActiveTeamMembers.Count > 0 && currentTeamMemberIndex < PlayerTeamManager.Instance.ActiveTeamMembers.Count) 
+        ? PlayerTeamManager.Instance.ActiveTeamMembers[currentTeamMemberIndex] 
+        : null;
+
     private async void Start()
     {
         playerCombat = PlayerCombat.instance;
@@ -53,6 +62,8 @@ public class TurnManager : Singleton<TurnManager>
             case TurnState.PlayerTurnState:
                 PlayerActionQueueUI.SetActionQueue(null);
                 EnemyActionQueueUI.SetActionQueue(null);
+                currentTeamMemberIndex = 0;
+                pendingPlayerActions.Clear();
                 HandlePlayerTurn();
                 break;
             case TurnState.SpeedCompareState:
@@ -77,12 +88,62 @@ public class TurnManager : Singleton<TurnManager>
                 break;
         }
     }
+    public void SubmitPlayerAction(Entity caster, Entity target, Skill skill)
+    {
+        // Calculate dynamic speed.
+        float actionSpeed = caster.Stats.ActionSpeed; // Use Getter if you have a dynamic read
+        pendingPlayerActions.Add(new ActionQueue(caster, target, skill, actionSpeed));
+        
+        currentTeamMemberIndex++;
+
+        // Reset UI stuff
+        playerCombat.SetSelectedSkill(null);
+        playerCombat.SetEnemyTarget(null);
+        playerCombat.SetPlayerState(PlayerActionState.Idle);
+        TargetingPanel.instance.SetActivePanel(false);
+        SkillPanelUI.Instance.gameObject.SetActive(false);
+
+        foreach (var enemy in FindObjectsOfType<EnemyCombat>())
+        {
+            enemy.Highlight(Color.white);
+        }
+        playerCombat.Highlight(Color.white);
+        foreach (var ally in FindObjectsOfType<PlayerAlly>()) 
+        {
+            ally.GetComponentInChildren<SpriteRenderer>().color = Color.white;
+        }
+
+        if (currentTeamMemberIndex >= PlayerTeamManager.Instance.ActiveTeamMembers.Count)
+        {
+            // Everyone has chosen, move to sorting phase
+            SetState(TurnState.SpeedCompareState);
+        }
+        else
+        {
+            // More characters need to choose
+            HandlePlayerTurn();
+        }
+    }
+
     private void HandlePlayerTurn()
     {
+        Entity activePlayer = CurrentActivePlayer;
+        if (activePlayer == null) 
+        {
+            SetState(TurnState.SpeedCompareState);
+            return;
+        }
+
+        Debug.Log($"[TurnManager] Waiting for {activePlayer.Stats.EntityName} to choose an action.");
+
         playerCombat.SetEnemyTarget(GetFirstEnemy());
         TargetingPanel.instance.SetEnemyTargetPanel(playerCombat.GetEnemyTarget());
         ActionBarUI.Instance.gameObject.SetActive(true);
-        turnRound++;
+        
+        if (currentTeamMemberIndex == 0) // Only increment turnRound once per cycle
+        {
+            turnRound++;
+        }
         List<GameObject> remainingEnemies = GetAllEnemies();
         remainingEnemies.RemoveAll(enemy => enemy.GetComponent<EnemyCombat>().IsDead());
         if (remainingEnemies.Count == 0)
@@ -98,14 +159,11 @@ public class TurnManager : Singleton<TurnManager>
     {
         ActionBarUI.Instance.gameObject.SetActive(false);
         SkillPanelUI.Instance.gameObject.SetActive(false);
-        ActionQueue playerAction = new ActionQueue(playerCombat, playerCombat.GetEnemyTarget(), playerCombat.GetSelectedSkill, playerCombat.GetStat(StatType.ActionSpeed));
-        // {
-        //     Caster = playerCombat,
-        //     Target = playerCombat.GetEnemyTarget(),
-        //     Skill = playerCombat.GetSelectedSkill,
-        //     ActionSpeed = playerCombat.GetStat(StatType.ActionSpeed)
-        // };
-        actionQueue.Add(playerAction);
+        
+        // Add all confirmed player actions to the main queue
+        actionQueue.AddRange(pendingPlayerActions);
+        pendingPlayerActions.Clear();
+
         List<GameObject> enemies = GetAllEnemies();
         enemies.RemoveAll(enemy => enemy.GetComponent<EnemyCombat>().IsDead());
         foreach (GameObject enemy in enemies)
@@ -190,9 +248,39 @@ public class TurnManager : Singleton<TurnManager>
             }
             if (entity.CompareTag("Player"))
             {
-                playerCombat.buffController.OnTurnStart(playerCombat, log);
-                if (entity.CanAction() == true) playerCombat.Action(log);
-                playerCombat.buffController.OnTurnEnd(playerCombat);
+                entity.buffController.OnTurnStart(entity, log);
+                if (entity.CanAction() == true) 
+                {
+                    if (entity.CurrentSP >= skill.SkillPoint)
+                    {
+                        entity.SetSP(-skill.SkillPoint);
+                        switch (skill.TargetType)
+                        {
+                            case TargetType.Self:
+                                entity.skillManager.UseSkill(skill, entity, log);
+                                break;
+                            case TargetType.Enemy:
+                                if (skill.TargetCount == TargetCount.Single)
+                                {
+                                    entity.skillManager.UseSkill(skill, target, log);
+                                }
+                                else if (skill.TargetCount == TargetCount.All)
+                                {
+                                    foreach (var t in GetAllEnemies())
+                                    {
+                                        if (t.GetComponent<EnemyCombat>() != null && !t.GetComponent<EnemyCombat>().IsDead())
+                                            entity.skillManager.UseSkill(skill, t.GetComponent<EnemyCombat>(), log);
+                                    }
+                                }
+                                break;
+                        }
+                    }
+                    else 
+                    {
+                        Debug.Log("Not enough SP to use " + skill.name);
+                    }
+                }
+                entity.buffController.OnTurnEnd(entity);
                 PlayerActionQueueUI.SetActionQueue(currentAction);
             }
             else if (entity.CompareTag("Enemy"))

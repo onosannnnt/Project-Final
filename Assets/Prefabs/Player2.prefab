@@ -94,9 +94,9 @@ GameObject:
   m_Component:
   - component: {fileID: 9066802528797163780}
   - component: {fileID: 8162448845763034006}
-  - component: {fileID: 7977669114527906489}
+  - component: {fileID: 4295723332852168888}
   m_Layer: 0
-  m_Name: PlayerCombat
+  m_Name: Player2
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -164,7 +164,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &7977669114527906489
+--- !u!114 &4295723332852168888
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -173,7 +173,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2805685396157638668}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa9ddd893f2fc4d58b020320d1096fca, type: 3}
+  m_Script: {fileID: 11500000, guid: 2cc4f1aa6aa84427f9523e53da0c724b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   DamageTextPrefab: {fileID: 827353491416033085, guid: c4b672b6114e644118bff5090eaf7a83,
@@ -185,7 +185,6 @@ MonoBehaviour:
   RandomSpawnOffset: 0.1
   stats: {fileID: 0}
   skills: {fileID: 0}
-  userData: {fileID: 0}
 --- !u!1 &8764232415643294593
 GameObject:
   m_ObjectHideFlags: 0

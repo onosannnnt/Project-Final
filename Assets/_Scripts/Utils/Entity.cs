@@ -13,7 +13,7 @@ public abstract class Entity : MonoBehaviour
     public float SpreadAmount = 0.3f;       // How far left/right the text will drift
     public float RandomSpawnOffset = 0.1f; // Slight scatter so they don't spawn perfectly overlapping
     [Header("Properties")]
-    [SerializeField] private EntitiesBaseStat stats; // Base stats from ScriptableObject
+    [SerializeField] protected EntitiesBaseStat stats; // Base stats from ScriptableObject
     [SerializeField] private SkillLoadout skills;
     protected int ID;
     protected float currentHealth;
@@ -34,7 +34,11 @@ public abstract class Entity : MonoBehaviour
     {
         currentHealth = GetStat(StatType.MaxHealth);
         currentSkillPoint = (int)GetStat(StatType.MaxSkillPoint);
-        skillManager.SetSkills(skills.EquippedSkills);
+        
+        if (skills != null)
+        {
+            skillManager.SetSkills(skills.EquippedSkills);
+        }
 
         OutgoingModifiers.Add(new CriticalModifier());
         IncomingModifiers.Add(new ResistanceModifier());

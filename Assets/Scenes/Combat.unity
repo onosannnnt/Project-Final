@@ -2454,6 +2454,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillsButton: {fileID: 895731535}
   InventoryButton: {fileID: 1217524836}
+  offset: {x: 0.45, y: 0.04, z: 0.03}
 --- !u!1 &242253182
 GameObject:
   m_ObjectHideFlags: 0
@@ -2675,6 +2676,7 @@ MonoBehaviour:
     type: 3}
   SkillPanel: {fileID: 349563404}
   BackButton: {fileID: 633267196}
+  offset: {x: 0.49, y: -0.06, z: 0.11}
 --- !u!1 &258435880
 GameObject:
   m_ObjectHideFlags: 0
@@ -5211,6 +5213,7 @@ Transform:
   - {fileID: 1426198910}
   - {fileID: 2057770490}
   - {fileID: 1470899739}
+  - {fileID: 918057048}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &428060467
@@ -11375,6 +11378,57 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 624.04736, y: 99.999985}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &918057047
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 918057048}
+  - component: {fileID: 918057049}
+  m_Layer: 0
+  m_Name: PlayerTeamManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &918057048
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 918057047}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 401934046}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &918057049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 918057047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d98b90995ba1f48d1915cd0ce1a8c76b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  worldParent: {fileID: 25655269}
+  mainPlayerPrefab: {fileID: 2805685396157638668, guid: bee767d543ab4463aaf2e5e987d25263,
+    type: 3}
+  allyPrefab: {fileID: 2805685396157638668, guid: 121f7e8dd9a4b4d70a155477593d1aee,
+    type: 3}
+  mainPlayerSpeedRatio: 0.7
+  ActiveTeamMembers: []
 --- !u!1 &925636150
 GameObject:
   m_ObjectHideFlags: 0
@@ -15888,8 +15942,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 985369183}
   m_HandleRect: {fileID: 985369182}
   m_Direction: 2
-  m_Value: 1.0000002
-  m_Size: 0.73130476
+  m_Value: 1
+  m_Size: 0.7313047
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
