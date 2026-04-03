@@ -94,7 +94,10 @@ public class TargetingPanel : MonoBehaviour
             Destroy(child.gameObject);
         }
         if (currentTarget == null) return;
-        List<Buff> statusBuffs = currentTarget.buffController.GetBuffsByType(BuffType.CrowdControl);
+        List<Buff> statusBuffs = new List<Buff>();
+        statusBuffs.AddRange(currentTarget.buffController.GetBuffsByType(BuffType.CrowdControl));
+        statusBuffs.AddRange(currentTarget.buffController.GetBuffsByType(BuffType.Debuff));
+        
         if (statusBuffs.Count == 0) StatusBuffParent.gameObject.SetActive(false);
         else StatusBuffParent.gameObject.SetActive(true);
         if (statusBuffs.Count == 0) return;

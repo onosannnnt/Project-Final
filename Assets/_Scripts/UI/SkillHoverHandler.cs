@@ -99,14 +99,6 @@ public class SkillHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerEx
         if (selectedBG != null) selectedBG.SetActive(true); 
     }
 
-    public void ApplySetVisuals(SkillSet set)
-    {
-        if (bgImage == null) bgImage = GetComponent<Image>();
-        if (bgImage == null) return;
-
-        bgImage.sprite = (set == null) ? originalBGSprite : set.setSelectedBG;
-    }
-
     void OnDisable()
     {
         if (hoverBG != null) hoverBG.SetActive(false);

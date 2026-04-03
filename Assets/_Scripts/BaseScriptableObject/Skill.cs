@@ -15,6 +15,7 @@ public class Skill : ScriptableObject
     [Header("Attribute")]
     public TargetType TargetType;
     public TargetCount TargetCount;
+    public bool reducesArmor = true; // Indicates if this skill reduces enemy armor
     public List<SkillEffect> SkillEffects;
 
     public bool Execute(Entity caster, Entity target, CombatActionLog log)

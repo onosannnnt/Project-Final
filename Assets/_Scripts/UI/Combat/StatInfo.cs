@@ -58,7 +58,10 @@ public class StatInfoUI : MonoBehaviour
     {
         if (BuffCardPrefab == null || BuffTransform == null || DebuffTransform == null) return;
         Buffs = Entity.buffController.GetBuffs();
-        Debuffs = Entity.buffController.GetDebuffs();
+        
+        Debuffs = new List<Buff>();
+        Debuffs.AddRange(Entity.buffController.GetDebuffs());
+        Debuffs.AddRange(Entity.buffController.GetBuffsByType(BuffType.CrowdControl));
 
         BuffHeaderText.text = $"Buffs: {Buffs.Count}";
         DebuffHeaderText.text = $"Debuffs: {Debuffs.Count}";
@@ -72,20 +75,24 @@ public class StatInfoUI : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        if (Buffs.Count == 0) return;
-        foreach (var buff in Buffs)
+        if (Buffs.Count > 0)
         {
-            GameObject buffGO = Instantiate(BuffCardPrefab, BuffTransform);
-            BuffItemUI ui = buffGO.GetComponent<BuffItemUI>();
-            ui.Setup($"{buff.BuffName}({buff.Duration})", buff.Description, buff.Icon, buff.Stack);
+            foreach (var buff in Buffs)
+            {
+                GameObject buffGO = Instantiate(BuffCardPrefab, BuffTransform);
+                BuffItemUI ui = buffGO.GetComponent<BuffItemUI>();
+                ui.Setup($"{buff.BuffName}({buff.Duration})", buff.Description, buff.Icon, buff.Stack);
+            }
         }
 
-        if (Debuffs.Count == 0) return;
-        foreach (var debuff in Debuffs)
+        if (Debuffs.Count > 0)
         {
-            GameObject debuffGO = Instantiate(BuffCardPrefab, DebuffTransform);
-            BuffItemUI ui = debuffGO.GetComponent<BuffItemUI>();
-            ui.Setup($"{debuff.BuffName}({debuff.Duration})", debuff.Description, debuff.Icon, debuff.Stack);
+            foreach (var debuff in Debuffs)
+            {
+                GameObject debuffGO = Instantiate(BuffCardPrefab, DebuffTransform);
+                BuffItemUI ui = debuffGO.GetComponent<BuffItemUI>();
+                ui.Setup($"{debuff.BuffName}({debuff.Duration})", debuff.Description, debuff.Icon, debuff.Stack);
+            }
         }
     }
     private void SetupLevelText()
@@ -134,7 +141,11 @@ public class StatInfoUI : MonoBehaviour
             Destroy(child.gameObject);
         }
         if (Entity == null) return;
-        List<Buff> statusBuffs = Entity.buffController.GetBuffsByType(BuffType.CrowdControl);
+        
+        List<Buff> statusBuffs = new List<Buff>();
+        statusBuffs.AddRange(Entity.buffController.GetBuffsByType(BuffType.CrowdControl));
+        statusBuffs.AddRange(Entity.buffController.GetBuffsByType(BuffType.Debuff));
+        
         if (statusBuffs.Count == 0) StatusBuffParent.gameObject.SetActive(false);
         else StatusBuffParent.gameObject.SetActive(true);
         if (statusBuffs.Count == 0) return;

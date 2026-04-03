@@ -76,7 +76,10 @@ public class HealthbarUI : Singleton<HealthbarUI>
             Destroy(child.gameObject);
         }
         if (player == null) return;
-        List<Buff> statusBuffs = player.buffController.GetBuffsByType(BuffType.CrowdControl);
+        List<Buff> statusBuffs = new List<Buff>();
+        statusBuffs.AddRange(player.buffController.GetBuffsByType(BuffType.CrowdControl));
+        statusBuffs.AddRange(player.buffController.GetBuffsByType(BuffType.Debuff));
+        
         if (statusBuffs.Count == 0) StatusBuffParent.gameObject.SetActive(false);
         else StatusBuffParent.gameObject.SetActive(true);
         if (statusBuffs.Count == 0) return;

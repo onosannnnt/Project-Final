@@ -18,7 +18,7 @@ public class SkillManager
         bool skillHit = skill.Execute(owner, target, log);
 
         // --- Break Mechanic ---
-        if (skillHit && owner is PlayerCombat && target is EnemyCombat enemyTarget)
+        if (skillHit && owner is PlayerCombat && target is EnemyCombat enemyTarget && skill.reducesArmor)
         {
             if (skill.TargetType == TargetType.Enemy)
             {
