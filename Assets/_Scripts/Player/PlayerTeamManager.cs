@@ -21,7 +21,7 @@ public class PlayerTeamManager : Singleton<PlayerTeamManager>
         // Lock in the total speed the first time we check it so we don't recalculate off a scaled version
         if (originalTotalSpeed < 0)
         {
-            originalTotalSpeed = PlayerCombat.instance.Stats.ActionSpeed;
+            originalTotalSpeed = PlayerCombat.instance.GetStat(StatType.ActionSpeed);
         }
 
         return originalTotalSpeed;
@@ -30,8 +30,8 @@ public class PlayerTeamManager : Singleton<PlayerTeamManager>
     // Position logic similar to enemy
     private Vector3[] spawnPositions = new Vector3[]
     {
-        new Vector3(0.96f, 0.03f, -0.36f), // Position 1 (Main Player)
-        new Vector3(0.91f, -0.43f, 0.72f), // Position 2 (Ally 1)
+        new Vector3(0.911f, -0.66f, 0f), // Position 1 (Main Player)
+        new Vector3(1.341f, -0.696f, 0.72f), // Position 2 (Ally 1)
         new Vector3(0.91f, -0.21f, 0.72f), // Position 3 (Ally 2 - future proofing)
         new Vector3(1.5f, 0.03f, 0f),      // Position 4 (Ally 3 - future proofing)
         new Vector3(1f, 0.03f, 0.5f)       // Position 5 (Ally 4 - future proofing)
@@ -40,11 +40,11 @@ public class PlayerTeamManager : Singleton<PlayerTeamManager>
     // Rotation logic (Euler angles)
     private Vector3[] spawnRotations = new Vector3[]
     {
-        new Vector3(0f, 156.55f, -8.3f), // Rotation 1 (Main Player)
-        new Vector3(0f, 150.7f, -5.55f), // Rotation 2 (Ally 1)
-        new Vector3(0f, 50f, 0f), // Rotation 3 (Ally 2)
-        new Vector3(0f, 50f, 0f), // Rotation 4 (Ally 3)
-        new Vector3(0f, 50f, 0f)  // Rotation 5 (Ally 4)
+        new Vector3(0f, 180f,0f), // Rotation 1 (Main Player)
+        new Vector3(0f, 180f,0f), // Rotation 2 (Ally 1)
+        new Vector3(0f, 180f, 0f), // Rotation 3 (Ally 2)
+        new Vector3(0f, 180f, 0f), // Rotation 4 (Ally 3)
+        new Vector3(0f, 180f, 0f)  // Rotation 5 (Ally 4)
     };
 
     public List<Entity> ActiveTeamMembers = new List<Entity>();

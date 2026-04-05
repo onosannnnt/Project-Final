@@ -9,9 +9,11 @@ public class EnemyGenerator : Singleton<EnemyGenerator>
 
     private Vector3[] spawnPositions = new Vector3[]
     {
-        new Vector3(-1.38f, 0.03f, -0.57f), // ตำแหน่งที่ 1 (ซ้าย)
-        new Vector3(-0.93f, 0.03f, -1.52f), // ตำแหน่งที่ 2 (กลาง)
-        new Vector3(-0.91f, -0.21f, 0.72f)  // ตำแหน่งที่ 3 (ขวา)
+        new Vector3(-2.085f, -0.771f, 0f), // ตำแหน่งที่ 1 (ซ้ายสุด)
+        new Vector3(-1.596f, -0.493f, 0f), // ตำแหน่งที่ 2 (ซ้าย)
+        new Vector3(-0.568f, 0.209f, 0f),  // ตำแหน่งที่ 3 (ขวาสุด)
+        new Vector3(-1.126f, -0.097f, 0f),  // ตำแหน่งที่ 4 (ขวา)
+        new Vector3(-1.919f, 0.139f, 0f)  // ตำแหน่งที่ 5 (กลาง)
     };
 
     void Start()
@@ -76,7 +78,7 @@ public class EnemyGenerator : Singleton<EnemyGenerator>
         int waveIndex = Mathf.Clamp(currentWave - 1, 0, currentQuest.waves.Length - 1);
         WaveConfig currentWaveConfig = currentQuest.waves[waveIndex];
 
-        Quaternion spawnRotation = Quaternion.Euler(0, -50, 0);
+        Quaternion spawnRotation = Quaternion.Euler(0, 0, 0);
 
         for (int i = 0; i < currentWaveConfig.enemies.Length; i++)
         {

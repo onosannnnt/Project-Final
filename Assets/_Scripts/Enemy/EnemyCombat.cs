@@ -30,13 +30,20 @@ public class EnemyCombat : Entity
         }
     }
 
+    private PlayerEntity GetActivePlayer()
+    {
+        if (TurnManager.Instance != null && TurnManager.Instance.CurrentActivePlayer is PlayerEntity pe)
+            return pe;
+        return PlayerCombat.instance;
+    }
+
     protected override void Start()
     {
         base.Start();
         maxhealthBarForegroundWidth = healthBarForeground.GetComponent<RectTransform>().sizeDelta.x;
-        if (PlayerCombat.instance.GetEnemyTarget() == this) TargetingPanel.instance.SetEnemyTargetPanel(this);
+        if (GetActivePlayer() != null && GetActivePlayer().GetEnemyTarget() == this) TargetingPanel.instance.SetEnemyTargetPanel(this);
 
-        currentBreakArmor = Stats.MaxBreakArmor;
+        currentBreakArmor = (int)GetStat(StatType.MaxBreakArmor);
         IncomingModifiers.Add(new BreakDamageModifier(this));
         
         UpdateArmorUI();
@@ -53,36 +60,36 @@ public class EnemyCombat : Entity
             }
             else
             {
-                breakArmorText.text = $"{currentBreakArmor}/{Stats.MaxBreakArmor}";
+                breakArmorText.text = $"{currentBreakArmor}/{GetStat(StatType.MaxBreakArmor)}";
                 breakArmorText.color = Color.white;
             }
         }
     }
     private void Update()
     {
-        if (PlayerCombat.instance.GetPlayerState != PlayerActionState.Targeting || PlayerCombat.instance.GetSelectedSkill == null)
+        if (GetActivePlayer().GetPlayerState != PlayerActionState.Targeting || GetActivePlayer().GetSelectedSkill == null)
         {
             Highlight(Color.white);
             return;
         }
 
-        if (PlayerCombat.instance.GetSelectedSkill.TargetType == TargetType.Self)
+        if (GetActivePlayer().GetSelectedSkill.TargetType == TargetType.Self)
         {
             Highlight(Color.white);
             return;
         }
 
         // If the selected skill targets all enemies, highlight all in red
-        if (PlayerCombat.instance.GetSelectedSkill.TargetType == TargetType.Enemy)
+        if (GetActivePlayer().GetSelectedSkill.TargetType == TargetType.Enemy)
         {
-            if (PlayerCombat.instance.GetSelectedSkill.TargetCount == TargetCount.All)
+            if (GetActivePlayer().GetSelectedSkill.TargetCount == TargetCount.All)
             {
                 Highlight(Color.red);
             }
             // If the selected skill targets a single enemy
-            else if (PlayerCombat.instance.GetSelectedSkill.TargetCount == TargetCount.Single)
+            else if (GetActivePlayer().GetSelectedSkill.TargetCount == TargetCount.Single)
             {
-                if (PlayerCombat.instance.GetEnemyTarget() == this)
+                if (GetActivePlayer().GetEnemyTarget() == this)
                     Highlight(Color.red);
                 else
                     Highlight(Color.yellow);
@@ -124,7 +131,7 @@ public class EnemyCombat : Entity
         {
             // Recover logic
             currentBreakState = BreakState.Normal;
-            currentBreakArmor = Stats.MaxBreakArmor;
+            currentBreakArmor = (int)GetStat(StatType.MaxBreakArmor);
             Debug.Log($"{gameObject.name} has recovered. Armor reset to Max.");
             // NOTE: In the future, you can add conditional logic here to prevent recovery 
         }
@@ -169,19 +176,19 @@ public class EnemyCombat : Entity
 
     public void OnMouseDown()
     {
-        if (PlayerCombat.instance.GetPlayerState != PlayerActionState.Targeting) return;
-        if (PlayerCombat.instance.GetSelectedSkill == null) return;
-        if (PlayerCombat.instance.GetSelectedSkill.TargetType == TargetType.Self) return;
+        if (GetActivePlayer().GetPlayerState != PlayerActionState.Targeting) return;
+        if (GetActivePlayer().GetSelectedSkill == null) return;
+        if (GetActivePlayer().GetSelectedSkill.TargetType == TargetType.Self) return;
         
-        if (PlayerCombat.instance.GetEnemyTarget() == this)
+        if (GetActivePlayer().GetEnemyTarget() == this)
         {
             // Submit the action on behalf of whichever player is currently active in TurnManager
-            Entity currentActive = TurnManager.Instance.CurrentActivePlayer ?? PlayerCombat.instance;
-            TurnManager.Instance.SubmitPlayerAction(currentActive, this, PlayerCombat.instance.GetSelectedSkill);
+            Entity currentActive = TurnManager.Instance.CurrentActivePlayer ?? GetActivePlayer();
+            TurnManager.Instance.SubmitPlayerAction(currentActive, this, GetActivePlayer().GetSelectedSkill);
             return;
         }
 
-        PlayerCombat.instance.SetEnemyTarget(this);
+        GetActivePlayer().SetEnemyTarget(this);
         TargetingPanel.instance.SetEnemyTargetPanel(this);
 
     }

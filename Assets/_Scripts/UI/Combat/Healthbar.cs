@@ -34,19 +34,54 @@ public class HealthbarUI : Singleton<HealthbarUI>
         }
         ForegroundInitialWidth = HealthForeground.rectTransform.sizeDelta.x;
         player = PlayerCombat.instance;
+        if (player != null)
+        {
+            player.OnHealthChanged += UpdateHealthBar;
+            player.OnSPChanged += UpdateSPBar;
+            player.buffController.OnBuffsChanged += UpdateBuffs;
+            
+            // Initialization updates
+            UpdateHealthBar(player.CurrentHealth, player.GetStat(StatType.MaxHealth));
+            UpdateSPBar(player.CurrentSP, (int)player.GetStat(StatType.MaxSkillPoint));
+            UpdateBuffs();
+        }
     }
-    private void Update()
+
+    private void OnDestroy()
     {
-        if (PlayerCombat.instance == null) return;
+        if (player != null)
+        {
+            player.OnHealthChanged -= UpdateHealthBar;
+            player.OnSPChanged -= UpdateSPBar;
+            if (player.buffController != null)
+            {
+                player.buffController.OnBuffsChanged -= UpdateBuffs;
+            }
+        }
+    }
 
-        float healthPercent = (float)player.CurrentHealth / PlayerCombat.instance.Stats.MaxHealth;
+    private void UpdateHealthBar(float currentHealth, float maxHealth)
+    {
+        float healthPercent = maxHealth > 0 ? (float)currentHealth / maxHealth : 0;
         HealthForeground.rectTransform.sizeDelta = new Vector2(ForegroundInitialWidth * healthPercent, HealthForeground.rectTransform.sizeDelta.y);
+        UpdateInfoText();
+    }
 
-        float spPercent = (float)player.CurrentSP / PlayerCombat.instance.Stats.MaxSkillPoint;
+    private void UpdateSPBar(int currentSP, int maxSP)
+    {
+        float spPercent = maxSP > 0 ? (float)currentSP / maxSP : 0;
         SPForeground.rectTransform.sizeDelta = new Vector2(ForegroundInitialWidth * spPercent, SPForeground.rectTransform.sizeDelta.y);
+        UpdateInfoText();
+    }
 
+    private void UpdateInfoText()
+    {
+        if (player == null) return;
         HealthInfo.text = $"HP {Math.Max(0, player.CurrentHealth):F2} | SP {Math.Max(0, player.CurrentSP):F2}";
+    }
 
+    private void UpdateBuffs()
+    {
         SetBuffs();
         SetStatusBuff();
     }
@@ -58,15 +93,15 @@ public class HealthbarUI : Singleton<HealthbarUI>
             Destroy(child.gameObject);
         }
         if (PlayerCombat.instance == null) return;
-        List<Buff> Buffs = player.buffController.GetBuffsByType(BuffType.Buff);
+        List<ActiveBuff> Buffs = player.buffController.GetBuffsByType(BuffType.Buff);
         if (Buffs.Count == 0) BuffParent.gameObject.SetActive(false);
         else BuffParent.gameObject.SetActive(true);
         foreach (var buff in Buffs)
         {
             GameObject buffObj = Instantiate(BuffPrefab, BuffParent.transform);
-            buffObj.GetComponent<Image>().sprite = buff.Icon;
-            buffObj.transform.Find("Duration").GetComponentInChildren<TextMeshProUGUI>().text = BuffStackColor(buff.Duration) + $"{buff.Duration}</color>";
-            buffObj.transform.Find("Stack").GetComponentInChildren<TextMeshProUGUI>().text = BuffStackColor(buff.Stack) + $"{buff.Stack}</color>";
+            buffObj.GetComponent<Image>().sprite = buff.Data.Icon;
+            buffObj.transform.Find("Duration").GetComponentInChildren<TextMeshProUGUI>().text = BuffStackColor(buff.CurrentDuration) + $"{buff.CurrentDuration}</color>";
+            buffObj.transform.Find("Stack").GetComponentInChildren<TextMeshProUGUI>().text = BuffStackColor(buff.CurrentStack) + $"{buff.CurrentStack}</color>";
         }
     }
     public void SetStatusBuff()
@@ -76,7 +111,7 @@ public class HealthbarUI : Singleton<HealthbarUI>
             Destroy(child.gameObject);
         }
         if (player == null) return;
-        List<Buff> statusBuffs = new List<Buff>();
+        List<ActiveBuff> statusBuffs = new List<ActiveBuff>();
         statusBuffs.AddRange(player.buffController.GetBuffsByType(BuffType.CrowdControl));
         statusBuffs.AddRange(player.buffController.GetBuffsByType(BuffType.Debuff));
         
@@ -86,7 +121,7 @@ public class HealthbarUI : Singleton<HealthbarUI>
         foreach (var buff in statusBuffs)
         {
             GameObject buffObj = Instantiate(StatusBuffPrefab, StatusBuffParent.transform);
-            buffObj.GetComponent<Image>().sprite = buff.Icon;
+            buffObj.GetComponent<Image>().sprite = buff.Data.Icon;
         }
     }
 

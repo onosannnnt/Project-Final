@@ -7,17 +7,17 @@ public class HealOverTimeEffect : Buff
     [Tooltip("Base Heal amount applied each turn")]
     public float BaseHeal;
 
-    public override void OnTurnStart(Entity owner, CombatActionLog log)
+    public override void OnTurnStart(Entity owner, CombatActionLog log, ActiveBuff buffState)
     {
         float totalHeal = 0f;
 
         if (StackCalculationType == StackMultiplierType.Linear)
         {
-            totalHeal = BaseHeal * Stack;
+            totalHeal = BaseHeal * buffState.CurrentStack;
         }
         else if (StackCalculationType == StackMultiplierType.DiminishingReturn)
         {
-            float effectiveStack = Stack / (Stack + Mathf.Max(Threshold, 1));
+            float effectiveStack = (float)buffState.CurrentStack / (buffState.CurrentStack + Mathf.Max(Threshold, 1));
             totalHeal = BaseHeal * effectiveStack;
         }
         

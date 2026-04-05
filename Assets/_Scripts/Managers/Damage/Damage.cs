@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public enum DamageElement
 {
@@ -39,27 +40,29 @@ public class Damage
 }
 public static class Utils
 {
+    private static readonly Dictionary<StatScale, StatType> ScalingStatMap = new()
+    {
+        { StatScale.Health, StatType.MaxHealth },
+        { StatScale.SkillPoint, StatType.MaxSkillPoint },
+        { StatScale.ActionSpeed, StatType.ActionSpeed }
+    };
+
+    private static readonly Dictionary<DamageElement, Color> DamageColorMap = new()
+    {
+        { DamageElement.Physical, Color.white },
+        { DamageElement.Fire, Color.red },
+        { DamageElement.Frost, Color.cyan },
+        { DamageElement.Lightning, Color.yellow },
+        { DamageElement.Wind, Color.green }
+    };
+
     public static StatType GetScalingStat(StatScale type)
     {
-        return type switch
-        {
-            StatScale.Health => StatType.MaxHealth,
-            StatScale.SkillPoint => StatType.MaxSkillPoint,
-            StatScale.ActionSpeed => StatType.ActionSpeed,
-            _ => StatType.None
-        };
+        return ScalingStatMap.TryGetValue(type, out var stat) ? stat : StatType.None;
     }
 
     public static Color GetDamageColor(DamageElement element)
     {
-        return element switch
-        {
-            DamageElement.Physical => Color.white,
-            DamageElement.Fire => Color.red,
-            DamageElement.Frost => Color.cyan,
-            DamageElement.Lightning => Color.yellow,
-            DamageElement.Wind => Color.green,
-            _ => Color.white
-        };
+        return DamageColorMap.TryGetValue(element, out var color) ? color : Color.white;
     }
 }

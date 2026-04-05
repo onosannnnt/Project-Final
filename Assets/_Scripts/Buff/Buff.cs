@@ -34,51 +34,54 @@ public enum BuffOrder
 [CreateAssetMenu(fileName = "Buff", menuName = "ScriptableObjects/Buff/Buff")]
 public class Buff : ScriptableObject
 {
+    [Header("General Info")]
     public string BuffName;
-    public string Description;
+    [TextArea(2, 4)] public string Description;
     public Sprite Icon;
     public BuffType buffType;
+
+    [Header("Duration Settings")]
+    public bool isPermanent = false; // Check this if the buff should stay forever until manually removed
     public int Duration = 3;
+
+    [Header("Stacking Mechanics")]
     public bool isStackable = false;
-    public int Stack = 1;
+    public int MaxStack = 0; // 0 means no limit
     public StackMultiplierType StackCalculationType;
     [Tooltip("Used for Target to do something when stack reach certain amount")]
     public int Threshold;
     [Tooltip("Used for Diminishing Return Stack Calculation")]
     public float DiminishingReturnDecayFactor;
+
+    [Header("Effects & Modifiers")]
     public TargetType targetType;
     public List<StatModifier> modifiers = new List<StatModifier>();
-    public bool isInitialized = true;
-    [HideInInspector] public bool wasReappliedThisTurn = false;
 
-    public virtual void OnApply(Entity owner) { }
-    public virtual void OnTurnStart(Entity owner, CombatActionLog log)
+    public virtual void OnApply(Entity owner, ActiveBuff buffState) { }
+    public virtual void OnTurnStart(Entity owner, CombatActionLog log, ActiveBuff buffState)
     {
-        wasReappliedThisTurn = false;
+        buffState.wasReappliedThisTurn = false;
     }
-    public virtual void OnTurnEnd(Entity owner)
+    public virtual void OnTurnEnd(Entity owner, ActiveBuff buffState)
     {
-        if (isInitialized)
+        if (isPermanent) return;
+
+        if (buffState.isInitialized)
         {
             Debug.Log("Buff duration countdown started");
-            isInitialized = false;
+            buffState.isInitialized = false;
             return;
         }
-        if (wasReappliedThisTurn)
+        if (buffState.wasReappliedThisTurn)
         {
             Debug.Log("Buff was reapplied this turn, skipping duration decrease");
             return;
         }
-        Duration -= 1;
+        buffState.CurrentDuration -= 1;
     }
-    public virtual void OnRefresh(Entity owner)
+    public virtual void OnRefresh(Entity owner, ActiveBuff buffState)
     {
         // default ไม่ทำอะไร
     }
-    public virtual void OnRemove(Entity owner) { }
-
-    public Buff Clone()
-    {
-        return Instantiate(this);
-    }
+    public virtual void OnRemove(Entity owner, ActiveBuff buffState) { }
 }

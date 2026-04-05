@@ -8,17 +8,17 @@ public class DOT : Buff
     [Tooltip("Base Damage to be dealt each turn")]
     public float BaseDamage;
 
-    public override void OnTurnStart(Entity owner, CombatActionLog log)
+    public override void OnTurnStart(Entity owner, CombatActionLog log, ActiveBuff buffState)
     {
         float totalDamage = 0f;
 
         if (StackCalculationType == StackMultiplierType.Linear)
         {
-            totalDamage = BaseDamage * Stack;
+            totalDamage = BaseDamage * buffState.CurrentStack;
         }
         else if (StackCalculationType == StackMultiplierType.DiminishingReturn)
         {
-            float effectiveStack = Stack / (Stack + Mathf.Max(Threshold, 1));
+            float effectiveStack = buffState.CurrentStack / (buffState.CurrentStack + Mathf.Max(Threshold, 1f));
             totalDamage = BaseDamage * effectiveStack;
         }
 

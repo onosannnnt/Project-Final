@@ -5,25 +5,33 @@ public class ActionBarUI : Singleton<ActionBarUI>
 {
     [SerializeField] private Button SkillsButton;
     [SerializeField] private Button InventoryButton;
-    public Vector3 offset = new Vector3(0f, 2f, 0f); // Float directly above character in 3D
+    
+    [Header("UI Positions")]
+    [Tooltip("Anchored position for the Main Player")]
+    public Vector2 mainPlayerUIPosition = new Vector2(0, 0);
+    [Tooltip("Anchored position for the Ally")]
+    public Vector2 allyUIPosition = new Vector2(250, 0);
 
     private void Start()
     {
         SetUpEventHandlers();
     }
 
-    private void Update()
+    private void OnEnable()
     {
-        if (TurnManager.Instance != null && TurnManager.Instance.CurrentActivePlayer != null && Camera.main != null)
-        {
-            // Calculate screen position from 3D world position + offset height
-            Vector3 worldPos = TurnManager.Instance.CurrentActivePlayer.transform.position + offset;
-            Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos);
+        UpdatePanelPosition();
+    }
 
-            // Prevent UI from rendering behind the camera or glitching out
-            if (screenPos.z > 0)
+    private void UpdatePanelPosition()
+    {
+        if (TurnManager.Instance != null && TurnManager.Instance.CurrentActivePlayer != null)
+        {
+            RectTransform rt = GetComponent<RectTransform>();
+            if (rt != null)
             {
-                transform.position = screenPos;
+                // If it's the main player vs an ally
+                bool isMainPlayer = TurnManager.Instance.CurrentActivePlayer.GetComponent<PlayerCombat>() != null;
+                rt.anchoredPosition = isMainPlayer ? mainPlayerUIPosition : allyUIPosition;
             }
         }
     }

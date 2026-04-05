@@ -24,6 +24,9 @@ public abstract class Entity : MonoBehaviour
     public List<IDamageModifier> OutgoingModifiers = new();
     public List<IDamageModifier> IncomingModifiers = new();
 
+    public event System.Action<float, float> OnHealthChanged;
+    public event System.Action<int, int> OnSPChanged;
+
     protected virtual void Awake()
     {
         if (stats != null) stats = stats.Clone();
@@ -66,6 +69,7 @@ public abstract class Entity : MonoBehaviour
     {
 
         currentHealth = math.max(currentHealth - damage.Amount, 0);
+        OnHealthChanged?.Invoke(currentHealth, GetStat(StatType.MaxHealth));
         Debug.Log($"{gameObject.name} took {damage.Amount} damage, current health: {CurrentHealth}/{GetStat(StatType.MaxHealth)}");
         ShowDamage((int)damage.Amount, Utils.GetDamageColor(damage.Element), damage.IsCriticalHit);
         if (currentHealth <= 0)
@@ -91,11 +95,13 @@ public abstract class Entity : MonoBehaviour
     public virtual void Heal(float amount)
     {
         currentHealth = Mathf.Min(currentHealth + amount, GetStat(StatType.MaxHealth));
+        OnHealthChanged?.Invoke(currentHealth, GetStat(StatType.MaxHealth));
         ShowDamage((int)amount, Color.green);
     }
     public virtual void SetSP(int amount)
     {
         currentSkillPoint = Mathf.Clamp(currentSkillPoint + amount, 0, (int)GetStat(StatType.MaxSkillPoint));
+        OnSPChanged?.Invoke(currentSkillPoint, (int)GetStat(StatType.MaxSkillPoint));
         Debug.Log($"{gameObject.name} SP changed by {amount}, current SP: {CurrentSP}/{(int)GetStat(StatType.MaxSkillPoint)}");
 
     }
@@ -108,7 +114,7 @@ public abstract class Entity : MonoBehaviour
 
         foreach (var buff in buffController.GetAllBuffs())
         {
-            foreach (var modifier in buff.modifiers)
+            foreach (var modifier in buff.Data.modifiers)
             {
                 if (modifier.Stat != stat) continue;
                 switch (modifier.Type)
@@ -117,18 +123,18 @@ public abstract class Entity : MonoBehaviour
                         flatStat += modifier.Value;
                         break;
                     case ModifierType.Percent:
-                        if (buff.isStackable)
+                        if (buff.Data.isStackable)
                         {
                             float totalPercent = 0f;
-                            switch (buff.StackCalculationType)
+                            switch (buff.Data.StackCalculationType)
                             {
                                 case StackMultiplierType.Linear:
-                                    totalPercent = modifier.Value * buff.Stack;
+                                    totalPercent = modifier.Value * buff.CurrentStack;
                                     break;
                                 case StackMultiplierType.DiminishingReturn:
                                     {
                                         int linearStacks = 5; // ปรับได้
-                                        for (int i = 0; i < buff.Stack; i++)
+                                        for (int i = 0; i < buff.CurrentStack; i++)
                                         {
                                             if (i < linearStacks)
                                             {
@@ -160,7 +166,7 @@ public abstract class Entity : MonoBehaviour
     {
         foreach (var buff in buffController.GetAllBuffs())
         {
-            if (buff.buffType == BuffType.CrowdControl)
+            if (buff.Data.buffType == BuffType.CrowdControl)
             {
                 return false;
             }

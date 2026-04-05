@@ -72,7 +72,7 @@ public class TurnManager : Singleton<TurnManager>
                 foreach (GameObject enemy in enemies)
                 {
                     EnemyCombat enemyCombat = enemy.GetComponent<EnemyCombat>();
-                    playerCombat.SetPlayerState(PlayerActionState.Action);
+                    if (CurrentActivePlayer is PlayerEntity pe) pe.SetPlayerState(PlayerActionState.Action); else playerCombat.SetPlayerState(PlayerActionState.Action);
                     enemyCombat.Highlight(Color.white);
                 }
                 HandleSpeedComparison();
@@ -91,15 +91,24 @@ public class TurnManager : Singleton<TurnManager>
     public void SubmitPlayerAction(Entity caster, Entity target, Skill skill)
     {
         // Calculate dynamic speed.
-        float actionSpeed = caster.Stats.ActionSpeed; // Use Getter if you have a dynamic read
+        float actionSpeed = caster.GetStat(StatType.ActionSpeed); // Use Getter
         pendingPlayerActions.Add(new ActionQueue(caster, target, skill, actionSpeed));
         
         currentTeamMemberIndex++;
 
         // Reset UI stuff
-        playerCombat.SetSelectedSkill(null);
-        playerCombat.SetEnemyTarget(null);
-        playerCombat.SetPlayerState(PlayerActionState.Idle);
+        if (caster is PlayerEntity ce) 
+        { 
+            ce.SetSelectedSkill(null); 
+            ce.SetEnemyTarget(null); 
+            ce.SetPlayerState(PlayerActionState.Idle); 
+        } 
+        else 
+        { 
+            playerCombat.SetSelectedSkill(null); 
+            playerCombat.SetEnemyTarget(null); 
+            playerCombat.SetPlayerState(PlayerActionState.Idle); 
+        }
         TargetingPanel.instance.SetActivePanel(false);
         SkillPanelUI.Instance.gameObject.SetActive(false);
 
@@ -108,9 +117,12 @@ public class TurnManager : Singleton<TurnManager>
             enemy.Highlight(Color.white);
         }
         playerCombat.Highlight(Color.white);
-        foreach (var ally in FindObjectsOfType<PlayerAlly>()) 
+foreach (var ally in FindObjectsOfType<PlayerEntity>())
         {
-            ally.GetComponentInChildren<SpriteRenderer>().color = Color.white;
+            if (ally != playerCombat)
+            {
+                ally.Highlight(Color.white);
+            }
         }
 
         if (currentTeamMemberIndex >= PlayerTeamManager.Instance.ActiveTeamMembers.Count)
@@ -136,8 +148,8 @@ public class TurnManager : Singleton<TurnManager>
 
         Debug.Log($"[TurnManager] Waiting for {activePlayer.Stats.EntityName} to choose an action.");
 
-        playerCombat.SetEnemyTarget(GetFirstEnemy());
-        TargetingPanel.instance.SetEnemyTargetPanel(playerCombat.GetEnemyTarget());
+        if (activePlayer is PlayerEntity ape) ape.SetEnemyTarget(GetFirstEnemy()); else playerCombat.SetEnemyTarget(GetFirstEnemy());
+        TargetingPanel.instance.SetEnemyTargetPanel((activePlayer as PlayerEntity)?.GetEnemyTarget() ?? playerCombat.GetEnemyTarget());
         ActionBarUI.Instance.gameObject.SetActive(true);
         
         if (currentTeamMemberIndex == 0) // Only increment turnRound once per cycle
@@ -169,13 +181,7 @@ public class TurnManager : Singleton<TurnManager>
         foreach (GameObject enemy in enemies)
         {
             Entity enemyEntity = enemy.GetComponent<EnemyCombat>();
-            ActionQueue enemyAction = new ActionQueue(enemyEntity, playerCombat, enemyEntity.skillManager.RandomSkill(), enemyEntity.Stats.ActionSpeed);
-            // {
-            //     Caster = enemyEntity,
-            //     Target = playerCombat,
-            //     Skill = enemyEntity.skillManager.RandomSkill(),
-            //     ActionSpeed = enemyEntity.Stats.ActionSpeed
-            // };
+            ActionQueue enemyAction = new ActionQueue(enemyEntity, playerCombat, enemyEntity.skillManager.RandomSkill(), enemyEntity.GetStat(StatType.ActionSpeed));
             actionQueue.Add(enemyAction);
         }
         actionQueue.Sort((a, b) => b.ActionSpeed.CompareTo(a.ActionSpeed));
@@ -246,10 +252,10 @@ public class TurnManager : Singleton<TurnManager>
                     log.AddEntityLog(new EntityStatData(enemyEntity));
                 }
             }
-            if (entity.CompareTag("Player"))
+            if (entity is PlayerEntity)
             {
                 entity.buffController.OnTurnStart(entity, log);
-                if (entity.CanAction() == true) 
+                if (entity.CanAction() == true)
                 {
                     if (entity.CurrentSP >= skill.SkillPoint)
                     {
@@ -275,24 +281,23 @@ public class TurnManager : Singleton<TurnManager>
                                 break;
                         }
                     }
-                    else 
+                    else
                     {
                         Debug.Log("Not enough SP to use " + skill.name);
                     }
                 }
                 entity.buffController.OnTurnEnd(entity);
-                PlayerActionQueueUI.SetActionQueue(currentAction);
+                PlayerActionQueueUI?.SetActionQueue(currentAction);
             }
-            else if (entity.CompareTag("Enemy"))
+            else if (entity is EnemyCombat enemyCombat)
             {
-                EnemyCombat enemyCombat = entity.GetComponent<EnemyCombat>();
                 if (enemyCombat != null) {
                     enemyCombat.buffController.OnTurnStart(enemyCombat, log);
                 }
                 // enemyCombat.buffController.OnTurnStart(enemyCombat, log);
                 if (entity.CanAction() == true) enemyCombat.skillManager.UseSkill(skill, playerCombat, log);
                 enemyCombat.buffController.OnTurnEnd(enemyCombat);
-                EnemyActionQueueUI.SetActionQueue(currentAction);
+                EnemyActionQueueUI?.SetActionQueue(currentAction);
             }
             // actionQueue.RemoveAt(0);
             actionQueue.Remove(currentAction);
@@ -432,20 +437,20 @@ public class TurnManager : Singleton<TurnManager>
         switch (phase)
         {
             case 1:
-                playerCombat.Stats.MaxHealth = 1000;
-                playerCombat.Stats.MaxSkillPoint = 100;
+                playerCombat.Stats.SetBase(StatType.MaxHealth, 1000);
+                playerCombat.Stats.SetBase(StatType.MaxSkillPoint, 100);
                 break;
             case 2:
-                playerCombat.Stats.MaxHealth = 2000;
-                playerCombat.Stats.MaxSkillPoint = 200;
+                playerCombat.Stats.SetBase(StatType.MaxHealth, 2000);
+                playerCombat.Stats.SetBase(StatType.MaxSkillPoint, 200);
                 break;
             case 3:
-                playerCombat.Stats.MaxHealth = 3000;
-                playerCombat.Stats.MaxSkillPoint = 300;
+                playerCombat.Stats.SetBase(StatType.MaxHealth, 3000);
+                playerCombat.Stats.SetBase(StatType.MaxSkillPoint, 300);
                 break;
             default:
-                playerCombat.Stats.MaxHealth = 3000;
-                playerCombat.Stats.MaxSkillPoint = 300;
+                playerCombat.Stats.SetBase(StatType.MaxHealth, 3000);
+                playerCombat.Stats.SetBase(StatType.MaxSkillPoint, 300);
                 break;
         }
 
@@ -469,13 +474,13 @@ public class TurnManager : Singleton<TurnManager>
         
         if (isStartOfBattle || isTutorial)
         {
-            playerCombat.Heal(playerCombat.Stats.MaxHealth);
-            playerCombat.SetSP(playerCombat.Stats.MaxSkillPoint);
-            Debug.Log($"[Phase {phase}] Player stats updated and healed -> Max HP: {playerCombat.Stats.MaxHealth}, Max SP: {playerCombat.Stats.MaxSkillPoint}");
+            playerCombat.Heal(playerCombat.GetStat(StatType.MaxHealth));
+            playerCombat.SetSP((int)playerCombat.GetStat(StatType.MaxSkillPoint));
+            Debug.Log($"[Phase {phase}] Player stats updated and healed -> Max HP: {playerCombat.GetStat(StatType.MaxHealth)}, Max SP: {playerCombat.GetStat(StatType.MaxSkillPoint)}");
         }
         else
         {
-            Debug.Log($"[Phase {phase}] Player stats updated -> Max HP: {playerCombat.Stats.MaxHealth}, Max SP: {playerCombat.Stats.MaxSkillPoint}");
+            Debug.Log($"[Phase {phase}] Player stats updated -> Max HP: {playerCombat.GetStat(StatType.MaxHealth)}, Max SP: {playerCombat.GetStat(StatType.MaxSkillPoint)}");
         }
     }
     // private void ShowLog(CombatActionLog log)

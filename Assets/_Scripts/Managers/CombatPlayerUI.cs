@@ -10,9 +10,15 @@ public class CombatPlayerUI : Singleton<CombatPlayerUI>
     [SerializeField] private GameObject spBar;
     [SerializeField] private GameObject actionPanel;
     [SerializeField] private Button skillsButton;
-    [SerializeField] private Button inventoryButton;
-    [SerializeField] private GameObject SkillPanel;
+    [SerializeField] private GameObject SkillList;
     [SerializeField] private GameObject SkillPrefab;
+
+    [Header("UI Positions")]
+    [Tooltip("Anchored position of the Action/Skill panels for the Main Player")]
+    [SerializeField] private Vector2 mainPlayerUIPosition = new Vector2(0, 0);
+    [Tooltip("Anchored position of the Action/Skill panels for the Ally")]
+    [SerializeField] private Vector2 allyUIPosition = new Vector2(250, 0);
+
     private void Start()
     {
         SetUpEventHandlers();
@@ -22,78 +28,94 @@ public class CombatPlayerUI : Singleton<CombatPlayerUI>
     //     UpdateHealthBar();
     //     UpdateSPBar();
     // }
+
     private void SetUpEventHandlers()
     {
         skillsButton.onClick.AddListener(() =>
         {
-            SkillPanel.SetActive(true);
+            SkillList.SetActive(true);
             actionPanel.SetActive(false);
             SetUpSkillPanel();
-        });
-        inventoryButton.onClick.AddListener(() =>
-        {
-            Debug.Log("Inventory Button Clicked");
         });
     }
 
     public void UpdateHealthBar()
     {
-        healthBar.GetComponent<Image>().fillAmount = playerCombat.CurrentHealth / playerCombat.Stats.MaxHealth;
+        healthBar.GetComponent<Image>().fillAmount = playerCombat.CurrentHealth / playerCombat.GetStat(StatType.MaxHealth);
     }
     public void UpdateSPBar()
     {
-        spBar.GetComponent<Image>().fillAmount = (float)playerCombat.CurrentSP / playerCombat.Stats.MaxSkillPoint;
+        spBar.GetComponent<Image>().fillAmount = (float)playerCombat.CurrentSP / playerCombat.GetStat(StatType.MaxSkillPoint);
     }
     private void SetUpSkillPanel()
     {
-        PlayerCombat playerCombat = PlayerCombat.instance;
-        foreach (Transform child in SkillPanel.transform)
+        Entity currentPlayer = TurnManager.Instance?.CurrentActivePlayer ?? playerCombat;
+        
+        foreach (Transform child in SkillList.transform)
         {
             if (child.gameObject.name != "Back")
                 Destroy(child.gameObject);
         }
-        int count = playerCombat.skillManager.GetSkills().Count;
+        int count = currentPlayer.skillManager.GetSkills().Count;
         if (count == 0) return;
         float spacing = 150f;
         int mid = count / 2;
         int index = 0;
-        foreach (var skill in playerCombat.skillManager.GetSkills())
+        foreach (var skill in currentPlayer.skillManager.GetSkills())
         {
             float x = (index - mid) * spacing;
             if (count % 2 == 0)
             {
                 x += spacing * 0.5f;
             }
-            GameObject skillButton = Instantiate(SkillPrefab, SkillPanel.transform);
+            GameObject skillButton = Instantiate(SkillPrefab, SkillList.transform);
             skillButton.GetComponent<RectTransform>().localPosition = new Vector3(x, 0, 0);
             skillButton.GetComponentInChildren<TextMeshProUGUI>().text = skill.name;
             
-            if (playerCombat.CurrentSP < skill.SkillPoint)
+            if (playerCombat.CurrentSP < skill.SkillPoint) // TODO: Assuming SP is shared, otherwise use currentPlayer's SP
             {
                 skillButton.GetComponent<Button>().interactable = false;
             }
             skillButton.GetComponent<Button>().onClick.AddListener(() =>
             {
-                playerCombat.SetSelectedSkill(skill);
-                playerCombat.HandleSelectSkill();
+                var activeEntity = TurnManager.Instance.CurrentActivePlayer as PlayerEntity ?? playerCombat;
+                activeEntity.SetSelectedSkill(skill);
+                activeEntity.HandleSelectSkill();
                 TargetingPanel.instance.SetActivePanel(true);
-                playerCombat.SetPlayerState(PlayerActionState.Targeting);
+                activeEntity.SetPlayerState(PlayerActionState.Targeting);
             });
             index += 1;
         }
     }
     public void OnBackButtonClicked()
     {
-        SkillPanel.SetActive(false);
+        SkillList.SetActive(false);
         actionPanel.SetActive(true);
-        PlayerCombat.instance.SetPlayerState(PlayerActionState.Idle);
+        var activeEntity = TurnManager.Instance.CurrentActivePlayer as PlayerEntity ?? PlayerCombat.instance;
+        activeEntity.SetPlayerState(PlayerActionState.Idle);
     }
+
     public void SetSkillPanelActive(bool isActive)
     {
-        SkillPanel.SetActive(isActive);
+        SkillList.SetActive(isActive);
+        if (isActive)
+            UpdatePanelPosition(SkillList);
     }
+
     public void SetActionPanelActive(bool isActive)
     {
         actionPanel.SetActive(isActive);
+        if (isActive)
+            UpdatePanelPosition(actionPanel);
+    }
+
+    private void UpdatePanelPosition(GameObject panel)
+    {
+        Entity currentPlayer = TurnManager.Instance?.CurrentActivePlayer ?? playerCombat;
+        RectTransform rt = panel.GetComponent<RectTransform>();
+        if (rt != null)
+        {
+            rt.anchoredPosition = (currentPlayer == playerCombat) ? mainPlayerUIPosition : allyUIPosition;
+        }
     }
 }

@@ -7,7 +7,7 @@ public class EnemySpawnConfig
     public GameObject enemyPrefab;
 
     [Tooltip("Target spawn position (0 = Left, 1 = Middle, 2 = Right)")]
-    [Range(0, 2)]
+    [Range(0, 4)]
     public int positionIndex;
 }
 

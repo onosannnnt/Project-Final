@@ -35,10 +35,11 @@ public class TargetingPanel : MonoBehaviour
     private void Update()
     {
         // เช็คเงื่อนไขว่า "ควรจะแสดงแผง UI หรือไม่"
-        bool shouldBeActive = PlayerCombat.instance.GetPlayerState == PlayerActionState.Targeting 
+        bool shouldBeActive = (TurnManager.Instance.CurrentActivePlayer as PlayerEntity ?? PlayerCombat.instance).GetPlayerState == PlayerActionState.Targeting 
                               && currentTarget != null 
                               && TurnManager.Instance.GetTurnState() == TurnState.PlayerTurnState 
-                              && PlayerCombat.instance.GetSelectedSkill.TargetType != TargetType.Self;
+                              && (TurnManager.Instance.CurrentActivePlayer as PlayerEntity ?? PlayerCombat.instance).GetSelectedSkill != null
+                              && (TurnManager.Instance.CurrentActivePlayer as PlayerEntity ?? PlayerCombat.instance).GetSelectedSkill.TargetType != TargetType.Self;
 
         // ถ้ายอมให้แสดงผล แต่ตัว GameObject ยังปิดอยู่ ค่อยสั่งเปิด (จะทำแค่ครั้งเดียว ไม่รัว)
         if (shouldBeActive && !gameObject.activeSelf)
@@ -64,7 +65,7 @@ public class TargetingPanel : MonoBehaviour
     public void SetEnemyTargetPanel(Entity enemy)
     {
         currentTarget = enemy;
-        if (PlayerCombat.instance.GetPlayerState == PlayerActionState.Targeting)
+        if ((TurnManager.Instance.CurrentActivePlayer as PlayerEntity ?? PlayerCombat.instance).GetPlayerState == PlayerActionState.Targeting)
         {
             SetActivePanel(true);
         }
@@ -76,15 +77,15 @@ public class TargetingPanel : MonoBehaviour
             Destroy(child.gameObject);
         }
         if (currentTarget == null) return;
-        List<Buff> Buffs = currentTarget.buffController.GetBuffsByType(BuffType.Buff);
+        List<ActiveBuff> Buffs = currentTarget.buffController.GetBuffsByType(BuffType.Buff);
         if (Buffs.Count == 0) BuffParent.gameObject.SetActive(false);
         else BuffParent.gameObject.SetActive(true);
         foreach (var buff in Buffs)
         {
             GameObject buffObj = Instantiate(BuffPrefab, BuffParent.transform);
-            buffObj.GetComponent<Image>().sprite = buff.Icon;
-            buffObj.transform.Find("Duration").GetComponentInChildren<TextMeshProUGUI>().text = BuffStackColor(buff.Duration) + $"{buff.Duration}</color>";
-            buffObj.transform.Find("Stack").GetComponentInChildren<TextMeshProUGUI>().text = BuffStackColor(buff.Stack) + $"{buff.Stack}</color>";
+            buffObj.GetComponent<Image>().sprite = buff.Data.Icon;
+            buffObj.transform.Find("Duration").GetComponentInChildren<TextMeshProUGUI>().text = BuffStackColor(buff.CurrentDuration) + $"{buff.CurrentDuration}</color>";
+            buffObj.transform.Find("Stack").GetComponentInChildren<TextMeshProUGUI>().text = BuffStackColor(buff.CurrentStack) + $"{buff.CurrentStack}</color>";
         }
     }
     public void SetStatusBuff()
@@ -94,7 +95,7 @@ public class TargetingPanel : MonoBehaviour
             Destroy(child.gameObject);
         }
         if (currentTarget == null) return;
-        List<Buff> statusBuffs = new List<Buff>();
+        List<ActiveBuff> statusBuffs = new List<ActiveBuff>();
         statusBuffs.AddRange(currentTarget.buffController.GetBuffsByType(BuffType.CrowdControl));
         statusBuffs.AddRange(currentTarget.buffController.GetBuffsByType(BuffType.Debuff));
         
@@ -104,7 +105,7 @@ public class TargetingPanel : MonoBehaviour
         foreach (var buff in statusBuffs)
         {
             GameObject buffObj = Instantiate(StatusBuffPrefab, StatusBuffParent.transform);
-            buffObj.GetComponent<Image>().sprite = buff.Icon;
+            buffObj.GetComponent<Image>().sprite = buff.Data.Icon;
         }
     }
 

@@ -4,73 +4,95 @@ using UnityEngine;
 public class BuffManager
 {
     private Entity owner;
-    private List<Buff> activeBuffs = new List<Buff>();
+    private List<ActiveBuff> activeBuffs = new List<ActiveBuff>();
+
+    public event System.Action OnBuffsChanged;
 
     public BuffManager(Entity owner)
     {
         this.owner = owner;
     }
-    public List<Buff> GetAllBuffs()
+    public List<ActiveBuff> GetAllBuffs()
     {
         return activeBuffs;
     }
-    public List<Buff> GetBuffs()
+    public List<ActiveBuff> GetBuffs()
     {
-        List<Buff> buffs = activeBuffs.FindAll(b => b.buffType == BuffType.Buff);
+        List<ActiveBuff> buffs = activeBuffs.FindAll(b => b.Data.buffType == BuffType.Buff);
         return buffs;
     }
-    public List<Buff> GetDebuffs()
+    public List<ActiveBuff> GetDebuffs()
     {
-        List<Buff> debuffs = activeBuffs.FindAll(b => b.buffType == BuffType.Debuff);
+        List<ActiveBuff> debuffs = activeBuffs.FindAll(b => b.Data.buffType == BuffType.Debuff);
         return debuffs;
     }
 
     public void AddBuff(Buff buff)
     {
-        Buff existingBuff = activeBuffs.Find(b => b.BuffName == buff.BuffName);
+        ActiveBuff existingBuff = activeBuffs.Find(b => b.Data.BuffName == buff.BuffName);
 
         if (existingBuff != null)
         {
-            existingBuff.Duration = buff.Duration;
+            existingBuff.CurrentDuration = buff.Duration;
             existingBuff.wasReappliedThisTurn = true;
 
-            if (existingBuff.isStackable)
+            if (buff.isStackable)
             {
-                existingBuff.Stack += 1;
+                existingBuff.CurrentStack += 1;
+                if (buff.MaxStack > 0 && existingBuff.CurrentStack > buff.MaxStack)
+                {
+                    existingBuff.CurrentStack = buff.MaxStack;
+                }
             }
-            existingBuff.OnApply(owner);
-            existingBuff.OnRefresh(owner);
+            buff.OnApply(owner, existingBuff);
+            buff.OnRefresh(owner, existingBuff);
         }
         else
         {
-            Buff newBuff = buff.Clone();
+            ActiveBuff newBuff = new ActiveBuff(buff);
             activeBuffs.Add(newBuff);
-            newBuff.OnApply(owner);
+            buff.OnApply(owner, newBuff);
         }
+        OnBuffsChanged?.Invoke();
     }
-    public void RemoveBuff(Buff buff)
+    public void RemoveBuff(ActiveBuff buff)
     {
-        Debug.Log(owner.gameObject.name + " lost buff: " + buff.BuffName);
+        Debug.Log(owner.gameObject.name + " lost buff: " + buff.Data.BuffName);
         activeBuffs.Remove(buff);
+        OnBuffsChanged?.Invoke();
     }
-    public virtual void OnApply(Entity owner, Buff buff)
+    public void ConsumeBuffStack(ActiveBuff buff, int stacksToConsume)
     {
-        buff.OnApply(owner);
+        if (buff == null || !activeBuffs.Contains(buff)) return;
+
+        buff.CurrentStack -= stacksToConsume;
+
+        if (buff.CurrentStack <= 0)
+        {
+            RemoveBuff(buff);
+        }
+        else
+        {
+            OnBuffsChanged?.Invoke();
+        }
+    }    public virtual void OnApply(Entity owner, ActiveBuff buff)
+    {
+        buff.Data.OnApply(owner, buff);
     }
     public virtual void OnTurnStart(Entity owner, CombatActionLog log)
     {
         foreach (var buff in activeBuffs)
         {
-            buff.OnTurnStart(owner, log);
+            buff.Data.OnTurnStart(owner, log, buff);
         }
     }
     public virtual void OnTurnEnd(Entity owner)
     {
-        List<Buff> toRemove = new();
+        List<ActiveBuff> toRemove = new();
         foreach (var buff in activeBuffs)
         {
-            buff.OnTurnEnd(owner);
-            if (buff.Duration <= 0)
+            buff.Data.OnTurnEnd(owner, buff);
+            if (!buff.Data.isPermanent && buff.CurrentDuration <= 0)
             {
                 toRemove.Add(buff);
             }
@@ -78,16 +100,20 @@ public class BuffManager
         Debug.Log(owner.gameObject.name + " has " + toRemove.Count + " buffs to remove.");
         foreach (var buff in toRemove)
         {
-            buff.OnRemove(owner);
+            buff.Data.OnRemove(owner, buff);
             activeBuffs.Remove(buff);
         }
+        if (toRemove.Count > 0)
+        {
+            OnBuffsChanged?.Invoke();
+        }
     }
-    public Buff GetBuffByName(string buffName)
+    public ActiveBuff GetBuffByName(string buffName)
     {
-        return activeBuffs.Find(b => b.BuffName == buffName);
+        return activeBuffs.Find(b => b.Data.BuffName == buffName);
     }
-    public List<Buff> GetBuffsByType(BuffType type)
+    public List<ActiveBuff> GetBuffsByType(BuffType type)
     {
-        return activeBuffs.FindAll(b => b.buffType == type);
+        return activeBuffs.FindAll(b => b.Data.buffType == type);
     }
 }

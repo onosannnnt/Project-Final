@@ -16,6 +16,7 @@ public enum StatType
     None, //for Default in switch case
     MaxHealth,
     MaxSkillPoint,
+    MaxBreakArmor,
     ActionSpeed
 }
 public enum EntityModifierType

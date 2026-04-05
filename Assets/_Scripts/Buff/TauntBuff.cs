@@ -9,24 +9,23 @@ public class TauntBuff : Buff
     // Extra damage taken while taunted (hidden because TauntEffect sets it)
     [HideInInspector] public float ExtraDamageTaken;
     
-    private IncomingVulnerabilityModifier modifier;
-
-    public override void OnApply(Entity owner)
+    public override void OnApply(Entity owner, ActiveBuff buffState)
     {
-        base.OnApply(owner);
-        modifier = new IncomingVulnerabilityModifier(ExtraDamageTaken);
+        base.OnApply(owner, buffState);
+        IncomingVulnerabilityModifier modifier = new IncomingVulnerabilityModifier(ExtraDamageTaken);
+        buffState.CustomState["modifier"] = modifier;
         owner.AddModifier(modifier, EntityModifierType.Incoming);
-        
+
         string taunterName = Taunter != null ? Taunter.gameObject.name : "Unknown";
         Debug.Log($"{owner.gameObject.name} is TAUNTED by {taunterName} and will take +{ExtraDamageTaken} damage from all attacks!");
     }
 
-    public override void OnRemove(Entity owner)
+    public override void OnRemove(Entity owner, ActiveBuff buffState)
     {
-        base.OnRemove(owner);
-        if (modifier != null)
+        base.OnRemove(owner, buffState);
+        if (buffState.CustomState.TryGetValue("modifier", out object modifierObj))
         {
-            owner.RemoveModifier(modifier, EntityModifierType.Incoming);
+            owner.RemoveModifier((IncomingVulnerabilityModifier)modifierObj, EntityModifierType.Incoming);
         }
         Debug.Log($"{owner.gameObject.name} is no longer taunted.");
     }
@@ -48,3 +47,4 @@ public class TauntBuff : Buff
         }
     }
 }
+    

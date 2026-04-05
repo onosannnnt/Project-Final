@@ -4,13 +4,13 @@ using UnityEngine;
 public class Chill : Buff
 {
     [SerializeField] private Buff FreezeBuff;
-    public override void OnApply(Entity owner)
+    public override void OnApply(Entity owner, ActiveBuff buffState)
     {
-        base.OnApply(owner);
-        Buff chilledBuff = owner.buffController.GetBuffByName("Chill");
-        Debug.Log(owner.gameObject.name + " has " + chilledBuff.Stack + " stacks of Chill.");
+        base.OnApply(owner, buffState);
+        ActiveBuff chilledBuff = owner.buffController.GetBuffByName("Chill");
+        Debug.Log(owner.gameObject.name + " has " + chilledBuff.CurrentStack + " stacks of Chill.");
         if (chilledBuff == null) return;
-        if (chilledBuff.Stack >= Threshold)
+        if (chilledBuff.CurrentStack >= Threshold)
         {
             Debug.Log(owner.gameObject.name + " has reached the threshold for Chill buff. Removing Chill and applying Freeze.");
             owner.buffController.RemoveBuff(chilledBuff);

@@ -7,9 +7,12 @@ public class SkillPanelUI : Singleton<SkillPanelUI>
     [SerializeField] private GameObject SkillButtonPrefab;
     [SerializeField] private GameObject SkillPanel;
     [SerializeField] private Button BackButton;
-    [Header("Tracking Settings")]
-    public Vector3 worldOffset = new Vector3(0f, 2f, 0f); // How high above the character in 3D
-    public Vector2 screenOffset = new Vector2(0f, 0f);      // Extra UI pixels to shift
+    
+    [Header("UI Positions")]
+    [Tooltip("Anchored position for the Main Player")]
+    public Vector2 mainPlayerUIPosition = new Vector2(0, 0);
+    [Tooltip("Anchored position for the Ally")]
+    public Vector2 allyUIPosition = new Vector2(250, 0);
 
     private void Start()
     {
@@ -17,30 +20,29 @@ public class SkillPanelUI : Singleton<SkillPanelUI>
         {
             gameObject.SetActive(false);
             ActionBarUI.Instance.gameObject.SetActive(true);
-            PlayerCombat.instance.SetPlayerState(PlayerActionState.Idle);
-            PlayerCombat.instance.SetSelectedSkill(null);
+            var activeEntity = TurnManager.Instance.CurrentActivePlayer as PlayerEntity ?? PlayerCombat.instance;
+            activeEntity.SetPlayerState(PlayerActionState.Idle);
+            activeEntity.SetSelectedSkill(null);
             TargetingPanel.instance.SetActivePanel(false);
 
         });
         gameObject.SetActive(false);
     }
 
-    private void Update()
+    private void OnEnable()
     {
-        if (TurnManager.Instance != null && TurnManager.Instance.CurrentActivePlayer != null && Camera.main != null)
+        UpdatePanelPosition();
+    }
+
+    private void UpdatePanelPosition()
+    {
+        if (TurnManager.Instance != null && TurnManager.Instance.CurrentActivePlayer != null)
         {
-            // Calculate screen position from 3D world position + offset height
-            Vector3 worldPos = TurnManager.Instance.CurrentActivePlayer.transform.position + worldOffset;
-            Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos);
-            
-            // Prevent UI from rendering behind the camera
-            if (screenPos.z > 0)
+            RectTransform rt = GetComponent<RectTransform>();
+            if (rt != null)
             {
-                screenPos.x += screenOffset.x;
-                screenPos.y += screenOffset.y;
-                
-                // Direct assignment instead of Lerp to stop weird sliding issues
-                transform.position = screenPos;
+                bool isMainPlayer = TurnManager.Instance.CurrentActivePlayer.GetComponent<PlayerCombat>() != null;
+                rt.anchoredPosition = isMainPlayer ? mainPlayerUIPosition : allyUIPosition;
             }
         }
     }
@@ -73,10 +75,11 @@ public class SkillPanelUI : Singleton<SkillPanelUI>
             }
             skillButton.GetComponent<Button>().onClick.AddListener(() =>
             {
-                PlayerCombat.instance.SetSelectedSkill(skill);
-                PlayerCombat.instance.HandleSelectSkill();
+                var activeEntity = TurnManager.Instance.CurrentActivePlayer as PlayerEntity ?? PlayerCombat.instance;
+                activeEntity.SetSelectedSkill(skill);
+                activeEntity.HandleSelectSkill();
                 TargetingPanel.instance.SetActivePanel(true);
-                PlayerCombat.instance.SetPlayerState(PlayerActionState.Targeting);
+                activeEntity.SetPlayerState(PlayerActionState.Targeting);
             });
         }
     }

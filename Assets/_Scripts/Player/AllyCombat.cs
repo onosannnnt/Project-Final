@@ -1,16 +1,7 @@
 using UnityEngine;
 
-public class AllyCombat : Entity
+public class AllyCombat : PlayerEntity
 {
-    private PlayerActionState playerState;
-    private EnemyCombat enemyTarget;
-
-    protected override void Start()
-    {
-        base.Start();
-        playerState = PlayerActionState.Idle;
-    }
-
     public void SyncStatsWithPlayer()
     {
         // Inherit stats and loadout from the main player

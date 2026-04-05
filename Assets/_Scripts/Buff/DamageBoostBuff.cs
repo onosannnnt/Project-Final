@@ -4,21 +4,21 @@ using UnityEngine;
 public class DamageBoostBuff : Buff
 {
     public float BonusDamage = 300f;
-    private ExtraDamageModifier modifier;
 
-    public override void OnApply(Entity owner)
+    public override void OnApply(Entity owner, ActiveBuff buffState)
     {
-        base.OnApply(owner);
-        modifier = new ExtraDamageModifier(BonusDamage);
+        base.OnApply(owner, buffState);
+        ExtraDamageModifier modifier = new ExtraDamageModifier(BonusDamage);
+        buffState.CustomState["modifier"] = modifier;
         owner.AddModifier(modifier, EntityModifierType.Outgoing);
     }
 
-    public override void OnRemove(Entity owner)
+    public override void OnRemove(Entity owner, ActiveBuff buffState)
     {
-        base.OnRemove(owner);
-        if (modifier != null)
+        base.OnRemove(owner, buffState);
+        if (buffState.CustomState.TryGetValue("modifier", out object modifierObj))
         {
-            owner.RemoveModifier(modifier, EntityModifierType.Outgoing);
+            owner.RemoveModifier((ExtraDamageModifier)modifierObj, EntityModifierType.Outgoing);
         }
     }
 

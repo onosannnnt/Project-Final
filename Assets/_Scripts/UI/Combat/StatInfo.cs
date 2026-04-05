@@ -20,8 +20,8 @@ public class StatInfoUI : MonoBehaviour
     [SerializeField] private GameObject StatusBuffPrefab;
 
     private Entity Entity;
-    private List<Buff> Buffs;
-    private List<Buff> Debuffs;
+    private List<ActiveBuff> Buffs;
+    private List<ActiveBuff> Debuffs;
     private float maxWitdthHealthbar;
     private void Start()
     {
@@ -59,7 +59,7 @@ public class StatInfoUI : MonoBehaviour
         if (BuffCardPrefab == null || BuffTransform == null || DebuffTransform == null) return;
         Buffs = Entity.buffController.GetBuffs();
         
-        Debuffs = new List<Buff>();
+        Debuffs = new List<ActiveBuff>();
         Debuffs.AddRange(Entity.buffController.GetDebuffs());
         Debuffs.AddRange(Entity.buffController.GetBuffsByType(BuffType.CrowdControl));
 
@@ -81,7 +81,7 @@ public class StatInfoUI : MonoBehaviour
             {
                 GameObject buffGO = Instantiate(BuffCardPrefab, BuffTransform);
                 BuffItemUI ui = buffGO.GetComponent<BuffItemUI>();
-                ui.Setup($"{buff.BuffName}({buff.Duration})", buff.Description, buff.Icon, buff.Stack);
+                ui.Setup($"{buff.Data.BuffName}({buff.CurrentDuration})", buff.Data.Description, buff.Data.Icon, buff.CurrentStack);
             }
         }
 
@@ -91,7 +91,7 @@ public class StatInfoUI : MonoBehaviour
             {
                 GameObject debuffGO = Instantiate(BuffCardPrefab, DebuffTransform);
                 BuffItemUI ui = debuffGO.GetComponent<BuffItemUI>();
-                ui.Setup($"{debuff.BuffName}({debuff.Duration})", debuff.Description, debuff.Icon, debuff.Stack);
+                ui.Setup($"{debuff.Data.BuffName}({debuff.CurrentDuration})", debuff.Data.Description, debuff.Data.Icon, debuff.CurrentStack);
             }
         }
     }
@@ -122,15 +122,15 @@ public class StatInfoUI : MonoBehaviour
             Destroy(child.gameObject);
         }
         if (Entity == null) return;
-        List<Buff> Buffs = Entity.buffController.GetBuffsByType(BuffType.Buff);
+        List<ActiveBuff> Buffs = Entity.buffController.GetBuffsByType(BuffType.Buff);
         if (Buffs.Count == 0) BuffParent.gameObject.SetActive(false);
         else BuffParent.gameObject.SetActive(true);
         foreach (var buff in Buffs)
         {
             GameObject buffObj = Instantiate(BuffIconPrefab, BuffParent.transform);
-            buffObj.GetComponent<Image>().sprite = buff.Icon;
-            buffObj.transform.Find("Duration").GetComponentInChildren<TextMeshProUGUI>().text = BuffStackColor(buff.Duration) + $"{buff.Duration}</color>";
-            buffObj.transform.Find("Stack").GetComponentInChildren<TextMeshProUGUI>().text = BuffStackColor(buff.Stack) + $"{buff.Stack}</color>";
+            buffObj.GetComponent<Image>().sprite = buff.Data.Icon;
+            buffObj.transform.Find("Duration").GetComponentInChildren<TextMeshProUGUI>().text = BuffStackColor(buff.CurrentDuration) + $"{buff.CurrentDuration}</color>";
+            buffObj.transform.Find("Stack").GetComponentInChildren<TextMeshProUGUI>().text = BuffStackColor(buff.CurrentStack) + $"{buff.CurrentStack}</color>";
         }
     }
     private void SetStatusBuff()
@@ -142,7 +142,7 @@ public class StatInfoUI : MonoBehaviour
         }
         if (Entity == null) return;
         
-        List<Buff> statusBuffs = new List<Buff>();
+        List<ActiveBuff> statusBuffs = new List<ActiveBuff>();
         statusBuffs.AddRange(Entity.buffController.GetBuffsByType(BuffType.CrowdControl));
         statusBuffs.AddRange(Entity.buffController.GetBuffsByType(BuffType.Debuff));
         
@@ -152,7 +152,7 @@ public class StatInfoUI : MonoBehaviour
         foreach (var buff in statusBuffs)
         {
             GameObject buffObj = Instantiate(StatusBuffPrefab, StatusBuffParent.transform);
-            buffObj.GetComponent<Image>().sprite = buff.Icon;
+            buffObj.GetComponent<Image>().sprite = buff.Data.Icon;
         }
     }
     private string BuffStackColor(int stack)

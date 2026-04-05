@@ -1,12 +1,10 @@
 using System;
 using UnityEngine;
 
-public class PlayerCombat : Entity
+public class PlayerCombat : PlayerEntity
 {
     [SerializeField] private UserData userData;
     public static PlayerCombat instance;
-    private PlayerActionState playerState;
-    private EnemyCombat enemyTarget;
     protected override void Awake()
     {
         base.Awake();
@@ -18,11 +16,6 @@ public class PlayerCombat : Entity
         {
             Destroy(gameObject);
         }
-    }
-    protected override void Start()
-    {
-        base.Start();
-        playerState = PlayerActionState.Idle;
     }
     public void SetUserData(UserData data)
     {
@@ -48,128 +41,4 @@ public class PlayerCombat : Entity
     {
         selectedSkill = skill;
     }
-    public PlayerActionState GetPlayerState => playerState;
-    public void SetPlayerState(PlayerActionState state)
-    {
-        playerState = state;
-    }
-    public void SetEnemyTarget(EnemyCombat enemy)
-    {
-        enemyTarget = enemy;
-        TargetingPanel.instance.SetEnemyTargetPanel(enemy);
-    }
-    public Entity GetEnemyTarget()
-    {
-        return enemyTarget;
-    }
-    public void Highlight(Color color)
-    {
-        GameObject PlayerVisual = transform.Find("PlayerVisual").gameObject;
-        PlayerVisual.GetComponent<SpriteRenderer>().color = color;
-    }
-    public void HandleSelectSkill()
-    {
-        if (selectedSkill == null) return;
-        
-        Entity activePlayer = TurnManager.Instance.CurrentActivePlayer ?? this;
-
-        if (selectedSkill.TargetType == TargetType.Self)
-        {
-            if (activePlayer is PlayerCombat pc) pc.Highlight(Color.yellow);
-            else if (activePlayer is PlayerAlly pa) pa.Highlight(Color.yellow);
-            
-            foreach (var enemy in FindObjectsOfType<EnemyCombat>())
-            {
-                enemy.Highlight(Color.white);
-            }
-            SetPlayerState(PlayerActionState.Targeting);
-        }
-        else if (selectedSkill.TargetType == TargetType.Enemy)
-        {
-            if (activePlayer is PlayerCombat pc) pc.Highlight(Color.white);
-            else if (activePlayer is PlayerAlly pa) pa.Highlight(Color.white);
-
-            if (selectedSkill.TargetCount == TargetCount.Single)
-            {
-                foreach (var enemy in FindObjectsOfType<EnemyCombat>())
-                {
-                    if (enemy == enemyTarget)
-                        enemy.Highlight(Color.red);
-                    else
-                        enemy.Highlight(Color.yellow);
-                }
-            }
-            else if (selectedSkill.TargetCount == TargetCount.All)
-            {
-                foreach (var enemy in FindObjectsOfType<EnemyCombat>())
-                {
-                    enemy.Highlight(Color.red);
-                }
-            }
-            SetPlayerState(PlayerActionState.Targeting);
-        }
-    }
-    private void OnMouseEnter()
-    {
-        if (playerState != PlayerActionState.Targeting || selectedSkill == null) return;
-        if (selectedSkill.TargetType != TargetType.Self) return;
-        if (TurnManager.Instance.CurrentActivePlayer == this || TurnManager.Instance.CurrentActivePlayer == null) Highlight(Color.green);
-    }
-    private void OnMouseExit()
-    {
-        if (playerState != PlayerActionState.Targeting || selectedSkill == null) return;
-        if (selectedSkill.TargetType != TargetType.Self) return;
-        if (TurnManager.Instance.CurrentActivePlayer == this || TurnManager.Instance.CurrentActivePlayer == null) Highlight(Color.yellow);
-    }
-    private void OnMouseDown()
-    {
-        if (playerState != PlayerActionState.Targeting || selectedSkill == null) return;
-        if (selectedSkill.TargetType != TargetType.Self) return;
-        Highlight(Color.white);
-        
-        Entity currentActive = TurnManager.Instance.CurrentActivePlayer ?? this;
-        TurnManager.Instance.SubmitPlayerAction(currentActive, currentActive, selectedSkill);
-    }
-    public void Action(CombatActionLog log)
-    {
-        if (currentSkillPoint < selectedSkill.SkillPoint)
-        {
-            Debug.Log("Not enough SP to use " + selectedSkill.name);
-            return;
-        }
-        SetSP(-selectedSkill.SkillPoint);
-        switch (selectedSkill.TargetType)
-        {
-            case TargetType.Self:
-                Debug.Log("Player used " + selectedSkill.name + " on self");
-                skillManager.UseSkill(selectedSkill, this, log);
-                break;
-
-            case TargetType.Enemy:
-                if (selectedSkill.TargetCount == TargetCount.Single)
-                {
-                    Debug.Log("Player used " + selectedSkill.name + " on " + enemyTarget.gameObject.name);
-                    skillManager.UseSkill(selectedSkill, enemyTarget, log);
-                }
-                else if (selectedSkill.TargetCount == TargetCount.All)
-                {
-                    Debug.Log("Player used " + selectedSkill.name + " on all enemies");
-                    foreach (var enemy in FindObjectsOfType<EnemyCombat>())
-                    {
-                        skillManager.UseSkill(selectedSkill, enemy, log);
-                    }
-                }
-                break;
-        }
-        
-        SetSelectedSkill(null);
-        SetEnemyTarget(null);
-        SetPlayerState(PlayerActionState.Idle);
-        foreach (var enemy in FindObjectsOfType<EnemyCombat>())
-        {
-            enemy.Highlight(Color.white);
-        }
-    }
-
-
 }
