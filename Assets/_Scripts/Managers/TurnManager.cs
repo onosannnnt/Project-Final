@@ -197,6 +197,13 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
             Entity entity = currentAction.Caster;
             Skill skill = currentAction.Skill;
             Entity target = currentAction.Target;
+
+            if (entity == null || entity.CurrentHealth <= 0)
+            {
+                actionQueue.RemoveAt(0);
+                continue;
+            }
+
             // Debug.Log(entity.gameObject.name + " is taking action with " + currentAction.ActionSpeed + " speed.");
             // PlayerActionQueueUI.SetActionQueue(null);
             // EnemyActionQueueUI.SetActionQueue(null);
@@ -268,14 +275,30 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
                             case TargetType.Enemy:
                                 if (skill.TargetCount == TargetCount.Single)
                                 {
-                                    entity.skillManager.UseSkill(skill, target, log);
+                                    if (target != null && target.CurrentHealth > 0)
+                                    {
+                                        entity.skillManager.UseSkill(skill, target, log);
+                                    }
+                                    else
+                                    {
+                                        Debug.Log("Target is already dead. Action cancelled.");
+                                    }
                                 }
                                 else if (skill.TargetCount == TargetCount.All)
                                 {
+                                    bool hasValidTarget = false;
                                     foreach (var t in GetAllEnemies())
                                     {
                                         if (t.GetComponent<EnemyCombat>() != null && !t.GetComponent<EnemyCombat>().IsDead())
+                                        {
                                             entity.skillManager.UseSkill(skill, t.GetComponent<EnemyCombat>(), log);
+                                            hasValidTarget = true;
+                                        }
+                                    }
+                                    
+                                    if (!hasValidTarget)
+                                    {
+                                        Debug.Log("No valid targets left for AoE skill. Action cancelled.");
                                     }
                                 }
                                 break;
@@ -295,7 +318,17 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
                     enemyCombat.buffController.OnTurnStart(enemyCombat, log);
                 }
                 // enemyCombat.buffController.OnTurnStart(enemyCombat, log);
-                if (entity.CanAction() == true) enemyCombat.skillManager.UseSkill(skill, playerCombat, log);
+                if (entity.CanAction() == true)
+                {
+                    if (playerCombat != null && playerCombat.CurrentHealth > 0)
+                    {
+                        enemyCombat.skillManager.UseSkill(skill, playerCombat, log);
+                    }
+                    else
+                    {
+                        Debug.Log("Player is dead. Enemy action cancelled.");
+                    }
+                }
                 enemyCombat.buffController.OnTurnEnd(enemyCombat);
                 EnemyActionQueueUI?.SetActionQueue(currentAction);
             }
