@@ -62,11 +62,21 @@ public class SkillListManager : MonoBehaviour
 
     public bool TrySelectSkill(SkillHoverHandler handler, Skill skillData)
     {
+        // Check if the skill is already selected to prevent duplicates
+        foreach (var slot in selectedSlots)
+        {
+            if (slot != null && slot.isOccupied && slot.skillData == skillData)
+            {
+                return false; 
+            }
+        }
+
         foreach (var slot in selectedSlots)
         {
             if (slot != null && !slot.isOccupied) 
             {
                 slot.SetSkill(handler, selectedSkillPrefab, skillData);
+                if (handler != null) handler.SetSelected(true);
                 SaveLoadout();
                 return true;
             }
@@ -83,6 +93,7 @@ public class SkillListManager : MonoBehaviour
             if (slot != null && slot.currentHandler == handler)
             {
                 slot.ClearSlot();
+                if (handler != null) handler.SetSelected(false);
                 SaveLoadout();
                 break;
             }
