@@ -365,6 +365,12 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
         // Restore skill points based on current phase
         RestoreSkillPointsByPhase();
 
+        // Advance the weather at the end of the round, right before the next starts
+        if (WeatherManager.Instance != null)
+        {
+            WeatherManager.Instance.AdvanceWeather();
+        }
+
         SetState(TurnState.PlayerTurnState);
         yield break;
     }
