@@ -146,7 +146,7 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
             return;
         }
 
-        Debug.Log($"[TurnManager] Waiting for {activePlayer.Stats.EntityName} to choose an action.");
+// // Debug.Log($"[TurnManager] Waiting for {activePlayer.Stats.EntityName} to choose an action.");
 
         if (activePlayer is PlayerEntity ape) ape.SetEnemyTarget(GetFirstEnemy()); else playerCombat.SetEnemyTarget(GetFirstEnemy());
         TargetingPanel.instance.SetEnemyTargetPanel((activePlayer as PlayerEntity)?.GetEnemyTarget() ?? playerCombat.GetEnemyTarget());
@@ -160,7 +160,7 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
         remainingEnemies.RemoveAll(enemy => enemy.GetComponent<EnemyCombat>().IsDead());
         if (remainingEnemies.Count == 0)
         {
-            Debug.Log("Generating new enemies for wave " + currentWave);
+// // Debug.Log("Generating new enemies for wave " + currentWave);
             EnemyGenerator.Instance.GenerateEnemy();
             currentWave += 1;
             ApplyPhaseStats();
@@ -181,7 +181,19 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
         foreach (GameObject enemy in enemies)
         {
             Entity enemyEntity = enemy.GetComponent<EnemyCombat>();
-            ActionQueue enemyAction = new ActionQueue(enemyEntity, playerCombat, enemyEntity.skillManager.RandomSkill(), enemyEntity.GetStat(StatType.ActionSpeed));
+            Skill chosenSkill;
+            
+            // Check against the base BossCombat class, not a specific boss
+            if (enemyEntity is BossCombat boss)
+            {
+                chosenSkill = boss.ChooseNextSkill();
+            }
+            else
+            {
+                chosenSkill = enemyEntity.skillManager.RandomSkill();
+            }
+
+            ActionQueue enemyAction = new ActionQueue(enemyEntity, playerCombat, chosenSkill, enemyEntity.GetStat(StatType.ActionSpeed));
             actionQueue.Add(enemyAction);
         }
         actionQueue.Sort((a, b) => b.ActionSpeed.CompareTo(a.ActionSpeed));
@@ -204,7 +216,7 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
                 continue;
             }
 
-            // Debug.Log(entity.gameObject.name + " is taking action with " + currentAction.ActionSpeed + " speed.");
+            // // Debug.Log(entity.gameObject.name + " is taking action with " + currentAction.ActionSpeed + " speed.");
             // PlayerActionQueueUI.SetActionQueue(null);
             // EnemyActionQueueUI.SetActionQueue(null);
             PlayerActionQueueUI?.SetActionQueue(null);
@@ -281,7 +293,7 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
                                     }
                                     else
                                     {
-                                        Debug.Log("Target is already dead. Action cancelled.");
+// // Debug.Log("Target is already dead. Action cancelled.");
                                     }
                                 }
                                 else if (skill.TargetCount == TargetCount.All)
@@ -298,7 +310,7 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
                                     
                                     if (!hasValidTarget)
                                     {
-                                        Debug.Log("No valid targets left for AoE skill. Action cancelled.");
+// // Debug.Log("No valid targets left for AoE skill. Action cancelled.");
                                     }
                                 }
                                 break;
@@ -306,7 +318,7 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
                     }
                     else
                     {
-                        Debug.Log("Not enough SP to use " + skill.name);
+// // Debug.Log("Not enough SP to use " + skill.name);
                     }
                 }
                 entity.buffController.OnTurnEnd(entity);
@@ -320,13 +332,27 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
                 // enemyCombat.buffController.OnTurnStart(enemyCombat, log);
                 if (entity.CanAction() == true)
                 {
-                    if (playerCombat != null && playerCombat.CurrentHealth > 0)
+                    switch (skill.TargetType)
                     {
-                        enemyCombat.skillManager.UseSkill(skill, playerCombat, log);
-                    }
-                    else
-                    {
-                        Debug.Log("Player is dead. Enemy action cancelled.");
+                        case TargetType.Self:
+                            // Boss targets itself for heals/buffs
+                            enemyCombat.skillManager.UseSkill(skill, enemyCombat, log);
+                            break;
+                        case TargetType.Enemy:
+                            // Boss targets the player (or active player)
+                            if (playerCombat != null && playerCombat.CurrentHealth > 0)
+                            {
+                                enemyCombat.skillManager.UseSkill(skill, playerCombat, log);
+                            }
+                            else
+                            {
+// // Debug.Log("Player is dead. Enemy action cancelled.");
+                            }
+                            break;
+                        case TargetType.Ally:
+                            // Treat ally casts as self for now
+                            enemyCombat.skillManager.UseSkill(skill, enemyCombat, log);
+                            break;
                     }
                 }
                 enemyCombat.buffController.OnTurnEnd(enemyCombat);
@@ -377,7 +403,7 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
 
     private void Win()
     {
-        Debug.Log("You Win!");
+// // Debug.Log("You Win!");
         CombatResultUI.Instance.gameObject.SetActive(true);
     }
     private List<GameObject> GetAllEnemies()
@@ -453,7 +479,7 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
         {
             // Restore SP to player
             playerCombat.SetSP(spToRestore);
-            Debug.Log($"[Phase {currentPhase}] Player restored {spToRestore} SP at end of turn");
+// // Debug.Log($"[Phase {currentPhase}] Player restored {spToRestore} SP at end of turn");
 
             // Restore SP to all alive enemies
             foreach (GameObject enemyObj in GetAllEnemies())
@@ -462,7 +488,7 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
                 if (enemy != null && !enemy.IsDead())
                 {
                     enemy.SetSP(spToRestore);
-                    Debug.Log($"[Phase {currentPhase}] {enemy.gameObject.name} restored {spToRestore} SP at end of turn");
+// // Debug.Log($"[Phase {currentPhase}] {enemy.gameObject.name} restored {spToRestore} SP at end of turn");
                 }
             }
         }
@@ -515,17 +541,17 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
         {
             playerCombat.Heal(playerCombat.GetStat(StatType.MaxHealth));
             playerCombat.SetSP((int)playerCombat.GetStat(StatType.MaxSkillPoint));
-            Debug.Log($"[Phase {phase}] Player stats updated and healed -> Max HP: {playerCombat.GetStat(StatType.MaxHealth)}, Max SP: {playerCombat.GetStat(StatType.MaxSkillPoint)}");
+// // Debug.Log($"[Phase {phase}] Player stats updated and healed -> Max HP: {playerCombat.GetStat(StatType.MaxHealth)}, Max SP: {playerCombat.GetStat(StatType.MaxSkillPoint)}");
         }
         else
         {
-            Debug.Log($"[Phase {phase}] Player stats updated -> Max HP: {playerCombat.GetStat(StatType.MaxHealth)}, Max SP: {playerCombat.GetStat(StatType.MaxSkillPoint)}");
+// // Debug.Log($"[Phase {phase}] Player stats updated -> Max HP: {playerCombat.GetStat(StatType.MaxHealth)}, Max SP: {playerCombat.GetStat(StatType.MaxSkillPoint)}");
         }
     }
     // private void ShowLog(CombatActionLog log)
     // {
     //     string jsonData = JsonUtility.ToJson(log, true);
-    //     Debug.Log("ข้อมูล JSON คือ:\n" + jsonData);
+    //     // Debug.Log("ข้อมูล JSON คือ:\n" + jsonData);
     // }
     private void ShowLog(CombatActionLog log)
     {

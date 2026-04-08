@@ -57,7 +57,7 @@ public class BuffManager
     }
     public void RemoveBuff(ActiveBuff buff)
     {
-        Debug.Log(owner.gameObject.name + " lost buff: " + buff.Data.BuffName);
+// // Debug.Log(owner.gameObject.name + " lost buff: " + buff.Data.BuffName);
         activeBuffs.Remove(buff);
         OnBuffsChanged?.Invoke();
     }
@@ -97,7 +97,7 @@ public class BuffManager
                 toRemove.Add(buff);
             }
         }
-        Debug.Log(owner.gameObject.name + " has " + toRemove.Count + " buffs to remove.");
+// // Debug.Log(owner.gameObject.name + " has " + toRemove.Count + " buffs to remove.");
         foreach (var buff in toRemove)
         {
             buff.Data.OnRemove(owner, buff);

@@ -68,13 +68,13 @@ public class Buff : ScriptableObject
 
         if (buffState.isInitialized)
         {
-            Debug.Log("Buff duration countdown started");
+// // Debug.Log("Buff duration countdown started");
             buffState.isInitialized = false;
             return;
         }
         if (buffState.wasReappliedThisTurn)
         {
-            Debug.Log("Buff was reapplied this turn, skipping duration decrease");
+// // Debug.Log("Buff was reapplied this turn, skipping duration decrease");
             return;
         }
         buffState.CurrentDuration -= 1;

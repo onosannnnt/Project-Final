@@ -23,7 +23,7 @@ public class GainBuffAndSPEffect : SkillEffect
         if (SPRestoreAmount > 0)
         {
             applyTarget.SetSP(SPRestoreAmount);
-            Debug.Log($"{applyTarget.gameObject.name} restored {SPRestoreAmount} SP.");
+// // Debug.Log($"{applyTarget.gameObject.name} restored {SPRestoreAmount} SP.");
         }
 
         // 2. Add Buff Stacks
@@ -34,7 +34,7 @@ public class GainBuffAndSPEffect : SkillEffect
                 applyTarget.buffController.AddBuff(BuffToApply);
             }
             
-            Debug.Log($"{applyTarget.gameObject.name} gained {StacksToGain} stacks of {BuffToApply.BuffName}.");
+// // Debug.Log($"{applyTarget.gameObject.name} gained {StacksToGain} stacks of {BuffToApply.BuffName}.");
 
             if (log != null)
             {

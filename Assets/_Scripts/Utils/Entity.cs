@@ -70,7 +70,7 @@ public abstract class Entity : MonoBehaviour
 
         currentHealth = math.max(currentHealth - damage.Amount, 0);
         OnHealthChanged?.Invoke(currentHealth, GetStat(StatType.MaxHealth));
-        Debug.Log($"{gameObject.name} took {damage.Amount} damage, current health: {CurrentHealth}/{GetStat(StatType.MaxHealth)}");
+// // Debug.Log($"{gameObject.name} took {damage.Amount} damage, current health: {CurrentHealth}/{GetStat(StatType.MaxHealth)}");
         ShowDamage((int)damage.Amount, Utils.GetDamageColor(damage.Element), damage.IsCriticalHit);
         if (currentHealth <= 0)
         {
@@ -102,7 +102,7 @@ public abstract class Entity : MonoBehaviour
     {
         currentSkillPoint = Mathf.Clamp(currentSkillPoint + amount, 0, (int)GetStat(StatType.MaxSkillPoint));
         OnSPChanged?.Invoke(currentSkillPoint, (int)GetStat(StatType.MaxSkillPoint));
-        Debug.Log($"{gameObject.name} SP changed by {amount}, current SP: {CurrentSP}/{(int)GetStat(StatType.MaxSkillPoint)}");
+// // Debug.Log($"{gameObject.name} SP changed by {amount}, current SP: {CurrentSP}/{(int)GetStat(StatType.MaxSkillPoint)}");
 
     }
 

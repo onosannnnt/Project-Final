@@ -25,7 +25,7 @@ public class HealOverTimeEffect : Buff
         float variance = Random.Range(0.85f, 1.15f);
         totalHeal *= variance;
 
-        Debug.Log($"{owner.gameObject.name} heals {totalHeal} HP from {name} HOT.");
+// // Debug.Log($"{owner.gameObject.name} heals {totalHeal} HP from {name} HOT.");
         log.AddHealEffectLog(new HealEffectLog
         {
             AppliedTargetID = owner.GetEntityID(),

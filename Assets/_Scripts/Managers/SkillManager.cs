@@ -12,7 +12,7 @@ public class SkillManager
 
     public void UseSkill(Skill skill, Entity target, CombatActionLog log)
     {
-        Debug.Log(owner.gameObject.name + " is using skill: " + skill.skillName + " on " + target.gameObject.name);
+// // Debug.Log(owner.gameObject.name + " is using skill: " + skill.skillName + " on " + target.gameObject.name);
         if (skill == null || target == null) return;
         
         bool skillHit = skill.Execute(owner, target, log);
@@ -33,7 +33,7 @@ public class SkillManager
             }
         }
 
-        Debug.Log(owner.gameObject.name + " has " + owner.CurrentHealth + " HP and " + owner.CurrentSP + " SP after using skill: " + skill.skillName);
+// // Debug.Log(owner.gameObject.name + " has " + owner.CurrentHealth + " HP and " + owner.CurrentSP + " SP after using skill: " + skill.skillName);
     }
     public List<Skill> GetSkills()
     {

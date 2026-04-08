@@ -46,7 +46,7 @@ public class ActionBarUI : Singleton<ActionBarUI>
         });
         InventoryButton.onClick.AddListener(() =>
         {
-            Debug.Log("Inventory Button Clicked");
+// // Debug.Log("Inventory Button Clicked");
         });
     }
 

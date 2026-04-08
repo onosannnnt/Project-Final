@@ -17,7 +17,7 @@ public class TauntBuff : Buff
         owner.AddModifier(modifier, EntityModifierType.Incoming);
 
         string taunterName = Taunter != null ? Taunter.gameObject.name : "Unknown";
-        Debug.Log($"{owner.gameObject.name} is TAUNTED by {taunterName} and will take +{ExtraDamageTaken} damage from all attacks!");
+// // Debug.Log($"{owner.gameObject.name} is TAUNTED by {taunterName} and will take +{ExtraDamageTaken} damage from all attacks!");
     }
 
     public override void OnRemove(Entity owner, ActiveBuff buffState)
@@ -27,7 +27,7 @@ public class TauntBuff : Buff
         {
             owner.RemoveModifier((IncomingVulnerabilityModifier)modifierObj, EntityModifierType.Incoming);
         }
-        Debug.Log($"{owner.gameObject.name} is no longer taunted.");
+// // Debug.Log($"{owner.gameObject.name} is no longer taunted.");
     }
 
     private class IncomingVulnerabilityModifier : IDamageModifier
@@ -43,7 +43,7 @@ public class TauntBuff : Buff
         {
             // Increase the incoming damage amount
             ctx.Damage.Amount += extraDamage;
-            Debug.Log($"Taunt Vulnerability applied! +{extraDamage} damage.");
+// // Debug.Log($"Taunt Vulnerability applied! +{extraDamage} damage.");
         }
     }
 }

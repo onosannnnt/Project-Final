@@ -148,6 +148,6 @@ public class SkillListManager : MonoBehaviour
             }
         }
 
-        Debug.Log(loadout);
+// // Debug.Log(loadout);
     }
 }

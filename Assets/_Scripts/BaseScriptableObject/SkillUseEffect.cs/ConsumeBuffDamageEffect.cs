@@ -13,12 +13,12 @@ public class ConsumeBuffDamageEffect : DamageEffect
 
     public override bool Execute(Entity caster, Entity target, CombatActionLog log)
     {
-        Debug.Log(caster.gameObject.name + " dealt damage on " + target.gameObject.name);
+// // Debug.Log(caster.gameObject.name + " dealt damage on " + target.gameObject.name);
 
         // 1. Accuracy Check
         if (Random.Range(0f, 100f) > Accuracy)
         {
-            Debug.Log($"{caster.gameObject.name}'s attack but missed!");
+            // // Debug.Log($"{caster.gameObject.name}'s attack but missed!");
             target.ShowDamage(0, Color.white);
             return false; 
         }
@@ -33,17 +33,17 @@ public class ConsumeBuffDamageEffect : DamageEffect
             _cachedStacksConsumed = 0;
 
             ActiveBuff buff = caster.buffController.GetBuffByName(BuffNameToConsume);
-            Debug.Log($"[ConsumeBuffDamageEffect] Looking for buff: {BuffNameToConsume}. Found on caster: {buff != null}");
+// // Debug.Log($"[ConsumeBuffDamageEffect] Looking for buff: {BuffNameToConsume}. Found on caster: {buff != null}");
             
             if (buff == null) 
             {
                 buff = target.buffController.GetBuffByName(BuffNameToConsume);
-                Debug.Log($"[ConsumeBuffDamageEffect] Looking for buff: {BuffNameToConsume}. Found on target: {buff != null}");
+// // Debug.Log($"[ConsumeBuffDamageEffect] Looking for buff: {BuffNameToConsume}. Found on target: {buff != null}");
             }
 
             if (buff != null && buff.CurrentStack > 0)
             {
-                Debug.Log($"[ConsumeBuffDamageEffect] {BuffNameToConsume} found with {buff.CurrentStack} stacks.");
+// // Debug.Log($"[ConsumeBuffDamageEffect] {BuffNameToConsume} found with {buff.CurrentStack} stacks.");
                 _cachedStacksConsumed = Mathf.Min(buff.CurrentStack, MaxStacksToConsume);
 
                 if (caster.buffController.GetBuffByName(BuffNameToConsume) != null)
@@ -55,7 +55,7 @@ public class ConsumeBuffDamageEffect : DamageEffect
                     target.buffController.ConsumeBuffStack(buff, _cachedStacksConsumed);
                 }
 
-                Debug.Log($"Consumed {_cachedStacksConsumed} stacks of {BuffNameToConsume} for bonus damage.");
+// // Debug.Log($"Consumed {_cachedStacksConsumed} stacks of {BuffNameToConsume} for bonus damage.");
             }
         }
 
@@ -71,10 +71,10 @@ public class ConsumeBuffDamageEffect : DamageEffect
         if (isCrit)
         {
             finalDamage *= 1.5f;
-            Debug.Log($"Critical Hit!");
+// // Debug.Log($"Critical Hit!");
         }
 
-        Debug.Log($"Base Damage: {totalDamage}, Variance: {variance}, Final Damage: {finalDamage}");
+// // Debug.Log($"Base Damage: {totalDamage}, Variance: {variance}, Final Damage: {finalDamage}");
 
         Damage damage = new Damage(finalDamage, Element, isCrit);
         DamageCtx ctx = new DamageCtx(caster, target, damage);

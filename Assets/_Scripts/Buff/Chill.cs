@@ -8,11 +8,11 @@ public class Chill : Buff
     {
         base.OnApply(owner, buffState);
         ActiveBuff chilledBuff = owner.buffController.GetBuffByName("Chill");
-        Debug.Log(owner.gameObject.name + " has " + chilledBuff.CurrentStack + " stacks of Chill.");
+// // Debug.Log(owner.gameObject.name + " has " + chilledBuff.CurrentStack + " stacks of Chill.");
         if (chilledBuff == null) return;
         if (chilledBuff.CurrentStack >= Threshold)
         {
-            Debug.Log(owner.gameObject.name + " has reached the threshold for Chill buff. Removing Chill and applying Freeze.");
+// // Debug.Log(owner.gameObject.name + " has reached the threshold for Chill buff. Removing Chill and applying Freeze.");
             owner.buffController.RemoveBuff(chilledBuff);
             owner.buffController.AddBuff(FreezeBuff);
         }

@@ -6,27 +6,7 @@ public class PlayerTeamManager : Singleton<PlayerTeamManager>
     [SerializeField] private Transform worldParent; // Parent location for characters
     [Header("Player Settings")]
     public GameObject mainPlayerPrefab; // Assuming you have a prefab for the player
-    public GameObject allyPrefab;       // Assuming you have a prefab for the ally
     
-    [Header("Team Speed Distribution")]
-    [Tooltip("How much of the total ActionSpeed goes to the Main Player vs the Ally. 1 = 100% Player, 0 = 100% Ally.")]
-    [Range(0f, 1f)] 
-    public float mainPlayerSpeedRatio = 0.7f; // Default 70% to Player, 30% to Ally
-    private float originalTotalSpeed = -1f;
-    
-    public float GetOriginalTotalSpeed()
-    {
-        if (PlayerCombat.instance == null) return 100f; // Safebase
-
-        // Lock in the total speed the first time we check it so we don't recalculate off a scaled version
-        if (originalTotalSpeed < 0)
-        {
-            originalTotalSpeed = PlayerCombat.instance.GetStat(StatType.ActionSpeed);
-        }
-
-        return originalTotalSpeed;
-    }
-
     // Position logic similar to enemy
     private Vector3[] spawnPositions = new Vector3[]
     {
@@ -62,31 +42,12 @@ public class PlayerTeamManager : Singleton<PlayerTeamManager>
         // the player here instead of having them pre-placed in the scene.
         
         // Let's assume Main Player is pre-placed, so we find them
-        if (PlayerCombat.instance != null)
+        if (PlayerCombat.instance != null && !ActiveTeamMembers.Contains(PlayerCombat.instance))
         {
             ActiveTeamMembers.Add(PlayerCombat.instance);
             // Assign explicitly to the first spawn position and rotation
             PlayerCombat.instance.transform.position = spawnPositions[0];
             PlayerCombat.instance.transform.rotation = Quaternion.Euler(spawnRotations[0]);
-
-            SpawnAlly();
-        }
-    }
-
-    public void SpawnAlly()
-    {
-        if (allyPrefab == null) return;
-
-        // Spawn second character at Position 2 and Rotation 2
-        GameObject allyObj = Instantiate(allyPrefab, spawnPositions[1], Quaternion.Euler(spawnRotations[1]), worldParent);
-        
-        PlayerAlly allyCombat = allyObj.GetComponent<PlayerAlly>();
-        if (allyCombat != null)
-        {
-            // Sync with PlayerCombat before adding
-            allyCombat.SyncStatsWithMainPlayer();
-            ActiveTeamMembers.Add(allyCombat);
-            Debug.Log($"[PlayerTeamManager] Spawned {allyCombat.Stats.EntityName}");
         }
     }
 }

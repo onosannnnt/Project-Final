@@ -44,7 +44,7 @@ public class NameHandler : MonoBehaviour
             PlayerPrefs.Save();
 
 
-            Debug.Log("Player Name Saved: " + playerName);
+// // Debug.Log("Player Name Saved: " + playerName);
 
             // เปลี่ยน Scene
             SceneManager.LoadScene(nextSceneName);

@@ -23,7 +23,7 @@ public class Skill : ScriptableObject
         bool hit = true;
         foreach (var effect in SkillEffects)
         {
-            Debug.Log(effect.name + " effect is executed from skill " + skillName);
+// // Debug.Log(effect.name + " effect is executed from skill " + skillName);
             bool effectHit = effect.Execute(caster, target, log);
             if (!effectHit)
             {

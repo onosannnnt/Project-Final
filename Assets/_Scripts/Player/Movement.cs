@@ -105,7 +105,7 @@ public class Movement : MonoBehaviour
         //     }
         // } else if (gameInput.IsInteractPressed())
         // {
-        //     Debug.Log("ไม่มีอะไรให้โต้ตอบ");
+        //     // Debug.Log("ไม่มีอะไรให้โต้ตอบ");
         // }
 
         // หาตัว Manager ในฉากแล้วสั่ง Save ก่อนโหลดฉากใหม่
@@ -119,7 +119,7 @@ public class Movement : MonoBehaviour
         if (userData != null)
         {
             userData.SelectedQuestIndex = selectedQuestIndex;
-            Debug.Log("Quest selected via 'F'! Updated UserData SelectedQuestIndex to: " + selectedQuestIndex);
+// // Debug.Log("Quest selected via 'F'! Updated UserData SelectedQuestIndex to: " + selectedQuestIndex);
         }
         else
         {

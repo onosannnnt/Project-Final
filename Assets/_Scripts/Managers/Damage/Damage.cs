@@ -8,6 +8,7 @@ public enum DamageElement
     Frost,
     Lightning,
     Wind,
+    Dot
 }
 public enum StatScale
 {
@@ -22,7 +23,8 @@ public enum DamageColor
     Red,
     Blue,
     Green,
-    Yellow
+    Yellow,
+    Violet
 }
 [System.Serializable]
 public class Damage
@@ -53,7 +55,8 @@ public static class Utils
         { DamageElement.Fire, Color.red },
         { DamageElement.Frost, Color.cyan },
         { DamageElement.Lightning, Color.yellow },
-        { DamageElement.Wind, Color.green }
+        { DamageElement.Wind, Color.green },
+        { DamageElement.Dot, new Color32(0xFF, 0x33, 0xFF, 0xFF) } // #FF33FF Hex for DoT
     };
 
     public static StatType GetScalingStat(StatScale type)

@@ -11,12 +11,12 @@ public class DamageEffect : SkillEffect
 
     public override bool Execute(Entity caster, Entity target, CombatActionLog log)
     {
-        Debug.Log(caster.gameObject.name + " dealt damage on " + target.gameObject.name);
+// // Debug.Log(caster.gameObject.name + " dealt damage on " + target.gameObject.name);
 
         // 1. Accuracy Check
         if (Random.Range(0f, 100f) > Accuracy)
         {
-            Debug.Log($"{caster.gameObject.name}'s attack but missed!");
+            // // Debug.Log($"{caster.gameObject.name}'s attack but missed!");
             target.ShowDamage(0, Color.white);
             return false; 
         }
@@ -30,10 +30,10 @@ public class DamageEffect : SkillEffect
         if (isCrit)
         {
             finalDamage *= 1.5f;
-            Debug.Log($"Critical Hit!");
+// // Debug.Log($"Critical Hit!");
         }
 
-        Debug.Log($"Base Damage: {BaseDamage}, Variance: {variance}, Final Damage: {finalDamage}");
+// // Debug.Log($"Base Damage: {BaseDamage}, Variance: {variance}, Final Damage: {finalDamage}");
 
         Damage damage = new Damage(finalDamage, Element, isCrit);
         DamageCtx ctx = new DamageCtx(caster, target, damage);

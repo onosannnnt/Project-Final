@@ -42,7 +42,7 @@ public class WeatherManager : Singleton<WeatherManager>
         NextWeather = GetRandomWeather();
         
         OnWeatherChanged?.Invoke(CurrentWeather, NextWeather, WeatherStreak);
-        Debug.Log($"[WeatherManager] Weather changed to {CurrentWeather} (Streak x{WeatherStreak}). Next turn weather will be {NextWeather}.");
+// // Debug.Log($"[WeatherManager] Weather changed to {CurrentWeather} (Streak x{WeatherStreak}). Next turn weather will be {NextWeather}.");
     }
 
     private WeatherType GetRandomWeather()

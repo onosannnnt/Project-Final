@@ -20,7 +20,7 @@ public class SceneTeleport : MonoBehaviour
 
             if (Input.GetKeyDown(interactKey))
             {
-                Debug.Log("Loading Scene: Map 2");
+// // Debug.Log("Loading Scene: Map 2");
             }
         }
     }

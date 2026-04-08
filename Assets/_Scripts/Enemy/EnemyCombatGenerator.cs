@@ -16,6 +16,15 @@ public class EnemyGenerator : Singleton<EnemyGenerator>
         new Vector3(-1.919f, 0.139f, 0f)  // ตำแหน่งที่ 5 (กลาง)
     };
 
+    public Vector3 GetSpawnPosition(int index)
+    {
+        if (index >= 0 && index < spawnPositions.Length)
+        {
+            return spawnPositions[index];
+        }
+        return Vector3.zero; // default
+    }
+
     void Start()
     {
         // แนะนำให้ลบส่วนนี้ออก แล้วให้ TurnManager เป็นคนเรียกแทนเมื่อพร้อม

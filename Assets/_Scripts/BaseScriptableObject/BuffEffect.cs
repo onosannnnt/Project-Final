@@ -13,7 +13,7 @@ public class BuffEffect : SkillEffect
 
         bool isResist = false;
         
-        Debug.Log(caster.gameObject.name + " used BuffEffect on " + target.gameObject.name);
+// // Debug.Log(caster.gameObject.name + " used BuffEffect on " + target.gameObject.name);
         foreach (var buff in buffs)
         {
             if (buff.targetType == TargetType.Self)

@@ -102,7 +102,7 @@ public class EnemyCombat : Entity
         if (currentBreakState != BreakState.Normal) return; // Only reduce armor if normal
         
         currentBreakArmor -= amount;
-        Debug.Log($"{gameObject.name} armor reduced by {amount}. Remaining Armor: {currentBreakArmor}");
+// // Debug.Log($"{gameObject.name} armor reduced by {amount}. Remaining Armor: {currentBreakArmor}");
 
         if (currentBreakArmor <= 0)
         {
@@ -115,7 +115,7 @@ public class EnemyCombat : Entity
 
     private void TriggerBreak()
     {
-        Debug.Log($"{gameObject.name} is BROKEN!");
+// // Debug.Log($"{gameObject.name} is BROKEN!");
         currentBreakState = BreakState.JustBroken;
         // Animation, sound effect, or floating text could go here
     }
@@ -125,14 +125,14 @@ public class EnemyCombat : Entity
         if (currentBreakState == BreakState.JustBroken)
         {
             currentBreakState = BreakState.Vulnerable;
-            Debug.Log($"{gameObject.name} is now Vulnerable and will take 15% more damage.");
+// // Debug.Log($"{gameObject.name} is now Vulnerable and will take 15% more damage.");
         }
         else if (currentBreakState == BreakState.Vulnerable)
         {
             // Recover logic
             currentBreakState = BreakState.Normal;
             currentBreakArmor = (int)GetStat(StatType.MaxBreakArmor);
-            Debug.Log($"{gameObject.name} has recovered. Armor reset to Max.");
+// // Debug.Log($"{gameObject.name} has recovered. Armor reset to Max.");
             // NOTE: In the future, you can add conditional logic here to prevent recovery 
         }
         
@@ -166,7 +166,7 @@ public class EnemyCombat : Entity
     {
         base.TakeDamage(damage);
         var healthBar = healthBarForeground.GetComponent<UnityEngine.UI.Image>();
-        Debug.Log($"{gameObject.name} took {damage.Amount} damage, current health: {CurrentHealth / GetStat(StatType.MaxHealth)}");
+// // Debug.Log($"{gameObject.name} took {damage.Amount} damage, current health: {CurrentHealth / GetStat(StatType.MaxHealth)}");
         if (healthBar != null)
         {
             float healthPercent = CurrentHealth / GetStat(StatType.MaxHealth);

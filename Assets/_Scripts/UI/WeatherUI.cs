@@ -33,7 +33,8 @@ public class WeatherUI : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (WeatherManager.Instance != null)
+        // Check HasInstance to safely see if the manager exists without re-creating or throwing errors
+        if (WeatherManager.HasInstance)
         {
             WeatherManager.Instance.OnWeatherChanged -= UpdateWeatherUI;
         }

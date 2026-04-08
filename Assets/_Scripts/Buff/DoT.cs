@@ -26,8 +26,15 @@ public class DOT : Buff
         float variance = Random.Range(0.85f, 1.15f);
         totalDamage *= variance;
 
-        Debug.Log($"{owner.gameObject.name} takes {totalDamage} damage from {name} DOT.");
-        Damage damage = new Damage(totalDamage, DamageElement.Physical); // Or appropriate element
+        owner.StartCoroutine(ApplyDotDamageDelayed(owner, totalDamage, log));
+    }
+
+    private System.Collections.IEnumerator ApplyDotDamageDelayed(Entity owner, float totalDamage, CombatActionLog log)
+    {
+        yield return new WaitForSeconds(0.5f);
+
+// // Debug.Log($"{owner.gameObject.name} takes {totalDamage} damage from {name} DOT.");
+        Damage damage = new Damage(totalDamage, DamageElement.Dot);
         DamageCtx ctx = new DamageCtx(owner, owner, damage);
         DamageSystem.Process(ctx, log);
     }

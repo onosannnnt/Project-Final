@@ -9,7 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84572286506634794ba4227fc91d1e2b, type: 3}
-  m_Name: LoseHealth
+  m_Script: {fileID: 11500000, guid: c46aedc9ed1084bb3abe687953decc10, type: 3}
+  m_Name: DamageEffect
   m_EditorClassIdentifier: 
-  maxHpCostPercentage: 0.1
+  BaseDamage: 150
+  Element: 0
+  Accuracy: 95
+  CriticalHitChance: 5

@@ -30,7 +30,7 @@ public class PlayerCombat : PlayerEntity
     }
     protected override void Die()
     {
-        Debug.Log("Player Died");
+// // Debug.Log("Player Died");
     }
     public override void TakeDamage(Damage damage)
     {

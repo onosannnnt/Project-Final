@@ -18,7 +18,7 @@ public class SceneController : MonoBehaviour
     // สำหรับปุ่มออกจากเกม
     public void QuitGame()
     {
-        Debug.Log("Game is exiting..."); // ไว้เช็คใน Console เพราะใน Editor เกมจะไม่ปิดจริง
+// // Debug.Log("Game is exiting..."); // ไว้เช็คใน Console เพราะใน Editor เกมจะไม่ปิดจริง
         // ถ้ากำลังรันอยู่ใน Unity Editor
         #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;

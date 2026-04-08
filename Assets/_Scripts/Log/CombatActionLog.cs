@@ -39,7 +39,7 @@ public class CombatActionLog
     public void AddEntityLog(EntityStatData log)
     {
         if (EntityLogs == null) return;
-        // UnityEngine.Debug.Log("Entity log added");
+        // UnityEngine.// Debug.Log("Entity log added");
         EntityLogs.Add(log);
     }
 }

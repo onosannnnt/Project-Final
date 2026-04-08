@@ -29514,6 +29514,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 03340a7ec62f14fb59a235742685b8d3, type: 2}
   - {fileID: 11400000, guid: bc23fe254f317f241837f96f768c273d, type: 2}
   - {fileID: 11400000, guid: 0d575b8c335695f48a878803c4c49058, type: 2}
+  - {fileID: 11400000, guid: 7126a5820e8b44344b52a692c6af4db2, type: 2}
   skillSlotPrefab: {fileID: 125270501465738059, guid: 1a5ac496baf806d439436b3eaa85a0d5,
     type: 3}
   contentParent: {fileID: 44288014}

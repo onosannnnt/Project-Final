@@ -3113,11 +3113,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   worldParent: {fileID: 25655269}
   quests:
+  - {fileID: 11400000, guid: 5a151c9dbe93641cc83412327283590f, type: 2}
   - {fileID: 11400000, guid: c9cb87fbd5e84ac4498ed65b7f907492, type: 2}
   - {fileID: 11400000, guid: 059341551e3e05b43add792b5d64e74f, type: 2}
   - {fileID: 11400000, guid: be5e6da865d545946a6c1b8c54f56d77, type: 2}
   - {fileID: 11400000, guid: f165b5705d8ea8a4097f77b9e2e94a71, type: 2}
-  - {fileID: 11400000, guid: 5a151c9dbe93641cc83412327283590f, type: 2}
 --- !u!1 &294723866
 GameObject:
   m_ObjectHideFlags: 0
@@ -5266,7 +5266,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000045776367}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &453420708
@@ -5936,8 +5936,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 212.5, y: 0}
-  m_SizeDelta: {x: 425, y: -43}
+  m_AnchoredPosition: {x: 218.23, y: 0}
+  m_SizeDelta: {x: 436.46, y: -43}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &507687646
 MonoBehaviour:
@@ -6167,9 +6167,9 @@ MonoBehaviour:
   currentWeatherIcon: {fileID: 1341886833}
   nextWeatherIcon: {fileID: 862889531}
   streakText: {fileID: 2038754878}
-  sunnySprite: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}
-  rainySprite: {fileID: 21300000, guid: ea3b8a61f4add494c84dfcffa4d9cc32, type: 3}
-  windySprite: {fileID: 21300000, guid: ea61475f2ca0f4eeba50601040774701, type: 3}
+  sunnySprite: {fileID: 21300000, guid: 4cd27596e0354444ea5b35a933f14dec, type: 3}
+  rainySprite: {fileID: 21300000, guid: 3d5be214abc73b242860529e0810abb3, type: 3}
+  windySprite: {fileID: 21300000, guid: fcbff5669f5659e40b8715f155dcb9c3, type: 3}
 --- !u!1 &534659541
 GameObject:
   m_ObjectHideFlags: 0
@@ -9471,8 +9471,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 213.19995, y: 0}
-  m_SizeDelta: {x: 425, y: 25}
+  m_AnchoredPosition: {x: 217.436, y: 0}
+  m_SizeDelta: {x: 436.65, y: 25}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &785669382
 MonoBehaviour:
@@ -10782,9 +10782,6 @@ MonoBehaviour:
   worldParent: {fileID: 25655269}
   mainPlayerPrefab: {fileID: 2805685396157638668, guid: bee767d543ab4463aaf2e5e987d25263,
     type: 3}
-  allyPrefab: {fileID: 2805685396157638668, guid: 121f7e8dd9a4b4d70a155477593d1aee,
-    type: 3}
-  mainPlayerSpeedRatio: 0.7
   ActiveTeamMembers: []
 --- !u!1 &925636150
 GameObject:
@@ -12989,13 +12986,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1084630070}
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 530272468}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -6.1, y: 33.5}
@@ -13014,14 +13011,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0.17934132, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 7a142df9bcfb64a9f8b416e93fb9f7ab, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6ec44c59d0d340f42851fc8651fa05fa, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -17651,8 +17648,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1034876034}
   m_HandleRect: {fileID: 1034876033}
   m_Direction: 2
-  m_Value: 0.99999976
-  m_Size: 0.7313047
+  m_Value: 1
+  m_Size: 0.73130476
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -23434,7 +23431,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -0.000015258789}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1955182109
@@ -24217,6 +24214,7 @@ MonoBehaviour:
     type: 3}
   StatusBuffPrefab: {fileID: 8145362129620172556, guid: 575c2d784d56f42ec869201ab144b064,
     type: 3}
+  targetPlayer: {fileID: 0}
 --- !u!114 &2008848220
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25304,15 +25302,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerCombat: {fileID: 656552212}
-  healthBar: {fileID: 507687644}
-  spBar: {fileID: 785669380}
   actionPanel: {fileID: 239885077}
   skillsButton: {fileID: 895731535}
   SkillList: {fileID: 349563404}
   SkillPrefab: {fileID: 316808589417792065, guid: af2b81e2e41aa4fb388bb37e96e47a30,
     type: 3}
-  mainPlayerUIPosition: {x: 599, y: -281}
-  allyUIPosition: {x: 250, y: 0}
+  uiOffsetPerCharacter: 250
 --- !u!1 &2061989693
 GameObject:
   m_ObjectHideFlags: 0

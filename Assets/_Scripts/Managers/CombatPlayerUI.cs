@@ -6,18 +6,14 @@ public class CombatPlayerUI : Singleton<CombatPlayerUI>
 {
     [SerializeField] private PlayerCombat playerCombat;
     [Header("UI Elements")]
-    [SerializeField] private GameObject healthBar;
-    [SerializeField] private GameObject spBar;
     [SerializeField] private GameObject actionPanel;
     [SerializeField] private Button skillsButton;
     [SerializeField] private GameObject SkillList;
     [SerializeField] private GameObject SkillPrefab;
 
     [Header("UI Positions")]
-    [Tooltip("Anchored position of the Action/Skill panels for the Main Player")]
-    [SerializeField] private Vector2 mainPlayerUIPosition = new Vector2(0, 0);
-    [Tooltip("Anchored position of the Action/Skill panels for the Ally")]
-    [SerializeField] private Vector2 allyUIPosition = new Vector2(250, 0);
+    [Tooltip("Anchored position offsets based on which character's turn it is")]
+    [SerializeField] private float uiOffsetPerCharacter = 250f;
 
     private void Start()
     {
@@ -39,14 +35,6 @@ public class CombatPlayerUI : Singleton<CombatPlayerUI>
         });
     }
 
-    public void UpdateHealthBar()
-    {
-        healthBar.GetComponent<Image>().fillAmount = playerCombat.CurrentHealth / playerCombat.GetStat(StatType.MaxHealth);
-    }
-    public void UpdateSPBar()
-    {
-        spBar.GetComponent<Image>().fillAmount = (float)playerCombat.CurrentSP / playerCombat.GetStat(StatType.MaxSkillPoint);
-    }
     private void SetUpSkillPanel()
     {
         Entity currentPlayer = TurnManager.Instance?.CurrentActivePlayer ?? playerCombat;
@@ -72,7 +60,7 @@ public class CombatPlayerUI : Singleton<CombatPlayerUI>
             skillButton.GetComponent<RectTransform>().localPosition = new Vector3(x, 0, 0);
             skillButton.GetComponentInChildren<TextMeshProUGUI>().text = skill.name;
             
-            if (playerCombat.CurrentSP < skill.SkillPoint) // TODO: Assuming SP is shared, otherwise use currentPlayer's SP
+            if (currentPlayer.CurrentSP < skill.SkillPoint) 
             {
                 skillButton.GetComponent<Button>().interactable = false;
             }
@@ -113,9 +101,11 @@ public class CombatPlayerUI : Singleton<CombatPlayerUI>
     {
         Entity currentPlayer = TurnManager.Instance?.CurrentActivePlayer ?? playerCombat;
         RectTransform rt = panel.GetComponent<RectTransform>();
-        if (rt != null)
+        if (rt != null && PlayerTeamManager.Instance != null)
         {
-            rt.anchoredPosition = (currentPlayer == playerCombat) ? mainPlayerUIPosition : allyUIPosition;
+            int index = PlayerTeamManager.Instance.ActiveTeamMembers.IndexOf(currentPlayer);
+            if (index == -1) index = 0; // Default to main player slot
+            rt.anchoredPosition = new Vector2(index * uiOffsetPerCharacter, 0);
         }
     }
 }

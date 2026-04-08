@@ -16,12 +16,9 @@ MonoBehaviour:
   skillName: NormalAttack
   description: 
   skillIcon: {fileID: 0}
-  Level: 0
-  Strength: 0
-  Agility: 0
-  Intelligence: 0
   SkillPoint: 0
-  SkillPointRestore: 0
-  TargetType: 1
+  TargetType: 2
+  TargetCount: 0
+  reducesArmor: 1
   SkillEffects:
   - {fileID: 11400000, guid: d74cea16a63414a489d22bb2685d08c0, type: 2}

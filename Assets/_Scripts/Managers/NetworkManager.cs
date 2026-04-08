@@ -30,7 +30,7 @@ public class NetworkManager : SingletonPersistent<NetworkManager>
         try
         {
             string uri = LoadEnv.apiKey + "/users";
-            Debug.Log(uri);
+// // Debug.Log(uri);
             // Await the POST request
             HttpResponseMessage response = await client.PostAsync(uri, content);
 

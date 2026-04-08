@@ -8,13 +8,11 @@ public class HealEffect : SkillEffect
 
     public override bool Execute(Entity caster, Entity target, CombatActionLog log)
     {
-        Debug.Log(caster.gameObject.name + " used HealEffect on " + target.gameObject.name);
+// // Debug.Log(caster.gameObject.name + " used HealEffect on " + target.gameObject.name);
         
-        // Add +- 15% variance
-        float variance = Random.Range(0.85f, 1.15f);
-        float finalHeal = BaseHeal * variance;
+        float finalHeal = BaseHeal;
 
-        Debug.Log($"Base Heal: {BaseHeal}, Variance: {variance}, Final Heal: {finalHeal}");
+        // // Debug.Log($"Base Heal: {BaseHeal}, Final Heal: {finalHeal}");
 
         caster.Heal(finalHeal);
         log.AddHealEffectLog(new HealEffectLog()
