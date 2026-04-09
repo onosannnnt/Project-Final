@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: SummonEffect
   m_EditorClassIdentifier: 
   enemiesToSummon:
-  - enemyPrefab: {fileID: 6702360306364772165, guid: e4dd33fc5de054c9f9059e4dffe6a311,
+  - enemyPrefab: {fileID: 6702360306364772165, guid: 7f5b69ad9953cb84e8cae62d5470fbff,
       type: 3}
     positionIndex: 0
-  - enemyPrefab: {fileID: 6702360306364772165, guid: e4dd33fc5de054c9f9059e4dffe6a311,
+  - enemyPrefab: {fileID: 6702360306364772165, guid: 7f5b69ad9953cb84e8cae62d5470fbff,
       type: 3}
     positionIndex: 1
-  - enemyPrefab: {fileID: 6702360306364772165, guid: e4dd33fc5de054c9f9059e4dffe6a311,
+  - enemyPrefab: {fileID: 6702360306364772165, guid: 7f5b69ad9953cb84e8cae62d5470fbff,
       type: 3}
     positionIndex: 2
-  - enemyPrefab: {fileID: 6702360306364772165, guid: e4dd33fc5de054c9f9059e4dffe6a311,
+  - enemyPrefab: {fileID: 6702360306364772165, guid: 7f5b69ad9953cb84e8cae62d5470fbff,
       type: 3}
     positionIndex: 3
