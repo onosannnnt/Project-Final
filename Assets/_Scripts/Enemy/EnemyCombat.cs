@@ -32,8 +32,16 @@ public class EnemyCombat : Entity
 
     private PlayerEntity GetActivePlayer()
     {
-        if (TurnManager.Instance != null && TurnManager.Instance.CurrentActivePlayer is PlayerEntity pe)
-            return pe;
+        if (TurnManager.Instance != null && TurnManager.Instance.CurrentActivePlayer != null)
+            return TurnManager.Instance.CurrentActivePlayer;
+            
+        // Fallback for safety if CurrentActivePlayer is null
+        if (PlayerTeamManager.Instance != null)
+        {
+            PlayerEntity firstAlive = PlayerTeamManager.Instance.GetFirstAliveMember();
+            if (firstAlive != null) return firstAlive;
+        }
+        
         return PlayerCombat.instance;
     }
 
@@ -67,29 +75,36 @@ public class EnemyCombat : Entity
     }
     private void Update()
     {
-        if (GetActivePlayer().GetPlayerState != PlayerActionState.Targeting || GetActivePlayer().GetSelectedSkill == null)
+        PlayerEntity activePlayer = GetActivePlayer();
+        if (activePlayer == null)
         {
             Highlight(Color.white);
             return;
         }
 
-        if (GetActivePlayer().GetSelectedSkill.TargetType == TargetType.Self)
+        if (activePlayer.GetPlayerState != PlayerActionState.Targeting || activePlayer.GetSelectedSkill == null)
+        {
+            Highlight(Color.white);
+            return;
+        }
+
+        if (activePlayer.GetSelectedSkill.TargetType == TargetType.Self)
         {
             Highlight(Color.white);
             return;
         }
 
         // If the selected skill targets all enemies, highlight all in red
-        if (GetActivePlayer().GetSelectedSkill.TargetType == TargetType.Enemy)
+        if (activePlayer.GetSelectedSkill.TargetType == TargetType.Enemy)
         {
-            if (GetActivePlayer().GetSelectedSkill.TargetCount == TargetCount.All)
+            if (activePlayer.GetSelectedSkill.TargetCount == TargetCount.All)
             {
                 Highlight(Color.red);
             }
             // If the selected skill targets a single enemy
-            else if (GetActivePlayer().GetSelectedSkill.TargetCount == TargetCount.Single)
+            else if (activePlayer.GetSelectedSkill.TargetCount == TargetCount.Single)
             {
-                if (GetActivePlayer().GetEnemyTarget() == this)
+                if (activePlayer.GetEnemyTarget() == this)
                     Highlight(Color.red);
                 else
                     Highlight(Color.yellow);
@@ -176,19 +191,21 @@ public class EnemyCombat : Entity
 
     public void OnMouseDown()
     {
-        if (GetActivePlayer().GetPlayerState != PlayerActionState.Targeting) return;
-        if (GetActivePlayer().GetSelectedSkill == null) return;
-        if (GetActivePlayer().GetSelectedSkill.TargetType == TargetType.Self) return;
+        PlayerEntity activePlayer = GetActivePlayer();
+        if (activePlayer == null) return;
+        if (activePlayer.GetPlayerState != PlayerActionState.Targeting) return;
+        if (activePlayer.GetSelectedSkill == null) return;
+        if (activePlayer.GetSelectedSkill.TargetType == TargetType.Self) return;
         
-        if (GetActivePlayer().GetEnemyTarget() == this)
+        if (activePlayer.GetEnemyTarget() == this)
         {
             // Submit the action on behalf of whichever player is currently active in TurnManager
-            Entity currentActive = TurnManager.Instance.CurrentActivePlayer ?? GetActivePlayer();
-            TurnManager.Instance.SubmitPlayerAction(currentActive, this, GetActivePlayer().GetSelectedSkill);
+            Entity currentActive = TurnManager.Instance.CurrentActivePlayer ?? activePlayer;
+            TurnManager.Instance.SubmitPlayerAction(currentActive, this, activePlayer.GetSelectedSkill);
             return;
         }
 
-        GetActivePlayer().SetEnemyTarget(this);
+        activePlayer.SetEnemyTarget(this);
         TargetingPanel.instance.SetEnemyTargetPanel(this);
 
     }

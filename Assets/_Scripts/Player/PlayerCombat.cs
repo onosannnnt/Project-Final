@@ -4,17 +4,16 @@ using UnityEngine;
 public class PlayerCombat : PlayerEntity
 {
     [SerializeField] private UserData userData;
+    [SerializeField] private bool registerAsMainPlayer = true;
     public static PlayerCombat instance;
     protected override void Awake()
     {
         base.Awake();
-        if (instance == null)
+        // Keep backward compatibility for systems that still read PlayerCombat.instance,
+        // but allow additional playable characters to exist.
+        if (registerAsMainPlayer && instance == null)
         {
             instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
         }
     }
     public void SetUserData(UserData data)

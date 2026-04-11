@@ -16,6 +16,8 @@ public class EnemyGenerator : Singleton<EnemyGenerator>
         new Vector3(-1.919f, 0.139f, 0f)  // ตำแหน่งที่ 5 (กลาง)
     };
 
+    [SerializeField] private UserData userData; // Injected globally via Inspector (ScriptableObject)
+
     public Vector3 GetSpawnPosition(int index)
     {
         if (index >= 0 && index < spawnPositions.Length)
@@ -32,47 +34,58 @@ public class EnemyGenerator : Singleton<EnemyGenerator>
         Invoke(nameof(GenerateInitialEnemy), 0.1f); 
     }
 
-    public void GenerateInitialEnemy() // เปลี่ยนเป็น public เพื่อให้ระบบอื่นเรียกได้
+public void GenerateInitialEnemy() // เปลี่ยนเป็น public เพื่อให้ระบบอื่นเรียกได้
+{
+    if (worldParent != null)
     {
-        if (TurnManager.Instance != null && TurnManager.Instance.currentWave == 1)
+        foreach (Transform child in worldParent)
         {
-            GenerateEnemy();
+            if (child != null && child.CompareTag("Enemy"))
+            {
+                return;
+            }
         }
     }
 
-    public QuestEnemies GetCurrentQuest()
+    if (TurnManager.Instance != null && TurnManager.Instance.currentWave == 1)
     {
-        if (quests == null || quests.Length == 0) return null;
-        int questIndex = 0;
-        
-        if (PlayerCombat.instance != null && PlayerCombat.instance.GetUserData() != null)
-        {
-            questIndex = PlayerCombat.instance.GetUserData().SelectedQuestIndex;
-        }
+        GenerateEnemy();
+    }
+}
 
-        questIndex = Mathf.Clamp(questIndex, 0, quests.Length - 1);
-        return quests[questIndex];
+public QuestEnemies GetCurrentQuest()
+{
+    if (quests == null || quests.Length == 0) return null;
+    int questIndex = 0;
+    
+    if (userData != null)
+    {
+        questIndex = userData.SelectedQuestIndex;
     }
 
-    public void GenerateEnemy()
+    questIndex = Mathf.Clamp(questIndex, 0, quests.Length - 1);
+    return quests[questIndex];
+}
+
+public void GenerateEnemy()
+{
+    // ป้องกัน Error กรณีไม่ได้ใส่ข้อมูลใน Inspector
+    if (quests == null || quests.Length == 0)
     {
-        // ป้องกัน Error กรณีไม่ได้ใส่ข้อมูลใน Inspector
-        if (quests == null || quests.Length == 0)
-        {
-            Debug.LogError("[EnemyGenerator] Quests array is empty! Cannot spawn enemies.");
-            return;
-        }
+        Debug.LogError("[EnemyGenerator] Quests array is empty! Cannot spawn enemies.");
+        return;
+    }
 
-        int currentWave = 1;
-        int maxWave = 3;
-        int questIndex = 0;
+    int currentWave = 1;
+    int maxWave = 3;
+    int questIndex = 0;
 
-        if (TurnManager.Instance != null && PlayerCombat.instance != null && PlayerCombat.instance.GetUserData() != null)
-        {
-            questIndex = PlayerCombat.instance.GetUserData().SelectedQuestIndex;
-            currentWave = TurnManager.Instance.currentWave;
-            maxWave = (int)TurnManager.Instance.GetMaxWave(); 
-        }
+    if (TurnManager.Instance != null && userData != null)
+    {
+        questIndex = userData.SelectedQuestIndex;
+        currentWave = TurnManager.Instance.currentWave;
+        maxWave = (int)TurnManager.Instance.GetMaxWave(); 
+    }
 
         questIndex = Mathf.Clamp(questIndex, 0, quests.Length - 1);
         QuestEnemies currentQuest = quests[questIndex];

@@ -8,28 +8,30 @@ public class TurnManager : Singleton<TurnManager>
     [SerializeField] private float wave = 3;
     [SerializeField] private ActionQueueUI PlayerActionQueueUI;
     [SerializeField] private ActionQueueUI EnemyActionQueueUI;
+    [Header("Phase Information")]
+    [SerializeField] private UserData userData;
+
     [Header("Skill Point Restoration per Phase")]
     [SerializeField] private int phase1SPRestore = 10; // Restore X SP per turn in Phase 1
     [SerializeField] private int phase2SPRestore = 20; // Restore Y SP per turn in Phase 2
     [SerializeField] private int phase3SPRestore = 30; // Restore Z SP per turn in Phase 3
     private TurnState currentState;
     private List<ActionQueue> actionQueue = new List<ActionQueue>();
-    private PlayerCombat playerCombat;
     public int turnRound = 0;
     public int combatID = 0;
     public int currentWave = 1;
     
     // --- Multiplayer Turn Variables ---
     private int currentTeamMemberIndex = 0;
+    private bool initialWaveSpawned = false;
     private List<ActionQueue> pendingPlayerActions = new List<ActionQueue>();
-    public Entity CurrentActivePlayer => 
-        (PlayerTeamManager.Instance != null && PlayerTeamManager.Instance.ActiveTeamMembers.Count > 0 && currentTeamMemberIndex < PlayerTeamManager.Instance.ActiveTeamMembers.Count) 
-        ? PlayerTeamManager.Instance.ActiveTeamMembers[currentTeamMemberIndex] 
-        : null;
+    public PlayerEntity CurrentActivePlayer =>
+        PlayerTeamManager.Instance != null ? PlayerTeamManager.Instance.GetMemberAt(currentTeamMemberIndex) : null;
 
     private async void Start()
     {
-        playerCombat = PlayerCombat.instance;
+        EnsureTeamReady();
+
         ApplyPhaseStats();
 
         if (EnemyGenerator.Instance != null && EnemyGenerator.Instance.GetCurrentQuest() != null)
@@ -37,17 +39,36 @@ public class TurnManager : Singleton<TurnManager>
             wave = EnemyGenerator.Instance.GetCurrentQuest().waves.Length;
         }
 
+        if (GetAllEnemies().Count > 0)
+        {
+            initialWaveSpawned = true;
+        }
+        else if (EnemyGenerator.Instance != null)
+        {
+            EnemyGenerator.Instance.GenerateInitialEnemy();
+            initialWaveSpawned = true;
+        }
+
         SetState(TurnState.PlayerTurnState);
         combatID = await NetworkManager.GetLatestCombatID();
         List<SkillLogs> skillLogs = new List<SkillLogs>();
-        foreach (var skill in playerCombat.skillManager.GetSkills())
+        
+        if (PlayerTeamManager.Instance != null && PlayerTeamManager.Instance.ActiveTeamMembers.Count > 0)
         {
-            skillLogs.Add(new SkillLogs
+            foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
             {
-                SkillID = skill.skillID,
-                SkillName = skill.skillName
-            });
+                if (member == null) continue;
+                foreach (var skill in member.skillManager.GetSkills())
+                {
+                    skillLogs.Add(new SkillLogs
+                    {
+                        SkillID = skill.skillID,
+                        SkillName = skill.skillName
+                    });
+                }
+            }
         }
+        
         await NetworkManager.SaveCombatSkillLoadoutLogs(new CombatSkillLoadoutLogs
         {
             CombatID = combatID,
@@ -63,16 +84,29 @@ public class TurnManager : Singleton<TurnManager>
                 PlayerActionQueueUI.SetActionQueue(null);
                 EnemyActionQueueUI.SetActionQueue(null);
                 currentTeamMemberIndex = 0;
+                AdvanceToNextAlivePlayer();
                 pendingPlayerActions.Clear();
                 HandlePlayerTurn();
                 break;
             case TurnState.SpeedCompareState:
                 List<GameObject> enemies = GetAllEnemies();
-                if (enemies.Count == 0) return;
+                if (enemies.Count == 0)
+                {
+                    SetState(TurnState.PlayerTurnState);
+                    return;
+                }
+                
+                if (PlayerTeamManager.Instance != null)
+                {
+                    foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
+                    {
+                        if (member != null && member.CurrentHealth > 0) member.SetPlayerState(PlayerActionState.Action);
+                    }
+                }
+
                 foreach (GameObject enemy in enemies)
                 {
                     EnemyCombat enemyCombat = enemy.GetComponent<EnemyCombat>();
-                    if (CurrentActivePlayer is PlayerEntity pe) pe.SetPlayerState(PlayerActionState.Action); else playerCombat.SetPlayerState(PlayerActionState.Action);
                     enemyCombat.Highlight(Color.white);
                 }
                 HandleSpeedComparison();
@@ -95,19 +129,14 @@ public class TurnManager : Singleton<TurnManager>
         pendingPlayerActions.Add(new ActionQueue(caster, target, skill, actionSpeed));
         
         currentTeamMemberIndex++;
+        AdvanceToNextAlivePlayer();
 
         // Reset UI stuff
-        if (caster is PlayerEntity ce) 
-        { 
+        if (caster is PlayerEntity ce)
+        {
             ce.SetSelectedSkill(null); 
             ce.SetEnemyTarget(null); 
             ce.SetPlayerState(PlayerActionState.Idle); 
-        } 
-        else 
-        { 
-            playerCombat.SetSelectedSkill(null); 
-            playerCombat.SetEnemyTarget(null); 
-            playerCombat.SetPlayerState(PlayerActionState.Idle); 
         }
         TargetingPanel.instance.SetActivePanel(false);
         SkillPanelUI.Instance.gameObject.SetActive(false);
@@ -116,16 +145,16 @@ public class TurnManager : Singleton<TurnManager>
         {
             enemy.Highlight(Color.white);
         }
-        playerCombat.Highlight(Color.white);
-foreach (var ally in FindObjectsOfType<PlayerEntity>())
+        
+        if (PlayerTeamManager.Instance != null)
         {
-            if (ally != playerCombat)
+            foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
             {
-                ally.Highlight(Color.white);
+                if (member != null) member.Highlight(Color.white);
             }
         }
 
-        if (currentTeamMemberIndex >= PlayerTeamManager.Instance.ActiveTeamMembers.Count)
+        if (PlayerTeamManager.Instance == null || currentTeamMemberIndex >= PlayerTeamManager.Instance.ActiveTeamMembers.Count)
         {
             // Everyone has chosen, move to sorting phase
             SetState(TurnState.SpeedCompareState);
@@ -139,7 +168,13 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
 
     private void HandlePlayerTurn()
     {
-        Entity activePlayer = CurrentActivePlayer;
+        if (!HasAlivePlayers())
+        {
+            SetState(TurnState.Lose);
+            return;
+        }
+
+        PlayerEntity activePlayer = CurrentActivePlayer;
         if (activePlayer == null) 
         {
             SetState(TurnState.SpeedCompareState);
@@ -148,8 +183,8 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
 
 // // Debug.Log($"[TurnManager] Waiting for {activePlayer.Stats.EntityName} to choose an action.");
 
-        if (activePlayer is PlayerEntity ape) ape.SetEnemyTarget(GetFirstEnemy()); else playerCombat.SetEnemyTarget(GetFirstEnemy());
-        TargetingPanel.instance.SetEnemyTargetPanel((activePlayer as PlayerEntity)?.GetEnemyTarget() ?? playerCombat.GetEnemyTarget());
+        activePlayer.SetEnemyTarget(GetFirstEnemy());
+        TargetingPanel.instance.SetEnemyTargetPanel(activePlayer.GetEnemyTarget());
         ActionBarUI.Instance.gameObject.SetActive(true);
         
         if (currentTeamMemberIndex == 0) // Only increment turnRound once per cycle
@@ -160,10 +195,21 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
         remainingEnemies.RemoveAll(enemy => enemy.GetComponent<EnemyCombat>().IsDead());
         if (remainingEnemies.Count == 0)
         {
-// // Debug.Log("Generating new enemies for wave " + currentWave);
-            EnemyGenerator.Instance.GenerateEnemy();
-            currentWave += 1;
-            ApplyPhaseStats();
+            if (!initialWaveSpawned)
+            {
+                EnemyGenerator.Instance?.GenerateInitialEnemy();
+                initialWaveSpawned = true;
+            }
+            else if (currentWave < wave)
+            {
+                currentWave += 1;
+                EnemyGenerator.Instance?.GenerateEnemy();
+                ApplyPhaseStats();
+            }
+            else
+            {
+                SetState(TurnState.Win);
+            }
         }
     }
 
@@ -193,12 +239,47 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
                 chosenSkill = enemyEntity.skillManager.RandomSkill();
             }
 
-            ActionQueue enemyAction = new ActionQueue(enemyEntity, playerCombat, chosenSkill, enemyEntity.GetStat(StatType.ActionSpeed));
+            Entity validTarget = GetActualTargetForEnemy(enemyEntity);
+
+            ActionQueue enemyAction = new ActionQueue(enemyEntity, validTarget, chosenSkill, enemyEntity.GetStat(StatType.ActionSpeed));
             actionQueue.Add(enemyAction);
         }
         actionQueue.Sort((a, b) => b.ActionSpeed.CompareTo(a.ActionSpeed));
         SetState(TurnState.ActionState);
     }
+
+    private Entity GetActualTargetForEnemy(Entity enemyEntity)
+    {
+        // 1. Check if the enemy is taunted
+        if (enemyEntity.buffController != null)
+        {
+            var tauntBuffs = enemyEntity.buffController.GetBuffsByType(BuffType.Debuff);
+            foreach (var activeBuff in tauntBuffs)
+            {
+                if (activeBuff.Data is TauntBuff taunt && taunt.Taunter != null && taunt.Taunter.CurrentHealth > 0)
+                {
+                    return taunt.Taunter;
+                }
+            }
+        }
+
+        // 2. Otherwise pick a random alive player
+        if (PlayerTeamManager.Instance != null && PlayerTeamManager.Instance.ActiveTeamMembers.Count > 0)
+        {
+            var alivePlayers = PlayerTeamManager.Instance.GetAliveMembers();
+            if (alivePlayers.Count > 0)
+            {
+                return alivePlayers[Random.Range(0, alivePlayers.Count)];
+            }
+        }
+        
+        // Fallback for safety
+        if (PlayerTeamManager.Instance != null && PlayerTeamManager.Instance.ActiveTeamMembers.Count > 0)
+            return PlayerTeamManager.Instance.ActiveTeamMembers[0];
+            
+        return null;
+    }
+
     private IEnumerator HandleActionExecution()
     {
         int actionID = 0;
@@ -262,7 +343,16 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
                 HealEffectLogs = new(),
                 EntityLogs = new()
             };
-            log.AddEntityLog(new EntityStatData(playerCombat));
+
+            // Log stats for all alive players
+            if (PlayerTeamManager.Instance != null)
+            {
+                foreach (var member in PlayerTeamManager.Instance.GetAliveMembers())
+                {
+                    log.AddEntityLog(new EntityStatData(member));
+                }
+            }
+
             foreach (var enemy in GetAllEnemies())
             {
                 var enemyEntity = enemy.GetComponent<EnemyCombat>();
@@ -314,6 +404,36 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
                                     }
                                 }
                                 break;
+                            case TargetType.Ally:
+                                if (skill.TargetCount == TargetCount.All)
+                                {
+                                    bool hasAllyTarget = false;
+                                    if (PlayerTeamManager.Instance != null)
+                                    {
+                                        foreach (var ally in PlayerTeamManager.Instance.GetAliveMembers())
+                                        {
+                                            entity.skillManager.UseSkill(skill, ally, log);
+                                            hasAllyTarget = true;
+                                        }
+                                    }
+
+                                    if (!hasAllyTarget)
+                                    {
+                                        entity.skillManager.UseSkill(skill, entity, log);
+                                    }
+                                }
+                                else
+                                {
+                                    if (target != null && target.CurrentHealth > 0)
+                                    {
+                                        entity.skillManager.UseSkill(skill, target, log);
+                                    }
+                                    else
+                                    {
+                                        entity.skillManager.UseSkill(skill, entity, log);
+                                    }
+                                }
+                                break;
                         }
                     }
                     else
@@ -340,9 +460,15 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
                             break;
                         case TargetType.Enemy:
                             // Boss targets the player (or active player)
-                            if (playerCombat != null && playerCombat.CurrentHealth > 0)
+                            Entity enemyTarget = target;
+                            if (enemyTarget == null || enemyTarget.CurrentHealth <= 0)
                             {
-                                enemyCombat.skillManager.UseSkill(skill, playerCombat, log);
+                                enemyTarget = GetActualTargetForEnemy(enemyCombat);
+                            }
+
+                            if (enemyTarget != null && enemyTarget.CurrentHealth > 0)
+                            {
+                                enemyCombat.skillManager.UseSkill(skill, enemyTarget, log);
                             }
                             else
                             {
@@ -372,7 +498,21 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
             }
             yield return new WaitForSeconds(1f);
         }
-        if (playerCombat.CurrentHealth <= 0)
+        
+        bool allPlayersDead = true;
+        if (PlayerTeamManager.Instance != null)
+        {
+            foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
+            {
+                if (member != null && member.CurrentHealth > 0)
+                {
+                    allPlayersDead = false;
+                    break;
+                }
+            }
+        }
+
+        if (allPlayersDead)
         {
             SetState(TurnState.Lose);
             yield break;
@@ -442,9 +582,9 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
     public int GetCurrentPhase()
     {
         // Determine phase based on global game progression instead of wave
-        if (playerCombat != null && playerCombat.GetUserData() != null)
+        if (userData != null)
         {
-            return playerCombat.GetUserData().GamePhase;
+            return userData.GamePhase;
         }
         return 1; // Default to Phase 1 if UserData is not assigned
     }
@@ -477,9 +617,14 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
 
         if (spToRestore > 0)
         {
-            // Restore SP to player
-            playerCombat.SetSP(spToRestore);
-// // Debug.Log($"[Phase {currentPhase}] Player restored {spToRestore} SP at end of turn");
+            // Restore SP to alive players
+            if (PlayerTeamManager.Instance != null)
+            {
+                foreach (var member in PlayerTeamManager.Instance.GetAliveMembers())
+                {
+                    member.SetSP(spToRestore);
+                }
+            }
 
             // Restore SP to all alive enemies
             foreach (GameObject enemyObj in GetAllEnemies())
@@ -494,29 +639,63 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
         }
     }
 
+    private void EnsureTeamReady()
+    {
+        if (PlayerTeamManager.Instance != null && PlayerTeamManager.Instance.ActiveTeamMembers.Count == 0)
+        {
+            PlayerTeamManager.Instance.SpawnTeam();
+        }
+    }
+
+    private bool HasAlivePlayers()
+    {
+        return PlayerTeamManager.Instance != null && PlayerTeamManager.Instance.GetAliveMembers().Count > 0;
+    }
+
+    private void AdvanceToNextAlivePlayer()
+    {
+        if (PlayerTeamManager.Instance == null) return;
+
+        while (currentTeamMemberIndex < PlayerTeamManager.Instance.ActiveTeamMembers.Count)
+        {
+            PlayerEntity member = PlayerTeamManager.Instance.ActiveTeamMembers[currentTeamMemberIndex];
+            if (member != null && member.CurrentHealth > 0)
+            {
+                break;
+            }
+            currentTeamMemberIndex++;
+        }
+    }
+
     private void ApplyPhaseStats()
     {
         int phase = GetCurrentPhase();
-        if (playerCombat == null || playerCombat.Stats == null) return;
+        if (PlayerTeamManager.Instance == null || PlayerTeamManager.Instance.ActiveTeamMembers.Count == 0) return;
 
-        switch (phase)
+        // Apply to all active players
+        foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
         {
-            case 1:
-                playerCombat.Stats.SetBase(StatType.MaxHealth, 1000);
-                playerCombat.Stats.SetBase(StatType.MaxSkillPoint, 100);
-                break;
-            case 2:
-                playerCombat.Stats.SetBase(StatType.MaxHealth, 2000);
-                playerCombat.Stats.SetBase(StatType.MaxSkillPoint, 200);
-                break;
-            case 3:
-                playerCombat.Stats.SetBase(StatType.MaxHealth, 3000);
-                playerCombat.Stats.SetBase(StatType.MaxSkillPoint, 300);
-                break;
-            default:
-                playerCombat.Stats.SetBase(StatType.MaxHealth, 3000);
-                playerCombat.Stats.SetBase(StatType.MaxSkillPoint, 300);
-                break;
+            if (member == null || member.Stats == null) continue;
+
+            switch (phase)
+            {
+                case 1:
+                    member.Stats.SetBase(StatType.MaxHealth, 1000);
+                    member.Stats.SetBase(StatType.MaxSkillPoint, 100);
+                    break;
+                case 2:
+                    member.Stats.SetBase(StatType.MaxHealth, 2000);
+                    member.Stats.SetBase(StatType.MaxSkillPoint, 200);
+                    break;
+                case 3:
+                    member.Stats.SetBase(StatType.MaxHealth, 3000);
+                    member.Stats.SetBase(StatType.MaxSkillPoint, 300);
+                    break;
+                default:
+                    member.Stats.SetBase(StatType.MaxHealth, 3000);
+                    member.Stats.SetBase(StatType.MaxSkillPoint, 300);
+                    break;
+            }
         }
 
         // Heal to full HP/SP to reflect the new max values if it's the start of battle
@@ -531,28 +710,18 @@ foreach (var ally in FindObjectsOfType<PlayerEntity>())
             }
         }
 
-        // currentWave already got incremented in HandlePlayerTurn, so if it's wave 1, we haven't started.
-        // Wait, HandlePlayerTurn also calls this AFTER currentWave += 1, so the new wave is currentWave.
-        // E.g. at start currentWave is 1. We heal.
-        // After wave 1 finishes, currentWave becomes 2. We heal if we want to heal between waves.
         bool isStartOfBattle = (currentWave == 1);
         
         if (isStartOfBattle || isTutorial)
         {
-            playerCombat.Heal(playerCombat.GetStat(StatType.MaxHealth));
-            playerCombat.SetSP((int)playerCombat.GetStat(StatType.MaxSkillPoint));
-// // Debug.Log($"[Phase {phase}] Player stats updated and healed -> Max HP: {playerCombat.GetStat(StatType.MaxHealth)}, Max SP: {playerCombat.GetStat(StatType.MaxSkillPoint)}");
-        }
-        else
-        {
-// // Debug.Log($"[Phase {phase}] Player stats updated -> Max HP: {playerCombat.GetStat(StatType.MaxHealth)}, Max SP: {playerCombat.GetStat(StatType.MaxSkillPoint)}");
+            foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
+            {
+                if (member == null) continue;
+                member.Heal(member.GetStat(StatType.MaxHealth));
+                member.SetSP((int)member.GetStat(StatType.MaxSkillPoint));
+            }
         }
     }
-    // private void ShowLog(CombatActionLog log)
-    // {
-    //     string jsonData = JsonUtility.ToJson(log, true);
-    //     // Debug.Log("ข้อมูล JSON คือ:\n" + jsonData);
-    // }
     private void ShowLog(CombatActionLog log)
     {
         System.Text.StringBuilder sb = new System.Text.StringBuilder();

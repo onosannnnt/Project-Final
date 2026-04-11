@@ -99,7 +99,7 @@ public class CombatPlayerUI : Singleton<CombatPlayerUI>
 
     private void UpdatePanelPosition(GameObject panel)
     {
-        Entity currentPlayer = TurnManager.Instance?.CurrentActivePlayer ?? playerCombat;
+        PlayerEntity currentPlayer = TurnManager.Instance?.CurrentActivePlayer ?? playerCombat;
         RectTransform rt = panel.GetComponent<RectTransform>();
         if (rt != null && PlayerTeamManager.Instance != null)
         {
