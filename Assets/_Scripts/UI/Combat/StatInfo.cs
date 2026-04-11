@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class StatInfoUI : MonoBehaviour
 {
     [SerializeField] private Button ExitButton;
-    [SerializeField] private TMP_Text LevelText;
     [SerializeField] private TMP_Text BuffHeaderText;
     [SerializeField] private TMP_Text DebuffHeaderText;
     [SerializeField] private Transform BuffTransform;
@@ -34,7 +33,6 @@ public class StatInfoUI : MonoBehaviour
         if (Entity == null) return;
         if (TurnManager.Instance.GetTurnState() != TurnState.PlayerTurnState) gameObject.SetActive(false);
         SetupBuffPanel();
-        SetupLevelText();
         SetupHealthBar();
         SetBuffs();
         SetStatusBuff();
@@ -94,12 +92,6 @@ public class StatInfoUI : MonoBehaviour
                 ui.Setup($"{debuff.Data.BuffName}({debuff.CurrentDuration})", debuff.Data.Description, debuff.Data.Icon, debuff.CurrentStack);
             }
         }
-    }
-    private void SetupLevelText()
-    {
-        if (LevelText == null) return;
-        LevelText.text = "";
-
     }
     private void OnExitClicked()
     {

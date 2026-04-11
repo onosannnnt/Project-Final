@@ -51,7 +51,25 @@ public abstract class Entity : MonoBehaviour
     public virtual float CurrentHealth => math.min(currentHealth, GetStat(StatType.MaxHealth));
     public virtual int CurrentSP => currentSkillPoint;
     public virtual EntitiesBaseStat Stats => stats;
+    public virtual SkillLoadout SkillLoadout => skills;
     public virtual Skill GetSelectedSkill => selectedSkill;
+
+    public virtual void SetSkillLoadout(SkillLoadout loadout, bool applyImmediately = true)
+    {
+        skills = loadout;
+
+        if (!applyImmediately || skillManager == null) return;
+
+        if (skills != null)
+        {
+            skillManager.SetSkills(skills.EquippedSkills);
+        }
+        else
+        {
+            skillManager.SetSkills(new List<Skill>());
+        }
+    }
+
     public virtual void SetSelectedSkill(Skill skill)
     {
         selectedSkill = skill;

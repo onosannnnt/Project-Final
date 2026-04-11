@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -16,6 +17,10 @@ public class HealthbarUI : MonoBehaviour
     [SerializeField] private GameObject BuffPrefab;
     [SerializeField] private GameObject StatusBuffPrefab;
     [SerializeField] private PlayerEntity targetPlayer;
+    [Header("Auto Binding")]
+    [SerializeField] private bool autoBindFromTeam = true;
+    [SerializeField] private int teamMemberIndex = 0;
+    [SerializeField] private float autoBindTimeoutSeconds = 3f;
 
     private float ForegroundInitialWidth;
     private float SPForegroundInitialWidth;
@@ -39,9 +44,11 @@ public class HealthbarUI : MonoBehaviour
 
         if (targetPlayer == null)
         {
-            // Only fall back to main player if it's the main player UI (SPForeground active)
-            // If it's your cloned ally UI, we shouldn't force it to be the main player
-            if (SPForeground != null)
+            if (autoBindFromTeam)
+            {
+                StartCoroutine(BindTargetFromTeamWhenReady());
+            }
+            else if (SPForeground != null && teamMemberIndex == 0 && PlayerCombat.instance != null)
             {
                 SetTargetPlayer(PlayerCombat.instance);
             }
@@ -50,6 +57,39 @@ public class HealthbarUI : MonoBehaviour
         {
             // Initialize with the targetPlayer already assigned in inspect
             SetTargetPlayer(targetPlayer);
+        }
+    }
+
+    private IEnumerator BindTargetFromTeamWhenReady()
+    {
+        float elapsed = 0f;
+
+        while (elapsed < autoBindTimeoutSeconds)
+        {
+            if (PlayerTeamManager.Instance != null && teamMemberIndex >= 0)
+            {
+                PlayerEntity teamMember = PlayerTeamManager.Instance.GetMemberAt(teamMemberIndex);
+                if (teamMember != null)
+                {
+                    SetTargetPlayer(teamMember);
+                    yield break;
+                }
+            }
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // Legacy fallback only for main player bar
+        if (targetPlayer == null && teamMemberIndex == 0 && PlayerCombat.instance != null)
+        {
+            SetTargetPlayer(PlayerCombat.instance);
+            yield break;
+        }
+
+        if (targetPlayer == null)
+        {
+            Debug.LogWarning($"[HealthbarUI] Failed to bind team member index {teamMemberIndex}. Check PlayerTeamManager slots and bar index setup.");
         }
     }
 

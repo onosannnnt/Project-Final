@@ -15,6 +15,8 @@ public class TurnManager : Singleton<TurnManager>
     [SerializeField] private int phase1SPRestore = 10; // Restore X SP per turn in Phase 1
     [SerializeField] private int phase2SPRestore = 20; // Restore Y SP per turn in Phase 2
     [SerializeField] private int phase3SPRestore = 30; // Restore Z SP per turn in Phase 3
+    [Header("Team Resource Settings")]
+    [SerializeField] private bool useSharedPlayerSkillPointPool = true;
     private TurnState currentState;
     private List<ActionQueue> actionQueue = new List<ActionQueue>();
     public int turnRound = 0;
@@ -33,6 +35,7 @@ public class TurnManager : Singleton<TurnManager>
         EnsureTeamReady();
 
         ApplyPhaseStats();
+        SyncSharedPlayerSkillPoints();
 
         if (EnemyGenerator.Instance != null && EnemyGenerator.Instance.GetCurrentQuest() != null)
         {
@@ -205,6 +208,7 @@ public class TurnManager : Singleton<TurnManager>
                 currentWave += 1;
                 EnemyGenerator.Instance?.GenerateEnemy();
                 ApplyPhaseStats();
+                SyncSharedPlayerSkillPoints();
             }
             else
             {
@@ -366,9 +370,17 @@ public class TurnManager : Singleton<TurnManager>
                 entity.buffController.OnTurnStart(entity, log);
                 if (entity.CanAction() == true)
                 {
-                    if (entity.CurrentSP >= skill.SkillPoint)
+                    bool canUseSkill = useSharedPlayerSkillPointPool
+                        ? TryConsumeSharedPlayerSkillPoints(skill.SkillPoint)
+                        : entity.CurrentSP >= skill.SkillPoint;
+
+                    if (canUseSkill)
                     {
-                        entity.SetSP(-skill.SkillPoint);
+                        if (!useSharedPlayerSkillPointPool)
+                        {
+                            entity.SetSP(-skill.SkillPoint);
+                        }
+
                         switch (skill.TargetType)
                         {
                             case TargetType.Self:
@@ -617,12 +629,19 @@ public class TurnManager : Singleton<TurnManager>
 
         if (spToRestore > 0)
         {
-            // Restore SP to alive players
-            if (PlayerTeamManager.Instance != null)
+            if (useSharedPlayerSkillPointPool)
             {
-                foreach (var member in PlayerTeamManager.Instance.GetAliveMembers())
+                RestoreSharedPlayerSkillPoints(spToRestore);
+            }
+            else
+            {
+                // Restore SP to alive players
+                if (PlayerTeamManager.Instance != null)
                 {
-                    member.SetSP(spToRestore);
+                    foreach (var member in PlayerTeamManager.Instance.GetAliveMembers())
+                    {
+                        member.SetSP(spToRestore);
+                    }
                 }
             }
 
@@ -644,6 +663,74 @@ public class TurnManager : Singleton<TurnManager>
         if (PlayerTeamManager.Instance != null && PlayerTeamManager.Instance.ActiveTeamMembers.Count == 0)
         {
             PlayerTeamManager.Instance.SpawnTeam();
+        }
+    }
+
+    private void SyncSharedPlayerSkillPoints()
+    {
+        if (!useSharedPlayerSkillPointPool) return;
+        int currentShared = GetSharedPlayerCurrentSkillPoints();
+        SetSharedPlayerSkillPoints(currentShared);
+    }
+
+    private bool TryConsumeSharedPlayerSkillPoints(int cost)
+    {
+        if (!useSharedPlayerSkillPointPool) return false;
+        int currentShared = GetSharedPlayerCurrentSkillPoints();
+        if (currentShared < cost) return false;
+
+        SetSharedPlayerSkillPoints(currentShared - cost);
+        return true;
+    }
+
+    private void RestoreSharedPlayerSkillPoints(int amount)
+    {
+        int currentShared = GetSharedPlayerCurrentSkillPoints();
+        SetSharedPlayerSkillPoints(currentShared + amount);
+    }
+
+    private int GetSharedPlayerCurrentSkillPoints()
+    {
+        if (PlayerTeamManager.Instance == null) return 0;
+
+        foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
+        {
+            if (member != null)
+            {
+                return member.CurrentSP;
+            }
+        }
+
+        return 0;
+    }
+
+    private int GetSharedPlayerMaxSkillPoints()
+    {
+        if (PlayerTeamManager.Instance == null) return 0;
+
+        int minMaxSp = int.MaxValue;
+        foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
+        {
+            if (member == null) continue;
+            int memberMaxSp = Mathf.RoundToInt(member.GetStat(StatType.MaxSkillPoint));
+            minMaxSp = Mathf.Min(minMaxSp, memberMaxSp);
+        }
+
+        return minMaxSp == int.MaxValue ? 0 : minMaxSp;
+    }
+
+    private void SetSharedPlayerSkillPoints(int value)
+    {
+        if (PlayerTeamManager.Instance == null) return;
+
+        int maxShared = GetSharedPlayerMaxSkillPoints();
+        int clampedShared = Mathf.Clamp(value, 0, maxShared);
+
+        foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
+        {
+            if (member == null) continue;
+            int delta = clampedShared - member.CurrentSP;
+            member.SetSP(delta);
         }
     }
 

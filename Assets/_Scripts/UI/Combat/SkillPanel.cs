@@ -32,10 +32,16 @@ public class SkillPanelUI : Singleton<SkillPanelUI>
         {
             gameObject.SetActive(false);
             ActionBarUI.Instance.gameObject.SetActive(true);
-            var activeEntity = TurnManager.Instance.CurrentActivePlayer as PlayerEntity ?? PlayerCombat.instance;
-            activeEntity.SetPlayerState(PlayerActionState.Idle);
-            activeEntity.SetSelectedSkill(null);
-            TargetingPanel.instance.SetActivePanel(false);
+            PlayerEntity activeEntity = TurnManager.Instance != null ? TurnManager.Instance.CurrentActivePlayer : null;
+            if (activeEntity != null)
+            {
+                activeEntity.SetPlayerState(PlayerActionState.Idle);
+                activeEntity.SetSelectedSkill(null);
+            }
+            if (TargetingPanel.instance != null)
+            {
+                TargetingPanel.instance.SetActivePanel(false);
+            }
 
         });
         gameObject.SetActive(false);
@@ -102,8 +108,8 @@ public class SkillPanelUI : Singleton<SkillPanelUI>
 
     public void SetUpSkillPanel()
     {
-        Entity activePlayer = TurnManager.Instance.CurrentActivePlayer;
-        if (activePlayer == null) activePlayer = PlayerCombat.instance;
+        PlayerEntity activePlayer = TurnManager.Instance != null ? TurnManager.Instance.CurrentActivePlayer : null;
+        if (activePlayer == null) return;
 
         foreach (Transform child in SkillPanel.transform)
         {
@@ -128,10 +134,14 @@ public class SkillPanelUI : Singleton<SkillPanelUI>
             }
             skillButton.GetComponent<Button>().onClick.AddListener(() =>
             {
-                var activeEntity = TurnManager.Instance.CurrentActivePlayer as PlayerEntity ?? PlayerCombat.instance;
+                PlayerEntity activeEntity = TurnManager.Instance != null ? TurnManager.Instance.CurrentActivePlayer : null;
+                if (activeEntity == null) return;
                 activeEntity.SetSelectedSkill(skill);
                 activeEntity.HandleSelectSkill();
-                TargetingPanel.instance.SetActivePanel(true);
+                if (TargetingPanel.instance != null)
+                {
+                    TargetingPanel.instance.SetActivePanel(true);
+                }
                 activeEntity.SetPlayerState(PlayerActionState.Targeting);
             });
         }

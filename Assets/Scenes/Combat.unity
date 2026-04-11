@@ -10836,11 +10836,13 @@ MonoBehaviour:
     sceneMember: {fileID: 656552212}
     prefab: {fileID: 7977669114527906489, guid: bee767d543ab4463aaf2e5e987d25263,
       type: 3}
+    loadoutOverride: {fileID: 11400000, guid: 5a526a6ae7db0422c9d63b916530c938, type: 2}
     spawnPointIndex: 0
   - memberId: 02
     sceneMember: {fileID: 0}
     prefab: {fileID: 7977669114527906489, guid: bc7bbcbe291cbf44fa35544a6c5e073c,
       type: 3}
+    loadoutOverride: {fileID: 11400000, guid: 3009cfca1047fa744ab37803320dd422, type: 2}
     spawnPointIndex: 1
   autoSpawnOnStart: 1
   autoDiscoverScenePlayers: 1

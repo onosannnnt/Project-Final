@@ -13,6 +13,9 @@ public class TeamMemberSlot
     [Tooltip("Character prefab to instantiate when sceneMember is not assigned.")]
     public PlayerEntity prefab;
 
+    [Tooltip("Optional loadout override for this member in combat.")]
+    public SkillLoadout loadoutOverride;
+
     [Tooltip("Spawn point index. Use -1 to auto-assign by slot order.")]
     public int spawnPointIndex = -1;
 }
@@ -75,6 +78,12 @@ public class PlayerTeamManager : Singleton<PlayerTeamManager>
 
             int spawnIndex = slot != null && slot.spawnPointIndex >= 0 ? slot.spawnPointIndex : autoSlotIndex;
             PlaceMember(member, spawnIndex);
+
+            if (slot != null && slot.loadoutOverride != null)
+            {
+                member.SetSkillLoadout(slot.loadoutOverride, true);
+            }
+
             AddMember(member);
             autoSlotIndex++;
         }
