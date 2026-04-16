@@ -10,26 +10,44 @@ public class SkillManager
         this.owner = owner;
     }
 
-    public void UseSkill(Skill skill, Entity target, CombatActionLog log)
+    public void UseSkill(Skill skill, Entity target, CombatActionLog log, bool allowWindSpread = true)
     {
 // // Debug.Log(owner.gameObject.name + " is using skill: " + skill.skillName + " on " + target.gameObject.name);
         if (skill == null || target == null) return;
-        
-        bool skillHit = skill.Execute(owner, target, log);
 
-        // --- Break Mechanic ---
-        if (skillHit && owner is PlayerEntity && target is EnemyCombat enemyTarget && skill.reducesArmor)
+        EnemyCombat enemyContext = target as EnemyCombat;
+        if (enemyContext != null)
         {
-            if (skill.TargetType == TargetType.Enemy)
+            enemyContext.BeginIncomingSkillDamageContext(allowWindSpread);
+        }
+
+        try
+        {
+            bool skillHit = skill.Execute(owner, target, log);
+        
+            // --- Break Mechanic ---
+            if (skillHit && owner is PlayerEntity && target is EnemyCombat enemyTarget && skill.reducesArmor)
             {
-                if (skill.TargetCount == TargetCount.Single)
+                DamageElement breakElement = skill.GetElement();
+
+                if (skill.TargetType == TargetType.Enemy)
                 {
-                    enemyTarget.ReduceArmor(2);
+                    if (skill.TargetCount == TargetCount.Single)
+                    {
+                        enemyTarget.ReduceArmor(2, breakElement);
+                    }
+                    else if (skill.TargetCount == TargetCount.All)
+                    {
+                        enemyTarget.ReduceArmor(1, breakElement);
+                    }
                 }
-                else if (skill.TargetCount == TargetCount.All)
-                {
-                    enemyTarget.ReduceArmor(1);
-                }
+            }
+        }
+        finally
+        {
+            if (enemyContext != null)
+            {
+                enemyContext.EndIncomingSkillDamageContext();
             }
         }
 

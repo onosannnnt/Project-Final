@@ -12,6 +12,12 @@ public static class DamageSystem
 
         ctx.Damage.Amount = Mathf.Max(ctx.Damage.Amount, 0);
         ctx.Target.TakeDamage(ctx.Damage);
+
+        if (ctx.Target is EnemyCombat enemyTarget)
+        {
+            enemyTarget.ApplyElementalBreakOnHitEffects(ctx.Damage.Amount);
+        }
+
         log.AddDamageEffectLog(new DamageEffectLog()
         {
             AppliedTarget = ctx.Target.Stats.EntityName,

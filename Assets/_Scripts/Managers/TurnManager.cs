@@ -401,11 +401,27 @@ public class TurnManager : Singleton<TurnManager>
                                 else if (skill.TargetCount == TargetCount.All)
                                 {
                                     bool hasValidTarget = false;
+                                    EnemyCombat primaryTarget = target as EnemyCombat;
+                                    bool primaryAssignedFromFallback = false;
+
                                     foreach (var t in GetAllEnemies())
                                     {
-                                        if (t.GetComponent<EnemyCombat>() != null && !t.GetComponent<EnemyCombat>().IsDead())
+                                        EnemyCombat enemyTarget = t.GetComponent<EnemyCombat>();
+                                        if (enemyTarget != null && !enemyTarget.IsDead())
                                         {
-                                            entity.skillManager.UseSkill(skill, t.GetComponent<EnemyCombat>(), log);
+                                            bool allowWindSpread = false;
+                                            if (primaryTarget != null)
+                                            {
+                                                allowWindSpread = enemyTarget == primaryTarget;
+                                            }
+                                            else if (!primaryAssignedFromFallback)
+                                            {
+                                                // Fallback: if no explicit primary exists, allow only the first alive target.
+                                                allowWindSpread = true;
+                                                primaryAssignedFromFallback = true;
+                                            }
+
+                                            entity.skillManager.UseSkill(skill, enemyTarget, log, allowWindSpread);
                                             hasValidTarget = true;
                                         }
                                     }
@@ -569,6 +585,23 @@ public class TurnManager : Singleton<TurnManager>
             }
         }
         return enemies;
+    }
+
+    public List<EnemyCombat> GetAliveEnemiesInBattleOrder()
+    {
+        List<EnemyCombat> aliveEnemies = new List<EnemyCombat>();
+        foreach (GameObject enemyObj in GetAllEnemies())
+        {
+            EnemyCombat enemyCombat = enemyObj.GetComponent<EnemyCombat>();
+            if (enemyCombat != null && !enemyCombat.IsDead())
+            {
+                aliveEnemies.Add(enemyCombat);
+            }
+        }
+
+        // Sort by world X so "adjacent" follows battlefield layout.
+        aliveEnemies.Sort((a, b) => a.transform.position.x.CompareTo(b.transform.position.x));
+        return aliveEnemies;
     }
     public void RemoveEntityFromActionQueue(Entity entity)
     {

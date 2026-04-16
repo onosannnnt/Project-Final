@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ConsumeBuffDamageEffect
   m_EditorClassIdentifier: 
   BaseDamage: 100
-  Element: 0
+  Element: 5
   Accuracy: 95
   CriticalHitChance: 5
   BuffNameToConsume: Frenzy

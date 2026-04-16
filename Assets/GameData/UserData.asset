@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 0
   Username: test
-  GamePhase: 1
+  GamePhase: 3
   SelectedQuestIndex: 0

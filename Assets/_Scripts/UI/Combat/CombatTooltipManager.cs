@@ -33,7 +33,10 @@ public class CombatTooltipManager : MonoBehaviour
         if (skill == null || infoBox == null) return;
 
         // เปลี่ยนข้อความ
-        infoText.text = skill.description;
+        if (infoText != null)
+        {
+            infoText.text = skill.GetTooltipDescription();
+        }
 
         // ย้ายกล่องมาที่ตำแหน่งปุ่ม + ระยะ offset
         infoBox.transform.position = buttonPosition + offset;

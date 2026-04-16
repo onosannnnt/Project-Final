@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public enum DamageElement
 {
+    None,
     Physical,
     Fire,
     Frost,
@@ -55,7 +56,7 @@ public static class Utils
         { DamageElement.Fire, Color.red },
         { DamageElement.Frost, Color.cyan },
         { DamageElement.Lightning, Color.yellow },
-        { DamageElement.Wind, Color.green },
+        { DamageElement.Wind, new Color32(0x4F, 0xFA, 0xAA, 0xFF) }, // #4ffaaa Hex for Wind
         { DamageElement.Dot, new Color32(0xFF, 0x33, 0xFF, 0xFF) } // #FF33FF Hex for DoT
     };
 

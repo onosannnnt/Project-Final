@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum BreakState
 {
@@ -11,8 +13,29 @@ public class EnemyCombat : Entity
 {
     [SerializeField] private GameObject healthBarForeground;
     [SerializeField] private TMPro.TextMeshProUGUI breakArmorText; // Add this for UI
+
+    [Header("Break Status Visual")]
+    [SerializeField] private Image breakStatusImage;
+    [SerializeField] private Sprite physicalBreakStatusSprite;
+    [SerializeField] private Sprite fireBreakStatusSprite;
+    [SerializeField] private Sprite frostBreakStatusSprite;
+    [SerializeField] private Sprite lightningBreakStatusSprite;
+    [SerializeField] private Sprite windBreakStatusSprite;
+    [SerializeField] private bool hideBreakStatusWhenNone = true;
+
+    [Header("Elemental Break Effects")]
+    [SerializeField] private float vulnerableDamageBonus = 0.15f;
+    [SerializeField] private float physicalDamageBonusPerStack = 0.05f;
+    [SerializeField] private float fireBonusDamageRatio = 0.5f;
+    [SerializeField] private float windSpreadDamageRatio = 0.3f;
+    [SerializeField] private float lightningArmorRecoveryRatio = 0.7f;
+
     private float maxhealthBarForegroundWidth;
     private bool isDead;
+    private DamageElement currentBreakElementStatus = DamageElement.None;
+    private int physicalBreakStacks = 0;
+    private int incomingSkillContextDepth = 0;
+    private bool allowWindSpreadInCurrentSkillContext = true;
 
     public BreakState currentBreakState = BreakState.Normal;
     public int currentBreakArmor;
@@ -23,9 +46,14 @@ public class EnemyCombat : Entity
         public BreakDamageModifier(EnemyCombat owner) { this.owner = owner; }
         public void Modify(DamageCtx ctx)
         {
-            if (owner.currentBreakState == BreakState.Vulnerable)
+            if (owner.currentBreakState == BreakState.Vulnerable && owner.currentBreakElementStatus != DamageElement.Frost)
             {
-                ctx.Damage.Amount *= 1.15f; // take 15% more damage
+                ctx.Damage.Amount *= 1f + owner.vulnerableDamageBonus; // take bonus damage while vulnerable
+            }
+
+            if (owner.physicalBreakStacks > 0)
+            {
+                ctx.Damage.Amount *= 1f + (owner.physicalDamageBonusPerStack * owner.physicalBreakStacks);
             }
         }
     }
@@ -51,10 +79,20 @@ public class EnemyCombat : Entity
         maxhealthBarForegroundWidth = healthBarForeground.GetComponent<RectTransform>().sizeDelta.x;
         if (GetActivePlayer() != null && GetActivePlayer().GetEnemyTarget() == this) TargetingPanel.instance.SetEnemyTargetPanel(this);
 
+        if (breakStatusImage == null)
+        {
+            Transform statusTransform = transform.Find("HealthBar/Status");
+            if (statusTransform != null)
+            {
+                breakStatusImage = statusTransform.GetComponent<Image>();
+            }
+        }
+
         currentBreakArmor = (int)GetStat(StatType.MaxBreakArmor);
         IncomingModifiers.Add(new BreakDamageModifier(this));
         
         UpdateArmorUI();
+        UpdateBreakStatusVisual();
     }
 
     private void UpdateArmorUI()
@@ -112,7 +150,7 @@ public class EnemyCombat : Entity
         }
     }
 
-    public void ReduceArmor(int amount)
+    public void ReduceArmor(int amount, DamageElement breakElement = DamageElement.None)
     {
         if (currentBreakState != BreakState.Normal) return; // Only reduce armor if normal
         
@@ -122,16 +160,24 @@ public class EnemyCombat : Entity
         if (currentBreakArmor <= 0)
         {
             currentBreakArmor = 0;
-            TriggerBreak();
+            TriggerBreak(breakElement);
         }
         
         UpdateArmorUI();
     }
 
-    private void TriggerBreak()
+    private void TriggerBreak(DamageElement breakElement)
     {
 // // Debug.Log($"{gameObject.name} is BROKEN!");
         currentBreakState = BreakState.JustBroken;
+
+        currentBreakElementStatus = NormalizeBreakElementForStatus(breakElement);
+        if (currentBreakElementStatus == DamageElement.Physical)
+        {
+            physicalBreakStacks += 1;
+        }
+
+        UpdateBreakStatusVisual();
         // Animation, sound effect, or floating text could go here
     }
 
@@ -146,12 +192,25 @@ public class EnemyCombat : Entity
         {
             // Recover logic
             currentBreakState = BreakState.Normal;
-            currentBreakArmor = (int)GetStat(StatType.MaxBreakArmor);
+            int maxBreakArmor = (int)GetStat(StatType.MaxBreakArmor);
+            if (currentBreakElementStatus == DamageElement.Lightning)
+            {
+                int recoveredArmor = Mathf.RoundToInt(maxBreakArmor * lightningArmorRecoveryRatio);
+                currentBreakArmor = Mathf.Clamp(recoveredArmor, 0, maxBreakArmor);
+            }
+            else
+            {
+                currentBreakArmor = maxBreakArmor;
+            }
+
+            // Elemental break statuses are temporary and disappear when armor recovers.
+            currentBreakElementStatus = DamageElement.None;
 // // Debug.Log($"{gameObject.name} has recovered. Armor reset to Max.");
             // NOTE: In the future, you can add conditional logic here to prevent recovery 
         }
         
         UpdateArmorUI();
+        UpdateBreakStatusVisual();
     }
 
     public override bool CanAction()
@@ -161,7 +220,145 @@ public class EnemyCombat : Entity
         {
             return false;
         }
+
+        // Frost break makes the enemy skip the next turn after being broken.
+        if (currentBreakState == BreakState.Vulnerable && currentBreakElementStatus == DamageElement.Frost)
+        {
+            return false;
+        }
+
         return base.CanAction();
+    }
+
+    public void BeginIncomingSkillDamageContext(bool allowWindSpread)
+    {
+        incomingSkillContextDepth += 1;
+        allowWindSpreadInCurrentSkillContext = allowWindSpread;
+    }
+
+    public void EndIncomingSkillDamageContext()
+    {
+        incomingSkillContextDepth = Mathf.Max(0, incomingSkillContextDepth - 1);
+        if (incomingSkillContextDepth == 0)
+        {
+            allowWindSpreadInCurrentSkillContext = true;
+        }
+    }
+
+    public void ApplyElementalBreakOnHitEffects(float incomingDamage)
+    {
+        if (incomingDamage <= 0f) return;
+        if (CurrentHealth <= 0f) return;
+        if (currentBreakState == BreakState.Normal) return;
+
+        switch (currentBreakElementStatus)
+        {
+            case DamageElement.Fire:
+            {
+                float extraFireDamage = incomingDamage * fireBonusDamageRatio;
+                if (extraFireDamage > 0f)
+                {
+                    // Separate hit number as requested.
+                    TakeDamage(new Damage(extraFireDamage, DamageElement.Fire));
+                }
+                break;
+            }
+            case DamageElement.Wind:
+            {
+                // In AoE scenarios, only the selected target should spread.
+                if (!allowWindSpreadInCurrentSkillContext) return;
+
+                float spreadDamage = incomingDamage * windSpreadDamageRatio;
+                if (spreadDamage <= 0f) return;
+
+                foreach (EnemyCombat adjacent in GetAdjacentAliveEnemies())
+                {
+                    if (adjacent == null || adjacent == this || adjacent.IsDead()) continue;
+
+                    // Direct damage application prevents recursive bouncing across adjacent enemies.
+                    adjacent.TakeDamage(new Damage(spreadDamage, DamageElement.Wind));
+                }
+                break;
+            }
+        }
+    }
+
+    private List<EnemyCombat> GetAdjacentAliveEnemies()
+    {
+        if (TurnManager.Instance == null)
+        {
+            return new List<EnemyCombat>();
+        }
+
+        List<EnemyCombat> aliveEnemies = TurnManager.Instance.GetAliveEnemiesInBattleOrder();
+        int currentIndex = aliveEnemies.IndexOf(this);
+        if (currentIndex < 0)
+        {
+            return new List<EnemyCombat>();
+        }
+
+        List<EnemyCombat> adjacent = new List<EnemyCombat>(2);
+        if (currentIndex > 0)
+        {
+            adjacent.Add(aliveEnemies[currentIndex - 1]);
+        }
+        if (currentIndex < aliveEnemies.Count - 1)
+        {
+            adjacent.Add(aliveEnemies[currentIndex + 1]);
+        }
+        return adjacent;
+    }
+
+    private DamageElement NormalizeBreakElementForStatus(DamageElement element)
+    {
+        switch (element)
+        {
+            case DamageElement.Physical:
+            case DamageElement.Fire:
+            case DamageElement.Frost:
+            case DamageElement.Lightning:
+            case DamageElement.Wind:
+                return element;
+            default:
+                return DamageElement.None;
+        }
+    }
+
+    private void UpdateBreakStatusVisual()
+    {
+        if (breakStatusImage == null)
+        {
+            return;
+        }
+
+        Sprite sprite = GetBreakStatusSprite(currentBreakElementStatus);
+        if (sprite == null && hideBreakStatusWhenNone)
+        {
+            breakStatusImage.gameObject.SetActive(false);
+            return;
+        }
+
+        breakStatusImage.gameObject.SetActive(true);
+        breakStatusImage.sprite = sprite;
+    }
+
+    private Sprite GetBreakStatusSprite(DamageElement element)
+    {
+        switch (element)
+        {
+            case DamageElement.Physical:
+                return physicalBreakStatusSprite;
+            case DamageElement.Fire:
+                return fireBreakStatusSprite;
+            case DamageElement.Frost:
+                return frostBreakStatusSprite;
+            case DamageElement.Lightning:
+                return lightningBreakStatusSprite;
+            case DamageElement.Wind:
+                return windBreakStatusSprite;
+            default:
+                return null;
+        }
     }
 
     protected override void Die()

@@ -84,6 +84,81 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &2024774761972065294
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5085175763069383744}
+  - component: {fileID: 6155448481482219632}
+  - component: {fileID: 4346448736133913830}
+  m_Layer: 5
+  m_Name: Status
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &5085175763069383744
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2024774761972065294}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3234684152306241524}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 656, y: 264}
+  m_SizeDelta: {x: 292.8, y: 290.82}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &6155448481482219632
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2024774761972065294}
+  m_CullTransparentMesh: 1
+--- !u!114 &4346448736133913830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2024774761972065294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &2898973329459691350
 GameObject:
   m_ObjectHideFlags: 0
@@ -117,6 +192,7 @@ RectTransform:
   m_Children:
   - {fileID: 1514557137162464142}
   - {fileID: 1980161816640474872}
+  - {fileID: 5085175763069383744}
   m_Father: {fileID: 638757405302400597}
   m_LocalEulerAnglesHint: {x: 0, y: 4.02, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -667,6 +743,23 @@ MonoBehaviour:
   skills: {fileID: 11400000, guid: 12dd7adc14cdf2448884ab64d275e0ae, type: 2}
   healthBarForeground: {fileID: 3161185528136002616}
   breakArmorText: {fileID: 1588384611004194450}
+  breakStatusImage: {fileID: 4346448736133913830}
+  physicalBreakStatusSprite: {fileID: 21300000, guid: 60a5ceff1b9f91e44ba837c2f13ca147,
+    type: 3}
+  fireBreakStatusSprite: {fileID: 21300000, guid: 07f1626437c34cd4f91851a0a0bc51d5,
+    type: 3}
+  frostBreakStatusSprite: {fileID: 21300000, guid: 98abc6e7a7db4774f89ae113295256bd,
+    type: 3}
+  lightningBreakStatusSprite: {fileID: 21300000, guid: 3ad45e5643fdb3f4f892d2bb316d8847,
+    type: 3}
+  windBreakStatusSprite: {fileID: 21300000, guid: 8467f003c056e804c8d5e4c914abce1e,
+    type: 3}
+  hideBreakStatusWhenNone: 1
+  vulnerableDamageBonus: 0.15
+  physicalDamageBonusPerStack: 0.05
+  fireBonusDamageRatio: 0.5
+  windSpreadDamageRatio: 0.3
+  lightningArmorRecoveryRatio: 0.7
   currentBreakState: 0
   currentBreakArmor: 0
 --- !u!1 &7181939115337276224
@@ -680,7 +773,7 @@ GameObject:
   - component: {fileID: 1980161816640474872}
   - component: {fileID: 8632098053305334163}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Armor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -704,7 +797,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -335, y: 238.8}
+  m_AnchoredPosition: {x: -477, y: 238.8}
   m_SizeDelta: {x: 406.8, y: 307.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8632098053305334163
