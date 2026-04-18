@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
+  m_Name: Last Stand
+  m_EditorClassIdentifier: 
+  skillID: 15
+  skillName: Last Stand
+  description: 'Become immortal(HP not lower than 1).  Take extra 300 damage. Deal
+    extra 400 damage for 3 turns. [SP: 80]'
+  skillIcon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}
+  SkillPoint: 80
+  TargetType: 0
+  TargetCount: 0
+  reducesArmor: 0
+  SkillEffects:
+  - {fileID: 11400000, guid: 5bb4b07c714aa45959376026d21fbae9, type: 2}

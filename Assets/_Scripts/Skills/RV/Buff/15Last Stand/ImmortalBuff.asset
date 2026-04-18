@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a1aea0858a994d5e908e008a414e698, type: 3}
+  m_Name: ImmortalBuff
+  m_EditorClassIdentifier: 
+  BuffName: Immortal
+  Description: Health cannot lower than 1
+  Icon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}
+  buffType: 0
+  isPermanent: 0
+  Duration: 3
+  isStackable: 0
+  MaxStack: 0
+  StackCalculationType: 0
+  Threshold: 0
+  DiminishingReturnDecayFactor: 0
+  targetType: 0
+  modifiers: []
+  preventLethalDamage: 1

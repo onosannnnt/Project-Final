@@ -15,4 +15,4 @@ MonoBehaviour:
   Branches:
   - WeatherCondition: 0
     BonusEffects:
-    - {fileID: 11400000, guid: 80ffa52af9e4a1947a7a0c293dee8575, type: 2}
+    - {fileID: 11400000, guid: 363428feaba3647c4a67a79633611955, type: 2}

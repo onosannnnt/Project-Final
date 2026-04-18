@@ -9,10 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 883ed3680a6461342b18fa16fddfc1dc, type: 3}
-  m_Name: WeatherBranchingEffect
+  m_Script: {fileID: 11500000, guid: e62906e6e4b6a47969e19cc177361b6d, type: 3}
+  m_Name: SharedPainEffect
   m_EditorClassIdentifier: 
-  Branches:
-  - WeatherCondition: 0
-    BonusEffects:
-    - {fileID: 11400000, guid: 80ffa52af9e4a1947a7a0c293dee8575, type: 2}
+  RedirectPercent: 50
+  sharedPainDebuffTemplate: {fileID: 11400000, guid: dc5c958f31cb14fbe8437146b807e828,
+    type: 2}

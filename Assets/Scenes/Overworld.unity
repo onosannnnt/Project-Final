@@ -6445,7 +6445,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1180751302}
   m_HandleRect: {fileID: 1180751301}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -29469,6 +29469,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: bc23fe254f317f241837f96f768c273d, type: 2}
   - {fileID: 11400000, guid: 0d575b8c335695f48a878803c4c49058, type: 2}
   - {fileID: 11400000, guid: 7126a5820e8b44344b52a692c6af4db2, type: 2}
+  - {fileID: 11400000, guid: fceb4fb54f61a478698176011ff19113, type: 2}
+  - {fileID: 11400000, guid: d1c58fe4a20e84293a08627f33ed6fce, type: 2}
+  - {fileID: 11400000, guid: 7369144d56efa4387b6d4a97dd32d6cc, type: 2}
+  - {fileID: 11400000, guid: f51740f81383e4075ac5a089f6690096, type: 2}
+  - {fileID: 11400000, guid: da49b81583e914780a3f07a7f2fd34fb, type: 2}
   skillSlotPrefab: {fileID: 125270501465738059, guid: 1a5ac496baf806d439436b3eaa85a0d5,
     type: 3}
   contentParent: {fileID: 44288014}

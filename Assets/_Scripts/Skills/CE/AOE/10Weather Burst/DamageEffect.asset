@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 883ed3680a6461342b18fa16fddfc1dc, type: 3}
-  m_Name: WeatherBranchingEffect
+  m_Script: {fileID: 11500000, guid: c46aedc9ed1084bb3abe687953decc10, type: 3}
+  m_Name: DamageEffect
   m_EditorClassIdentifier: 
-  Branches:
-  - WeatherCondition: 0
-    BonusEffects:
-    - {fileID: 11400000, guid: 80ffa52af9e4a1947a7a0c293dee8575, type: 2}
+  BaseDamage: 100
+  Element: 0
+  Accuracy: 95
+  CriticalHitChance: 5

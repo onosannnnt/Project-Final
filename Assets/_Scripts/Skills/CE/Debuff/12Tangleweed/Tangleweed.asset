@@ -10,16 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
-  m_Name: "Nature\u2019s Strike"
+  m_Name: Tangleweed
   m_EditorClassIdentifier: 
-  skillID: 9
-  skillName: "Nature\u2019s Strike"
-  description: 'Deal 150 damage. [Sunny: extra 150 damage] [SP: 15]'
-  skillIcon: {fileID: 21300000, guid: 1f1aaf4286d2c4ea495a95b2bba8abaa, type: 3}
+  skillID: 12
+  skillName: Tangleweed
+  description: 'Reduce a enemy speed 30% for 3 turns. [Rainny: take extra 50 damage]
+    [SP: 15]'
+  skillIcon: {fileID: 21300000, guid: ea3b8a61f4add494c84dfcffa4d9cc32, type: 3}
   SkillPoint: 15
   TargetType: 2
   TargetCount: 0
-  reducesArmor: 1
+  reducesArmor: 0
   SkillEffects:
-  - {fileID: 11400000, guid: 801e9f220ad9142219e739a05d1ad24c, type: 2}
-  - {fileID: 11400000, guid: 75c3475c65eb312408d9fb017e06244d, type: 2}
+  - {fileID: 11400000, guid: ab8aa3a45d3ac4ff58923e59b99eb685, type: 2}
+  - {fileID: 11400000, guid: 74bd73f547a8943659fca0ffb902af89, type: 2}

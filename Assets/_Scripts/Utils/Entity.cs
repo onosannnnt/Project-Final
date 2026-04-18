@@ -85,11 +85,21 @@ public abstract class Entity : MonoBehaviour
 
     public virtual void TakeDamage(Damage damage)
     {
+        float appliedDamage = damage.Amount;
 
-        currentHealth = math.max(currentHealth - damage.Amount, 0);
+        bool hasLethalProtection = buffController != null &&
+                                   buffController.GetAllBuffs().Exists(b => b.Data != null && b.Data.preventLethalDamage);
+
+        if (hasLethalProtection && currentHealth > 1)
+        {
+            // Clamp lethal damage so owner stays at 1 HP.
+            appliedDamage = Mathf.Min(appliedDamage, currentHealth - 1f);
+        }
+
+        currentHealth = math.max(currentHealth - appliedDamage, 0);
         OnHealthChanged?.Invoke(currentHealth, GetStat(StatType.MaxHealth));
 // // Debug.Log($"{gameObject.name} took {damage.Amount} damage, current health: {CurrentHealth}/{GetStat(StatType.MaxHealth)}");
-        ShowDamage((int)damage.Amount, Utils.GetDamageColor(damage.Element), damage.IsCriticalHit);
+        ShowDamage((int)appliedDamage, Utils.GetDamageColor(damage.Element), damage.IsCriticalHit);
         if (currentHealth <= 0)
         {
             // Mark as dead immediately so wave checks work

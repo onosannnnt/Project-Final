@@ -57,6 +57,10 @@ public class Buff : ScriptableObject
     public TargetType targetType;
     public List<StatModifier> modifiers = new List<StatModifier>();
 
+    [Header("Special Flags")]
+    [Tooltip("If enabled, this buff prevents the owner from dropping below 1 HP from damage.")]
+    public bool preventLethalDamage = false;
+
     public virtual void OnApply(Entity owner, ActiveBuff buffState) { }
     public virtual void OnTurnStart(Entity owner, CombatActionLog log, ActiveBuff buffState)
     {

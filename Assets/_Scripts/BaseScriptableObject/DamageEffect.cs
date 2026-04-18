@@ -30,10 +30,10 @@ public class DamageEffect : SkillEffect
         if (isCrit)
         {
             finalDamage *= 1.5f;
-// // Debug.Log($"Critical Hit!");
+     // Debug.Log($"Critical Hit!");
         }
 
-// // Debug.Log($"Base Damage: {BaseDamage}, Variance: {variance}, Final Damage: {finalDamage}");
+     // Debug.Log($"Base Damage: {BaseDamage}, Variance: {variance}, Final Damage: {finalDamage}");
 
         Damage damage = new Damage(finalDamage, Element, isCrit);
         DamageCtx ctx = new DamageCtx(caster, target, damage);

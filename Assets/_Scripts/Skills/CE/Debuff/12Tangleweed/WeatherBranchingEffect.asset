@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: WeatherBranchingEffect
   m_EditorClassIdentifier: 
   Branches:
-  - WeatherCondition: 0
+  - WeatherCondition: 2
     BonusEffects:
-    - {fileID: 11400000, guid: 80ffa52af9e4a1947a7a0c293dee8575, type: 2}
+    - {fileID: 11400000, guid: 26f3ebb580e18499d9690ae729118919, type: 2}

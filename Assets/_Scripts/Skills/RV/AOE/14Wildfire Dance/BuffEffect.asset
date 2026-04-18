@@ -9,10 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 883ed3680a6461342b18fa16fddfc1dc, type: 3}
-  m_Name: WeatherBranchingEffect
+  m_Script: {fileID: 11500000, guid: 96c91456b669f4856867d806353c122a, type: 3}
+  m_Name: BuffEffect
   m_EditorClassIdentifier: 
-  Branches:
-  - WeatherCondition: 0
-    BonusEffects:
-    - {fileID: 11400000, guid: 80ffa52af9e4a1947a7a0c293dee8575, type: 2}
+  buffs:
+  - {fileID: 11400000, guid: c30162a2f3a6642fda45da9dad04534b, type: 2}
