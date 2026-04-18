@@ -9,13 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1c9d7bf68c3b444dab011e24d6bcdd4f, type: 3}
-  m_Name: KillRewardBuffDamageEffect
+  m_Script: {fileID: 11500000, guid: 2169135afa2e299488ff879be46694a9, type: 3}
+  m_Name: ConsumeBuffDamageEffect
   m_EditorClassIdentifier: 
-  DamageAmount: 300
+  BaseDamage: 300
   Element: 0
-  Accuracy: 90
-  CriticalHitChance: 10
-  CriticalDamageMultiplier: 1.5
-  BuffToGain: {fileID: 11400000, guid: 3d5cae4c40374de4885c1e1a820a5eeb, type: 2}
-  StacksOnKill: 2
+  Accuracy: 85
+  CriticalHitChance: 15
+  BuffNameToConsume: Frenzy
+  MaxStacksToConsume: 6
+  DamagePerStack: 300

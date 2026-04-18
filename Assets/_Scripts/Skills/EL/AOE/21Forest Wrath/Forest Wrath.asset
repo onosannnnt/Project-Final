@@ -10,16 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
-  m_Name: Carnivorous Bite
+  m_Name: Forest Wrath
   m_EditorClassIdentifier: 
-  skillID: 19
-  skillName: Carnivorous Bite
-  description: 'Deal 300 damage. Consume Frenzy Stacks to add 300 damage (Max 3).
-    [SP: 80]'
+  skillID: 21
+  skillName: Forest Wrath
+  description: 'Deal 200 AoE damage. Consume all Frenzy Stacks to add 150 damage
+    each. [SP: 90]'
   skillIcon: {fileID: 21300000, guid: 1f1aaf4286d2c4ea495a95b2bba8abaa, type: 3}
-  SkillPoint: 80
+  SkillPoint: 90
   TargetType: 2
-  TargetCount: 0
+  TargetCount: 1
   reducesArmor: 1
-  SkillEffects:
-  - {fileID: 11400000, guid: dc1f927c6ffd44d25985c2952ca8f988, type: 2}
+  SkillEffects: []
