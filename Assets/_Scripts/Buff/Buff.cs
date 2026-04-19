@@ -60,6 +60,8 @@ public class Buff : ScriptableObject
     [Header("Special Flags")]
     [Tooltip("If enabled, this buff prevents the owner from dropping below 1 HP from damage.")]
     public bool preventLethalDamage = false;
+    [Tooltip("If enabled, this buff blocks all healing received by the owner.")]
+    public bool preventHealing = false;
 
     public virtual void OnApply(Entity owner, ActiveBuff buffState) { }
     public virtual void OnTurnStart(Entity owner, CombatActionLog log, ActiveBuff buffState)

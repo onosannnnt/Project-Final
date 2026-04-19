@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
+  m_Name: Morning Dew
+  m_EditorClassIdentifier: 
+  skillID: 28
+  skillName: Morning Dew
+  description: 'Heal 200 HP. Gain 1 Frenzy Stack. [SP: 15]'
+  skillIcon: {fileID: 21300000, guid: ea61475f2ca0f4eeba50601040774701, type: 3}
+  SkillPoint: 15
+  TargetType: 0
+  TargetCount: 0
+  reducesArmor: 1
+  SkillEffects:
+  - {fileID: 11400000, guid: 83a6f9fffe02c324e8c6fdc1bab7fac0, type: 2}
+  - {fileID: 11400000, guid: 83514ee9faa2abc419aa74638597eab8, type: 2}

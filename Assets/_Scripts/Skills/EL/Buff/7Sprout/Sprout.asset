@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillID: 7
   skillName: Sprout
-  description: Gain 2 Stacks and restore 20 MP.
+  description: Gain 2 Frenzy Stacks
   skillIcon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}
   SkillPoint: 0
   TargetType: 0

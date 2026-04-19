@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2169135afa2e299488ff879be46694a9, type: 3}
   m_Name: ConsumeBuffDamageEffect
   m_EditorClassIdentifier: 
-  BaseDamage: 100
+  BaseDamage: 200
   Element: 5
-  Accuracy: 95
-  CriticalHitChance: 5
+  Accuracy: 85
+  CriticalHitChance: 15
   BuffNameToConsume: Frenzy
-  MaxStacksToConsume: 3
-  DamagePerStack: 50
+  MaxStacksToConsume: 12
+  DamagePerStack: 150

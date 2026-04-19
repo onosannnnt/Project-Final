@@ -21,4 +21,5 @@ MonoBehaviour:
   TargetType: 2
   TargetCount: 1
   reducesArmor: 1
-  SkillEffects: []
+  SkillEffects:
+  - {fileID: 11400000, guid: aaa40a94d15e94a3eb5868abdb87acc8, type: 2}

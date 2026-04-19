@@ -122,6 +122,13 @@ public abstract class Entity : MonoBehaviour
 
     public virtual void Heal(float amount)
     {
+        bool hasHealingBlock = buffController != null &&
+                               buffController.GetAllBuffs().Exists(b => b.Data != null && b.Data.preventHealing);
+        if (hasHealingBlock)
+        {
+            return;
+        }
+
         currentHealth = Mathf.Min(currentHealth + amount, GetStat(StatType.MaxHealth));
         OnHealthChanged?.Invoke(currentHealth, GetStat(StatType.MaxHealth));
         ShowDamage((int)amount, Color.green);
