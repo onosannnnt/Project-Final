@@ -20,6 +20,11 @@ public class SkillListManager : MonoBehaviour
     public GameObject bubbleBoxInScene;
     public TextMeshProUGUI bubbleTextInScene;
 
+    [Header("Element Test Modal")]
+    [SerializeField] private GameObject skillElementTestModal;
+    [SerializeField] private SkillElementTestConfigurator skillElementTestConfigurator;
+    [SerializeField] private bool hideElementTestModalOnStart = true;
+
     [Header("Data Saving")]
     [Tooltip("Assign loadout assets in player order (index 0 = player 1, index 1 = player 2).")]
     public SkillLoadout[] playerLoadouts;
@@ -39,6 +44,20 @@ public class SkillListManager : MonoBehaviour
         GenerateSkillList();
         LoadActiveLoadoutIntoSlots();
         UpdateLoadoutTabVisuals();
+        InitializeElementTestModal();
+    }
+
+    private void InitializeElementTestModal()
+    {
+        if (skillElementTestModal == null)
+        {
+            return;
+        }
+
+        if (hideElementTestModalOnStart)
+        {
+            skillElementTestModal.SetActive(false);
+        }
     }
 
     void ForceInitialCleanup()
@@ -238,6 +257,50 @@ public class SkillListManager : MonoBehaviour
         if (player2TabImage != null)
         {
             player2TabImage.color = activeLoadoutIndex == 1 ? activeTabColor : inactiveTabColor;
+        }
+    }
+
+    public void ToggleSkillElementTestModal()
+    {
+        if (skillElementTestModal == null)
+        {
+            return;
+        }
+
+        SetSkillElementTestModalVisible(!skillElementTestModal.activeSelf);
+    }
+
+    public void ShowSkillElementTestModal()
+    {
+        SetSkillElementTestModalVisible(true);
+    }
+
+    public void HideSkillElementTestModal()
+    {
+        SetSkillElementTestModalVisible(false);
+    }
+
+    public void SetSkillElementTestModalVisible(bool isVisible)
+    {
+        if (skillElementTestModal == null)
+        {
+            return;
+        }
+
+        skillElementTestModal.SetActive(isVisible);
+        if (!isVisible)
+        {
+            return;
+        }
+
+        if (skillElementTestConfigurator == null)
+        {
+            skillElementTestConfigurator = skillElementTestModal.GetComponentInChildren<SkillElementTestConfigurator>(true);
+        }
+
+        if (skillElementTestConfigurator != null)
+        {
+            skillElementTestConfigurator.RefreshOptions();
         }
     }
 

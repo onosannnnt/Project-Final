@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: DamageEffect
   m_EditorClassIdentifier: 
   BaseDamage: 120
-  Element: 3
+  Element: 0
   Accuracy: 95
   CriticalHitChance: 10

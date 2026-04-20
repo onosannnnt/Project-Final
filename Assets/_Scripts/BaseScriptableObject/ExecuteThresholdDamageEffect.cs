@@ -12,6 +12,9 @@ public class ExecuteThresholdDamageEffect : SkillEffect
     [SerializeField] public float CriticalHitChance = 5f;
     [SerializeField] public float CriticalDamageMultiplier = 1.5f;
 
+    public override bool IsElementalAttackEffect => true;
+    public override bool IsDotElementSource => false;
+
     public override bool Execute(Entity caster, Entity target, CombatActionLog log)
     {
         if (Random.Range(0f, 100f) > Accuracy)

@@ -9,6 +9,9 @@ public class DamageEffect : SkillEffect
     [Range(0f, 100f)]
     [SerializeField] public float CriticalHitChance = 5f;
 
+    public override bool IsElementalAttackEffect => true;
+    public override bool IsDotElementSource => false;
+
     public override bool Execute(Entity caster, Entity target, CombatActionLog log)
     {
 // // Debug.Log(caster.gameObject.name + " dealt damage on " + target.gameObject.name);

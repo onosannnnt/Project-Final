@@ -24,12 +24,11 @@ public class SkillManager
         try
         {
             bool skillHit = skill.Execute(owner, target, log);
+            DamageElement breakElement = skill.GetElement();
         
             // --- Break Mechanic ---
-            if (skillHit && owner is PlayerEntity && target is EnemyCombat enemyTarget && skill.reducesArmor)
+            if (skillHit && owner is PlayerEntity && target is EnemyCombat enemyTarget && skill.reducesArmor && breakElement != DamageElement.None)
             {
-                DamageElement breakElement = skill.GetElement();
-
                 if (skill.TargetType == TargetType.Enemy)
                 {
                     if (skill.TargetCount == TargetCount.Single)

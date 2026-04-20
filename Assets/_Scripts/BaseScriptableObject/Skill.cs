@@ -25,16 +25,31 @@ public class Skill : ScriptableObject
             return DamageElement.None;
         }
 
-        // Use the first direct damage effect as the skill element source.
+        // Use the first effect that exposes a DamageElement as the skill element source.
         foreach (SkillEffect effect in SkillEffects)
         {
-            if (effect is DamageEffect damageEffect)
+            if (effect == null)
             {
-                return damageEffect.Element;
+                continue;
+            }
+
+            if (!effect.IsElementalAttackEffect)
+            {
+                continue;
+            }
+
+            if (effect.TryGetElement(out DamageElement element))
+            {
+                if (element == DamageElement.Dot && !effect.IsDotElementSource)
+                {
+                    continue;
+                }
+
+                return element;
             }
         }
 
-        // If this skill has no DamageEffect, treat it as non-elemental.
+        // If this skill has no element-bearing effect, treat it as non-elemental.
         return DamageElement.None;
     }
 
@@ -57,6 +72,51 @@ public class Skill : ScriptableObject
         }
 
         return $"{elementLine}\n{description}";
+    }
+
+    public bool TrySetElementForTesting(DamageElement newElement, out string reason)
+    {
+        if (SkillEffects == null || SkillEffects.Count == 0)
+        {
+            reason = "Skill has no effects.";
+            return false;
+        }
+
+        bool foundAttackEffect = false;
+        foreach (SkillEffect effect in SkillEffects)
+        {
+            if (effect == null || !effect.IsElementalAttackEffect)
+            {
+                continue;
+            }
+
+            foundAttackEffect = true;
+            if (newElement == DamageElement.Dot && !effect.IsDotElementSource)
+            {
+                continue;
+            }
+
+            if (effect.TrySetElement(newElement))
+            {
+                reason = "Element updated.";
+                return true;
+            }
+        }
+
+        if (!foundAttackEffect)
+        {
+            reason = "Skill has no elemental attack effect.";
+            return false;
+        }
+
+        if (newElement == DamageElement.Dot)
+        {
+            reason = "DoT element is allowed only for dedicated DoT element sources.";
+            return false;
+        }
+
+        reason = "No writable element found on attack effects.";
+        return false;
     }
 
     public bool Execute(Entity caster, Entity target, CombatActionLog log)

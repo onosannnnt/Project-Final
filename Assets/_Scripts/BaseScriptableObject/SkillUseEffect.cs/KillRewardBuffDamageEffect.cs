@@ -11,6 +11,9 @@ public class KillRewardBuffDamageEffect : SkillEffect
     [SerializeField] public float CriticalHitChance = 5f;
     [SerializeField] public float CriticalDamageMultiplier = 1.5f;
 
+    public override bool IsElementalAttackEffect => true;
+    public override bool IsDotElementSource => false;
+
     [Header("Kill Reward")]
     [Tooltip("Buff gained by the caster if this hit kills the target")]
     public Buff BuffToGain;
