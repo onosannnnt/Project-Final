@@ -12,7 +12,7 @@ public class SkillManager
 
     public void UseSkill(Skill skill, Entity target, CombatActionLog log, bool allowWindSpread = true)
     {
-// // Debug.Log(owner.gameObject.name + " is using skill: " + skill.skillName + " on " + target.gameObject.name);
+        // // Debug.Log(owner.gameObject.name + " is using skill: " + skill.skillName + " on " + target.gameObject.name);
         if (skill == null || target == null) return;
 
         EnemyCombat enemyContext = target as EnemyCombat;
@@ -25,9 +25,9 @@ public class SkillManager
         {
             bool skillHit = skill.Execute(owner, target, log);
             DamageElement breakElement = skill.GetElement();
-        
+
             // --- Break Mechanic ---
-            if (skillHit && owner is PlayerEntity && target is EnemyCombat enemyTarget && skill.reducesArmor && breakElement != DamageElement.None)
+            if (skillHit && owner is PlayerEntity && target is EnemyCombat enemyTarget && skill.reducesArmor)
             {
                 if (skill.TargetType == TargetType.Enemy)
                 {
@@ -50,7 +50,7 @@ public class SkillManager
             }
         }
 
-// // Debug.Log(owner.gameObject.name + " has " + owner.CurrentHealth + " HP and " + owner.CurrentSP + " SP after using skill: " + skill.skillName);
+        // // Debug.Log(owner.gameObject.name + " has " + owner.CurrentHealth + " HP and " + owner.CurrentSP + " SP after using skill: " + skill.skillName);
     }
     public List<Skill> GetSkills()
     {

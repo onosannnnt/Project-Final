@@ -15,7 +15,7 @@ public class Movement : MonoBehaviour
     public LayerMask terrainLayer;
     public Rigidbody rb;
     public float groundDist;
-    public SpriteRenderer sr; 
+    public SpriteRenderer sr;
     private bool interactRequested;
 
     void Start()
@@ -24,15 +24,15 @@ public class Movement : MonoBehaviour
     }
 
     public bool IsWalking()
-        {
+    {
         return isWalking;
-        }
+    }
 
     void Update()
     {
         RaycastHit hit;
         Vector3 castPos = transform.position;
-        castPos.y += 1;
+        // castPos.y += 1;
 
         if (Physics.Raycast(castPos, -transform.up, out hit, Mathf.Infinity, terrainLayer))
         {
@@ -49,7 +49,7 @@ public class Movement : MonoBehaviour
         Vector3 moveDir = new Vector3(x, 0, y);
         rb.velocity = moveDir * moveSpeed;
 
-        
+
 
         if (moveDir != Vector3.zero)
         {
@@ -73,7 +73,7 @@ public class Movement : MonoBehaviour
         {
             interactRequested = true;
         }
-        
+
     }
 
     private void FixedUpdate()
@@ -110,16 +110,16 @@ public class Movement : MonoBehaviour
 
         // หาตัว Manager ในฉากแล้วสั่ง Save ก่อนโหลดฉากใหม่
         SkillListManager skillManager = FindObjectOfType<SkillListManager>();
-        if (skillManager != null) 
+        if (skillManager != null)
         {
-            skillManager.SaveLoadout(); 
+            skillManager.SaveLoadout();
         }
 
         // --- NEW LOGIC: Update UserData before entering combat ---
         if (userData != null)
         {
             userData.SelectedQuestIndex = selectedQuestIndex;
-// // Debug.Log("Quest selected via 'F'! Updated UserData SelectedQuestIndex to: " + selectedQuestIndex);
+            // // Debug.Log("Quest selected via 'F'! Updated UserData SelectedQuestIndex to: " + selectedQuestIndex);
         }
         else
         {
@@ -130,25 +130,25 @@ public class Movement : MonoBehaviour
     }
 }
 
-    // public bool IsWalking()
-    // {
-    //     return isWalking;
-    // }
-    // private void HandleMovement()
-    // {
-    //     Vector2 inputVector = gameInput.GetMovementVectorNormalized();
-    //     Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
+// public bool IsWalking()
+// {
+//     return isWalking;
+// }
+// private void HandleMovement()
+// {
+//     Vector2 inputVector = gameInput.GetMovementVectorNormalized();
+//     Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
 
-    //     isWalking = inputVector != Vector2.zero;
+//     isWalking = inputVector != Vector2.zero;
 
-    //     if (isWalking)
-    //     {
-    //         if (moveDir.x > 0)
-    //             PlayerVisual.transform.rotation = Quaternion.Euler(0, 0, 0);     // facing right
-    //         else if (moveDir.x < 0)
-    //             PlayerVisual.transform.rotation = Quaternion.Euler(0, 180, 0);
-    //     }
-    //     transform.position += moveDir * moveSpeed * Time.fixedDeltaTime;
-    // }
+//     if (isWalking)
+//     {
+//         if (moveDir.x > 0)
+//             PlayerVisual.transform.rotation = Quaternion.Euler(0, 0, 0);     // facing right
+//         else if (moveDir.x < 0)
+//             PlayerVisual.transform.rotation = Quaternion.Euler(0, 180, 0);
+//     }
+//     transform.position += moveDir * moveSpeed * Time.fixedDeltaTime;
+// }
 
 
