@@ -16,15 +16,16 @@ MonoBehaviour:
   Description: 
   Icon: {fileID: 0}
   buffType: 1
+  isPermanent: 0
   Duration: 3
   isStackable: 0
-  Stack: 1
+  MaxStack: 0
   StackCalculationType: 0
   Threshold: 0
   DiminishingReturnDecayFactor: 0
   targetType: 2
   modifiers: []
-  isInitialized: 1
-  wasReappliedThisTurn: 0
+  preventLethalDamage: 0
+  preventHealing: 0
   Taunter: {fileID: 0}
   ExtraDamageTaken: 100
