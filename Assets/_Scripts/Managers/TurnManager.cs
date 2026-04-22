@@ -22,7 +22,8 @@ public class TurnManager : Singleton<TurnManager>
     public int turnRound = 0;
     public int combatID = 0;
     public int currentWave = 1;
-    
+    private bool combatResultResolved;
+
     // --- Multiplayer Turn Variables ---
     private int currentTeamMemberIndex = 0;
     private bool initialWaveSpawned = false;
@@ -32,6 +33,7 @@ public class TurnManager : Singleton<TurnManager>
 
     private async void Start()
     {
+        combatResultResolved = false;
         EnsureTeamReady();
 
         ApplyPhaseStats();
@@ -55,7 +57,7 @@ public class TurnManager : Singleton<TurnManager>
         SetState(TurnState.PlayerTurnState);
         combatID = await NetworkManager.GetLatestCombatID();
         List<SkillLogs> skillLogs = new List<SkillLogs>();
-        
+
         if (PlayerTeamManager.Instance != null && PlayerTeamManager.Instance.ActiveTeamMembers.Count > 0)
         {
             foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
@@ -71,7 +73,7 @@ public class TurnManager : Singleton<TurnManager>
                 }
             }
         }
-        
+
         await NetworkManager.SaveCombatSkillLoadoutLogs(new CombatSkillLoadoutLogs
         {
             CombatID = combatID,
@@ -98,7 +100,7 @@ public class TurnManager : Singleton<TurnManager>
                     SetState(TurnState.PlayerTurnState);
                     return;
                 }
-                
+
                 if (PlayerTeamManager.Instance != null)
                 {
                     foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
@@ -121,7 +123,7 @@ public class TurnManager : Singleton<TurnManager>
                 Win();
                 break;
             case TurnState.Lose:
-                Loader.Load(Loader.Scenes.Overworld);
+                Lose();
                 break;
         }
     }
@@ -130,16 +132,16 @@ public class TurnManager : Singleton<TurnManager>
         // Calculate dynamic speed.
         float actionSpeed = caster.GetStat(StatType.ActionSpeed); // Use Getter
         pendingPlayerActions.Add(new ActionQueue(caster, target, skill, actionSpeed));
-        
+
         currentTeamMemberIndex++;
         AdvanceToNextAlivePlayer();
 
         // Reset UI stuff
         if (caster is PlayerEntity ce)
         {
-            ce.SetSelectedSkill(null); 
-            ce.SetEnemyTarget(null); 
-            ce.SetPlayerState(PlayerActionState.Idle); 
+            ce.SetSelectedSkill(null);
+            ce.SetEnemyTarget(null);
+            ce.SetPlayerState(PlayerActionState.Idle);
         }
         TargetingPanel.instance.SetActivePanel(false);
         SkillPanelUI.Instance.gameObject.SetActive(false);
@@ -148,7 +150,7 @@ public class TurnManager : Singleton<TurnManager>
         {
             enemy.Highlight(Color.white);
         }
-        
+
         if (PlayerTeamManager.Instance != null)
         {
             foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
@@ -178,18 +180,18 @@ public class TurnManager : Singleton<TurnManager>
         }
 
         PlayerEntity activePlayer = CurrentActivePlayer;
-        if (activePlayer == null) 
+        if (activePlayer == null)
         {
             SetState(TurnState.SpeedCompareState);
             return;
         }
 
-// // Debug.Log($"[TurnManager] Waiting for {activePlayer.Stats.EntityName} to choose an action.");
+        // // Debug.Log($"[TurnManager] Waiting for {activePlayer.Stats.EntityName} to choose an action.");
 
         activePlayer.SetEnemyTarget(GetFirstEnemy());
         TargetingPanel.instance.SetEnemyTargetPanel(activePlayer.GetEnemyTarget());
         ActionBarUI.Instance.gameObject.SetActive(true);
-        
+
         if (currentTeamMemberIndex == 0) // Only increment turnRound once per cycle
         {
             turnRound++;
@@ -221,7 +223,7 @@ public class TurnManager : Singleton<TurnManager>
     {
         ActionBarUI.Instance.gameObject.SetActive(false);
         SkillPanelUI.Instance.gameObject.SetActive(false);
-        
+
         // Add all confirmed player actions to the main queue
         actionQueue.AddRange(pendingPlayerActions);
         pendingPlayerActions.Clear();
@@ -232,7 +234,7 @@ public class TurnManager : Singleton<TurnManager>
         {
             Entity enemyEntity = enemy.GetComponent<EnemyCombat>();
             Skill chosenSkill;
-            
+
             // Check against the base BossCombat class, not a specific boss
             if (enemyEntity is BossCombat boss)
             {
@@ -276,11 +278,11 @@ public class TurnManager : Singleton<TurnManager>
                 return alivePlayers[Random.Range(0, alivePlayers.Count)];
             }
         }
-        
+
         // Fallback for safety
         if (PlayerTeamManager.Instance != null && PlayerTeamManager.Instance.ActiveTeamMembers.Count > 0)
             return PlayerTeamManager.Instance.ActiveTeamMembers[0];
-            
+
         return null;
     }
 
@@ -332,13 +334,13 @@ public class TurnManager : Singleton<TurnManager>
                 ActionID = actionID++,
                 CasterID = entity != null ? entity.GetEntityID() : -1,
                 CasterName = entity?.Stats?.EntityName ?? "Unknown Caster", // ถ้า entity หรือ stats เป็น null จะใช้ชื่อนี้แทน
-                
+
                 TargetID = target != null ? target.GetEntityID() : -1,
                 TargetName = target?.Stats?.EntityName ?? "No Target", // ป้องกันกรณีเป้าหมายไม่มี/ตายไปแล้ว
-                
+
                 SkillID = skill != null ? skill.skillID : -1,
                 SkillName = skill?.skillName ?? "Unknown Skill",
-                
+
                 ActionPointUsed = skill?.SkillPoint ?? 0,
                 ActionPointRecovery = 0,
                 ActionSpeed = currentAction.ActionSpeed,
@@ -395,7 +397,7 @@ public class TurnManager : Singleton<TurnManager>
                                     }
                                     else
                                     {
-// // Debug.Log("Target is already dead. Action cancelled.");
+                                        // // Debug.Log("Target is already dead. Action cancelled.");
                                     }
                                 }
                                 else if (skill.TargetCount == TargetCount.All)
@@ -425,10 +427,10 @@ public class TurnManager : Singleton<TurnManager>
                                             hasValidTarget = true;
                                         }
                                     }
-                                    
+
                                     if (!hasValidTarget)
                                     {
-// // Debug.Log("No valid targets left for AoE skill. Action cancelled.");
+                                        // // Debug.Log("No valid targets left for AoE skill. Action cancelled.");
                                     }
                                 }
                                 break;
@@ -466,7 +468,7 @@ public class TurnManager : Singleton<TurnManager>
                     }
                     else
                     {
-// // Debug.Log("Not enough SP to use " + skill.name);
+                        // // Debug.Log("Not enough SP to use " + skill.name);
                     }
                 }
                 entity.buffController.OnTurnEnd(entity);
@@ -474,7 +476,8 @@ public class TurnManager : Singleton<TurnManager>
             }
             else if (entity is EnemyCombat enemyCombat)
             {
-                if (enemyCombat != null) {
+                if (enemyCombat != null)
+                {
                     enemyCombat.buffController.OnTurnStart(enemyCombat, log);
                 }
                 // enemyCombat.buffController.OnTurnStart(enemyCombat, log);
@@ -500,7 +503,7 @@ public class TurnManager : Singleton<TurnManager>
                             }
                             else
                             {
-// // Debug.Log("Player is dead. Enemy action cancelled.");
+                                // // Debug.Log("Player is dead. Enemy action cancelled.");
                             }
                             break;
                         case TargetType.Ally:
@@ -526,7 +529,7 @@ public class TurnManager : Singleton<TurnManager>
             }
             yield return new WaitForSeconds(1f);
         }
-        
+
         bool allPlayersDead = true;
         if (PlayerTeamManager.Instance != null)
         {
@@ -571,8 +574,62 @@ public class TurnManager : Singleton<TurnManager>
 
     private void Win()
     {
-// // Debug.Log("You Win!");
-        CombatResultUI.Instance.gameObject.SetActive(true);
+        if (combatResultResolved)
+        {
+            return;
+        }
+
+        combatResultResolved = true;
+
+        if (userData != null)
+        {
+            bool didAdvancePhase;
+            bool didFinishGame;
+            int earnedCoins;
+
+            bool completed = userData.TryCompleteSelectedQuest(out didAdvancePhase, out didFinishGame, out earnedCoins);
+            if (!completed)
+            {
+                Debug.LogWarning("Quest completion was skipped because selected quest is not in a completable state.");
+            }
+            else
+            {
+                Debug.Log("Quest reward pending NPC turn-in: " + earnedCoins + " coins.");
+
+                if (didFinishGame)
+                {
+                    Debug.Log("Quest 3 completed. Game progression finished.");
+                }
+                else if (didAdvancePhase)
+                {
+                    Debug.Log("Quest completed. Advanced to phase " + userData.GamePhase + ".");
+                }
+            }
+        }
+        else
+        {
+            Debug.LogWarning("UserData is missing in TurnManager. Progression was not updated.");
+        }
+
+        if (CombatResultUI.Instance != null)
+        {
+            CombatResultUI.Instance.gameObject.SetActive(true);
+        }
+        else
+        {
+            Loader.Load(Loader.Scenes.Overworld);
+        }
+    }
+
+    private void Lose()
+    {
+        if (combatResultResolved)
+        {
+            return;
+        }
+
+        combatResultResolved = true;
+        Loader.Load(Loader.Scenes.Overworld);
     }
     private List<GameObject> GetAllEnemies()
     {
@@ -685,7 +742,7 @@ public class TurnManager : Singleton<TurnManager>
                 if (enemy != null && !enemy.IsDead())
                 {
                     enemy.SetSP(spToRestore);
-// // Debug.Log($"[Phase {currentPhase}] {enemy.gameObject.name} restored {spToRestore} SP at end of turn");
+                    // // Debug.Log($"[Phase {currentPhase}] {enemy.gameObject.name} restored {spToRestore} SP at end of turn");
                 }
             }
         }
@@ -831,7 +888,7 @@ public class TurnManager : Singleton<TurnManager>
         }
 
         bool isStartOfBattle = (currentWave == 1);
-        
+
         if (isStartOfBattle || isTutorial)
         {
             foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)

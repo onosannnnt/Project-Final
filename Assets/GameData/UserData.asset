@@ -15,4 +15,6 @@ MonoBehaviour:
   ID: 0
   Username: test
   GamePhase: 3
-  SelectedQuestIndex: 0
+  SelectedQuestIndex: 3
+  HighestCompletedQuestIndex: 3
+  IsGameFinished: 1

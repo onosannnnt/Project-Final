@@ -12,5 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b03db1597306eae4db6869e334951f6d, type: 3}
   m_Name: Quest3
   m_EditorClassIdentifier: 
-  MobPrefabs: []
-  BossPrefab: {fileID: 0}
+  isTutorial: 0
+  waves:
+  - enemies:
+    - enemyPrefab: {fileID: 6702360306364772165, guid: 630e186e9988bb14db951e26a00f7958,
+        type: 3}
+      positionIndex: 4

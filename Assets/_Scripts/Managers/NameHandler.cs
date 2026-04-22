@@ -37,6 +37,7 @@ public class NameHandler : MonoBehaviour
         {
             // บันทึกชื่อเก็บไว้ (ใช้ PlayerPrefs เพื่อดึงไปใช้ใน Scene อื่นได้ง่าย)
             PlayerPrefs.SetString("PlayerName", playerName);
+            userData.ResetProgression();
             userData.Username = playerName;
             UserResponse response = await NetworkManager.SavePlayerData(userData);
             userData.ID = response.ID;
@@ -44,7 +45,7 @@ public class NameHandler : MonoBehaviour
             PlayerPrefs.Save();
 
 
-// // Debug.Log("Player Name Saved: " + playerName);
+            // // Debug.Log("Player Name Saved: " + playerName);
 
             // เปลี่ยน Scene
             SceneManager.LoadScene(nextSceneName);

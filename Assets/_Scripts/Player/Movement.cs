@@ -115,15 +115,23 @@ public class Movement : MonoBehaviour
             skillManager.SaveLoadout();
         }
 
-        // --- NEW LOGIC: Update UserData before entering combat ---
-        if (userData != null)
+        if (userData == null)
         {
-            userData.SelectedQuestIndex = selectedQuestIndex;
-            // // Debug.Log("Quest selected via 'F'! Updated UserData SelectedQuestIndex to: " + selectedQuestIndex);
+            Debug.LogWarning("UserData is not assigned in Movement. Cannot validate progression.");
+            return;
         }
-        else
+
+        if (!userData.TrySetSelectedQuest(selectedQuestIndex))
         {
-            Debug.LogWarning("UserData is not assigned in Movement! The game might not load the correct quest enemies.");
+            int fallbackQuestIndex = userData.SelectedQuestIndex;
+            if (!userData.TrySetSelectedQuest(fallbackQuestIndex))
+            {
+                string reason = userData.GetQuestBlockedReason(selectedQuestIndex);
+                Debug.LogWarning("Cannot start quest index " + selectedQuestIndex + ". " + reason);
+                return;
+            }
+
+            Debug.Log("Quest index " + selectedQuestIndex + " is not available. Starting unlocked quest index " + fallbackQuestIndex + " instead.");
         }
 
         Loader.Load(Loader.Scenes.Combat);

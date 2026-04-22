@@ -51,13 +51,22 @@ public class InventoryTabController : MonoBehaviour
     public void OpenInventory(int index)
     {
         // ป้องกัน Error: เช็คว่า Index อยู่ในขอบเขตและตัวแปรไม่เป็น Null
-        if (index < 0 || index >= allTabs.Count || inventoryUI == null || allTabs[index].panel == null) 
+        if (index < 0 || index >= allTabs.Count || inventoryUI == null || allTabs[index].panel == null)
         {
             Debug.LogWarning("ตรวจเช็ค Inspector: อาจจะลืมลาก Panel หรือตั้งค่า Index ผิด");
             return;
         }
-            inventoryUI.SetActive(true);
-            ShowTab(index);
+        inventoryUI.SetActive(true);
+        ShowTab(index);
+    }
+
+    // For UI Button OnClick() close action
+    public void CloseInventoryFromButton()
+    {
+        if (inventoryUI != null)
+        {
+            inventoryUI.SetActive(false);
+        }
     }
 
     public void ShowTab(int index)

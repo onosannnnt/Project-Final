@@ -15,6 +15,7 @@ public class NameingUI : Singleton<NameingUI>
     private async void OnStartButtonClicked()
     {
         string username = nameInputField.text;
+        userData.ResetProgression();
         userData.Username = username;
         UserResponse response = await NetworkManager.SavePlayerData(userData);
         userData.ID = response.ID;
