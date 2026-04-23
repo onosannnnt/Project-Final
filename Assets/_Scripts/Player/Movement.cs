@@ -18,6 +18,9 @@ public class Movement : MonoBehaviour
     public SpriteRenderer sr;
     private bool interactRequested;
 
+    [Header("Interaction")]
+    [SerializeField] private bool allowGlobalQuestStartFromInteract;
+
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody>();
@@ -69,7 +72,7 @@ public class Movement : MonoBehaviour
             sr.flipX = false;
         }
 
-        if (gameInput.IsInteractPressed())
+        if (allowGlobalQuestStartFromInteract && gameInput != null && gameInput.IsInteractPressed())
         {
             interactRequested = true;
         }
@@ -78,6 +81,12 @@ public class Movement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!allowGlobalQuestStartFromInteract)
+        {
+            interactRequested = false;
+            return;
+        }
+
         if (interactRequested)
         {
             HandleInteraction();

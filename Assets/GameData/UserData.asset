@@ -15,6 +15,13 @@ MonoBehaviour:
   ID: 0
   Username: test
   GamePhase: 3
-  SelectedQuestIndex: 3
-  HighestCompletedQuestIndex: 3
-  IsGameFinished: 1
+  SelectedQuestIndex: 0
+  HighestCompletedQuestIndex: -1
+  IsGameFinished: 0
+  TotalCoins: 0
+  PendingQuestCoins: 0
+  PendingRewardQuestIndex: -1
+  tutorialCoinReward: 9
+  quest1CoinReward: 9
+  quest2CoinReward: 9
+  quest3CoinReward: 0
