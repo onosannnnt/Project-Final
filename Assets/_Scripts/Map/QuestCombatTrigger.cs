@@ -13,7 +13,8 @@ public class QuestCombatTrigger : MonoBehaviour
     [SerializeField] private GameObject promptSprite;
     [SerializeField] private bool usePlayerPromptSprite;
     [SerializeField] private string playerPromptChildName = "ChangeMapIcon";
-    [SerializeField] private bool billboardPromptSprite = true;
+    [SerializeField] private bool usePromptBillboard = true;
+    [SerializeField] private BillboardToCamera.BillboardMode promptBillboardMode = BillboardToCamera.BillboardMode.FaceCameraPosition;
 
     [Header("Before Combat")]
     [SerializeField] private bool saveSkillLoadoutBeforeCombat = true;
@@ -28,6 +29,7 @@ public class QuestCombatTrigger : MonoBehaviour
     {
         if (promptSprite != null)
         {
+            ConfigurePromptBillboard(promptSprite);
             promptSprite.SetActive(false);
         }
     }
@@ -39,8 +41,6 @@ public class QuestCombatTrigger : MonoBehaviour
 
     private void Update()
     {
-        UpdatePromptBillboard();
-
         if (!isPlayerInside || isLoadingCombat)
         {
             return;
@@ -81,6 +81,8 @@ public class QuestCombatTrigger : MonoBehaviour
         {
             activePromptSprite = ResolvePromptSprite(other);
         }
+
+        ConfigurePromptBillboard(activePromptSprite);
 
         SetPromptVisible(true);
     }
@@ -131,11 +133,18 @@ public class QuestCombatTrigger : MonoBehaviour
             return;
         }
 
-        int activeQuestIndex = userData.GetCurrentInProgressQuestIndex();
-        if (!userData.TrySetSelectedQuest(activeQuestIndex))
+        if (!userData.HasSelectedQuest())
         {
-            string reason = userData.GetQuestBlockedReason(activeQuestIndex);
-            Debug.LogWarning("Cannot start active quest index " + activeQuestIndex + ". " + reason);
+            Debug.LogWarning("No quest selected. Accept a quest first before entering combat.");
+            return;
+        }
+
+        int selectedQuestIndex = userData.SelectedQuestIndex;
+        if (!userData.CanStartQuest(selectedQuestIndex))
+        {
+            string reason = userData.GetQuestBlockedReason(selectedQuestIndex);
+            Debug.LogWarning("Selected quest is not startable. " + reason);
+            userData.ClearSelectedQuest();
             return;
         }
 
@@ -166,21 +175,31 @@ public class QuestCombatTrigger : MonoBehaviour
         }
     }
 
-    private void UpdatePromptBillboard()
+    private void ConfigurePromptBillboard(GameObject targetObject)
     {
-        GameObject billboardTarget = activePromptSprite != null ? activePromptSprite : promptSprite;
-        if (!billboardPromptSprite || billboardTarget == null || !billboardTarget.activeInHierarchy)
+        if (targetObject == null)
         {
             return;
         }
 
-        if (Camera.main == null)
+        BillboardToCamera billboard = targetObject.GetComponent<BillboardToCamera>();
+
+        if (usePromptBillboard)
         {
+            if (billboard == null)
+            {
+                billboard = targetObject.AddComponent<BillboardToCamera>();
+            }
+
+            billboard.SetMode(promptBillboardMode);
+            billboard.enabled = true;
             return;
         }
 
-        Transform promptTransform = billboardTarget.transform;
-        promptTransform.rotation = Quaternion.LookRotation(promptTransform.position - Camera.main.transform.position);
+        if (billboard != null)
+        {
+            billboard.enabled = false;
+        }
     }
 
     private GameObject ResolvePromptSprite(Collider playerCollider)

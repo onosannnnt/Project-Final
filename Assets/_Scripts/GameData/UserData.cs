@@ -3,6 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "UserData", menuName = "ScriptableObjects/GameData/UserData"),]
 public class UserData : ScriptableObject
 {
+    public const int NoQuestSelected = -1;
     public const int TutorialQuestIndex = 0;
     public const int Quest1Index = 1;
     public const int Quest2Index = 2;
@@ -13,8 +14,8 @@ public class UserData : ScriptableObject
     public string Username;
     [Tooltip("Current game progression phase (e.g., 1, 2, 3)")]
     public int GamePhase = 1;
-    [Tooltip("The index of the quest currently being played (e.g., 0 for Tutorial, 1 for Quest 1)")]
-    public int SelectedQuestIndex = 0;
+    [Tooltip("Selected quest index. -1 means no quest is selected yet.")]
+    public int SelectedQuestIndex = NoQuestSelected;
 
     [Tooltip("Highest completed quest index. -1 means no quest has been completed yet.")]
     public int HighestCompletedQuestIndex = -1;
@@ -40,7 +41,7 @@ public class UserData : ScriptableObject
     public void ResetProgression()
     {
         GamePhase = 1;
-        SelectedQuestIndex = TutorialQuestIndex;
+        SelectedQuestIndex = NoQuestSelected;
         HighestCompletedQuestIndex = -1;
         IsGameFinished = false;
         TotalCoins = 0;
@@ -83,6 +84,16 @@ public class UserData : ScriptableObject
 
         SelectedQuestIndex = questIndex;
         return true;
+    }
+
+    public bool HasSelectedQuest()
+    {
+        return CanStartQuest(SelectedQuestIndex);
+    }
+
+    public void ClearSelectedQuest()
+    {
+        SelectedQuestIndex = NoQuestSelected;
     }
 
     public bool TryCompleteSelectedQuest(out bool didAdvancePhase, out bool didFinishGame)
@@ -130,7 +141,7 @@ public class UserData : ScriptableObject
         earnedCoins = GetQuestCoinReward(questIndex);
         AddPendingQuestCoins(earnedCoins, questIndex);
 
-        SelectedQuestIndex = Mathf.Clamp(HighestCompletedQuestIndex + 1, TutorialQuestIndex, LastQuestIndex);
+        ClearSelectedQuest();
         return true;
     }
 
@@ -210,18 +221,20 @@ public class UserData : ScriptableObject
 
     public int GetCurrentInProgressQuestIndex()
     {
-        if (CanStartQuest(SelectedQuestIndex))
+        if (HasSelectedQuest())
         {
             return SelectedQuestIndex;
         }
 
-        return GetCurrentUnlockedQuestIndex();
+        return NoQuestSelected;
     }
 
     public string GetQuestDisplayName(int questIndex)
     {
         switch (questIndex)
         {
+            case NoQuestSelected:
+                return "None";
             case TutorialQuestIndex:
                 return "Tutorial";
             case Quest1Index:

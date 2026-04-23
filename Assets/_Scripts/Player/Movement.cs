@@ -96,10 +96,8 @@ public class Movement : MonoBehaviour
     }
 
     [Header("Quest Configuration")]
-    [Tooltip("The UserData to update before starting the quest.")]
+    [Tooltip("The UserData that stores selected quest progression.")]
     public UserData userData;
-    [Tooltip("The array index of the quest to play (0 for Tutorial, 1 for Quest 1, etc.)")]
-    public int selectedQuestIndex = 0;
 
     private void HandleInteraction()
     {
@@ -130,17 +128,10 @@ public class Movement : MonoBehaviour
             return;
         }
 
-        if (!userData.TrySetSelectedQuest(selectedQuestIndex))
+        if (!userData.HasSelectedQuest())
         {
-            int fallbackQuestIndex = userData.SelectedQuestIndex;
-            if (!userData.TrySetSelectedQuest(fallbackQuestIndex))
-            {
-                string reason = userData.GetQuestBlockedReason(selectedQuestIndex);
-                Debug.LogWarning("Cannot start quest index " + selectedQuestIndex + ". " + reason);
-                return;
-            }
-
-            Debug.Log("Quest index " + selectedQuestIndex + " is not available. Starting unlocked quest index " + fallbackQuestIndex + " instead.");
+            Debug.LogWarning("No quest selected. Accept a quest from the quest panel/NPC before entering combat.");
+            return;
         }
 
         Loader.Load(Loader.Scenes.Combat);

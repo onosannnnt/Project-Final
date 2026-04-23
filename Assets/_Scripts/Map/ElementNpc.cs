@@ -1,16 +1,14 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
-public class QuestRewardNpc : MonoBehaviour
+public class ElementNpc : MonoBehaviour
 {
-    [Header("Data")]
-    [SerializeField] private UserData userData;
-
-    [Header("Quest Panel")]
-    [SerializeField] private QuestSelectionUI questSelectionUI;
+    [Header("Element Panel")]
+    [SerializeField] private bool openElementPanelOnTalk = true;
+    [FormerlySerializedAs("fallbackElementPanel")]
+    [SerializeField] private GameObject changeElementPanel;
 
     [Header("Interaction")]
-    [SerializeField] private bool openQuestPanelOnTalk = true;
-    [SerializeField] private bool claimRewardOnTalk;
     [SerializeField] private KeyCode fallbackInteractKey = KeyCode.E;
     [SerializeField] private string playerTag = "Player";
 
@@ -246,49 +244,32 @@ public class QuestRewardNpc : MonoBehaviour
         return null;
     }
 
-    // Call this from your NPC talk interaction event.
     public void OnTalkToNpc()
     {
-        if (claimRewardOnTalk)
+        if (!openElementPanelOnTalk)
         {
-            ClaimPendingQuestReward();
-        }
-
-        if (openQuestPanelOnTalk)
-        {
-            OpenQuestPanel();
-        }
-    }
-
-    public void OpenQuestPanel()
-    {
-        if (questSelectionUI == null)
-        {
-            Debug.LogWarning("QuestSelectionUI is not assigned on QuestRewardNpc.");
             return;
         }
 
-        questSelectionUI.OpenPanel();
+        OpenElementPanel();
     }
 
-    public void ClaimPendingQuestReward()
+    public void OpenElementPanel()
     {
-        if (userData == null)
+        if (changeElementPanel != null)
         {
-            Debug.LogWarning("UserData is not assigned on QuestRewardNpc.");
+            changeElementPanel.SetActive(true);
             return;
         }
 
-        int claimedCoins;
-        int rewardQuestIndex;
-        if (userData.TryClaimPendingQuestCoins(out claimedCoins, out rewardQuestIndex))
+        Debug.LogWarning("ElementNpc has no panel target assigned. Assign changeElementPanel.");
+    }
+    public void CloseElementPanel()
+    {
+        if (changeElementPanel != null)
         {
-            string questName = userData.GetQuestDisplayName(rewardQuestIndex);
-            Debug.Log("Claimed quest reward from " + questName + ": +" + claimedCoins + " coins. Total coins: " + userData.TotalCoins + ".");
-        }
-        else
-        {
-            Debug.Log("No pending quest coin reward to claim.");
+            changeElementPanel.SetActive(false);
+            return;
         }
     }
 }

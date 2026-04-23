@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 0
   Username: test
-  GamePhase: 3
-  SelectedQuestIndex: 0
+  GamePhase: 1
+  SelectedQuestIndex: -1
   HighestCompletedQuestIndex: -1
   IsGameFinished: 0
   TotalCoins: 0
