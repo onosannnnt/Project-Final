@@ -16,6 +16,8 @@ MonoBehaviour:
   skillName: Cycle of Life
   description: 'Heal team 400 HP. Gain 3 Frenzy Stack. [SP: 60]'
   skillIcon: {fileID: 21300000, guid: ea61475f2ca0f4eeba50601040774701, type: 3}
+  skillType: 1
+  Tier: 2
   SkillPoint: 60
   TargetType: 1
   TargetCount: 1

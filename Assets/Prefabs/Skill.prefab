@@ -67,11 +67,13 @@ MonoBehaviour:
   skillNameText: {fileID: 4815078829302975481}
   elementIconImage: {fileID: 1806535960864784767}
   noneElementSprite: {fileID: 0}
-  physicalElementSprite: {fileID: 21300000, guid: 60a5ceff1b9f91e44ba837c2f13ca147, type: 3}
-  fireElementSprite: {fileID: 21300000, guid: 07f1626437c34cd4f91851a0a0bc51d5, type: 3}
-  frostElementSprite: {fileID: 21300000, guid: 98abc6e7a7db4774f89ae113295256bd, type: 3}
-  lightningElementSprite: {fileID: 21300000, guid: 3ad45e5643fdb3f4f892d2bb316d8847, type: 3}
-  windElementSprite: {fileID: 21300000, guid: 8467f003c056e804c8d5e4c914abce1e, type: 3}
+  physicalElementSprite: {fileID: 21300000, guid: 60a5ceff1b9f91e44ba837c2f13ca147,
+    type: 3}
+  fireElementSprite: {fileID: 21300000, guid: fd1a23f79012f44039254abb8029db80, type: 3}
+  frostElementSprite: {fileID: 21300000, guid: 57f103376ceea4a5db6c3df3893aebd6, type: 3}
+  lightningElementSprite: {fileID: 21300000, guid: c0ccedb0f1e0c48b5b306824ba1eec51,
+    type: 3}
+  windElementSprite: {fileID: 21300000, guid: 269b04d349c6b4908ab3facf582c3584, type: 3}
   dotElementSprite: {fileID: 0}
   hideElementIconWhenMissingSprite: 1
   unselectedCheckmark: {fileID: 21300000, guid: 965556510d805684c8caae216cd8d744,
@@ -198,7 +200,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: -50}
-  m_SizeDelta: {x: 103.99, y: 50}
+  m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &4643840997999696505
 CanvasRenderer:
@@ -499,7 +501,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 83.4657, y: -50}
-  m_SizeDelta: {x: 174.3638, y: 100}
+  m_SizeDelta: {x: 0, y: 100}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &5850688805967933654
 MonoBehaviour:

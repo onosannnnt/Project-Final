@@ -10,6 +10,8 @@ public class Skill : ScriptableObject
     [TextArea(3, 10)]
     public string description;
     public Sprite skillIcon;
+    public SkillType skillType;
+    public int Tier;
     [Header("Cost")]
     public int SkillPoint;
     [Header("Attribute")]
@@ -17,6 +19,23 @@ public class Skill : ScriptableObject
     public TargetCount TargetCount;
     public bool reducesArmor = true; // Indicates if this skill reduces enemy armor
     public List<SkillEffect> SkillEffects;
+
+    //Price by Tier (can be set to 0 for non-purchasable skills)
+    public int GetSkillPrice()
+    {
+        //Tier 1: 100, Tier 2: 200, Tier 3: 300 (example pricing, can be adjusted as needed)
+        switch (Tier)
+        {
+            case 1:
+                return 10;
+            case 2:
+                return 30;
+            case 3:
+                return 80;
+            default:
+                return 0; // Default price for undefined tiers
+        }
+    }
 
     public DamageElement GetElement()
     {
@@ -124,7 +143,7 @@ public class Skill : ScriptableObject
         bool hit = true;
         foreach (var effect in SkillEffects)
         {
-// // Debug.Log(effect.name + " effect is executed from skill " + skillName);
+            // // Debug.Log(effect.name + " effect is executed from skill " + skillName);
             bool effectHit = effect.Execute(caster, target, log);
             if (!effectHit)
             {

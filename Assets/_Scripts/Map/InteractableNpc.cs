@@ -1,12 +1,12 @@
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class ElementNpc : MonoBehaviour
+public class InteractableNpc : MonoBehaviour
 {
-    [Header("Element Panel")]
-    [SerializeField] private bool openElementPanelOnTalk = true;
-    [FormerlySerializedAs("fallbackElementPanel")]
-    [SerializeField] private GameObject changeElementPanel;
+    [Header("NPC Panel")]
+    [SerializeField] private bool openPanelOnTalk = true;
+    [FormerlySerializedAs("fallbackPanel")]
+    [SerializeField] private GameObject changePanel;
 
     [Header("Interaction")]
     [SerializeField] private KeyCode fallbackInteractKey = KeyCode.E;
@@ -246,29 +246,29 @@ public class ElementNpc : MonoBehaviour
 
     public void OnTalkToNpc()
     {
-        if (!openElementPanelOnTalk)
+        if (!openPanelOnTalk)
         {
             return;
         }
 
-        OpenElementPanel();
+        OpenPanel();
     }
 
-    public void OpenElementPanel()
+    public void OpenPanel()
     {
-        if (changeElementPanel != null)
+        if (changePanel != null)
         {
-            changeElementPanel.SetActive(true);
+            changePanel.SetActive(true);
             return;
         }
 
-        Debug.LogWarning("ElementNpc has no panel target assigned. Assign changeElementPanel.");
+        Debug.LogWarning("No panel target assigned. Assign a panel.");
     }
-    public void CloseElementPanel()
+    public void ClosePanel()
     {
-        if (changeElementPanel != null)
+        if (changePanel != null)
         {
-            changeElementPanel.SetActive(false);
+            changePanel.SetActive(false);
             return;
         }
     }

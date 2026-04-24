@@ -16,9 +16,12 @@ MonoBehaviour:
   skillName: Ember Seeds
   description: 'Deal 120 AoE damage. 20% chance to take 50 self-damage. [SP: 20]'
   skillIcon: {fileID: 21300000, guid: 1f1aaf4286d2c4ea495a95b2bba8abaa, type: 3}
+  skillType: 0
+  Tier: 1
   SkillPoint: 20
   TargetType: 2
   TargetCount: 1
+  reducesArmor: 1
   SkillEffects:
   - {fileID: 11400000, guid: af115b9adcfa948a0b2eb8dac09bf99a, type: 2}
   - {fileID: 11400000, guid: cfbf0164421804b7a85b3067a9cbf0dc, type: 2}

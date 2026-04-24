@@ -16,6 +16,8 @@ MonoBehaviour:
   skillName: Morning Dew
   description: 'Heal 200 HP. Gain 1 Frenzy Stack. [SP: 15]'
   skillIcon: {fileID: 21300000, guid: ea61475f2ca0f4eeba50601040774701, type: 3}
+  skillType: 1
+  Tier: 1
   SkillPoint: 15
   TargetType: 0
   TargetCount: 0

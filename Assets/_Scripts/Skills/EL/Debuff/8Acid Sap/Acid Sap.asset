@@ -16,6 +16,8 @@ MonoBehaviour:
   skillName: Acid Sap
   description: Target takes extra 50 damage. Gain 3 Frenzy Stacks if it dies.
   skillIcon: {fileID: 21300000, guid: ea3b8a61f4add494c84dfcffa4d9cc32, type: 3}
+  skillType: 3
+  Tier: 1
   SkillPoint: 15
   TargetType: 2
   TargetCount: 0

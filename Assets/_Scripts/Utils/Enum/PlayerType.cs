@@ -5,6 +5,14 @@ public enum TargetType
     Enemy
 }
 
+public enum SkillType
+{
+    Attack,
+    Sustain,
+    Buff,
+    Debuff
+}
+
 public enum TargetCount
 {
     Single,

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "UserData", menuName = "ScriptableObjects/GameData/UserData"),]
 public class UserData : ScriptableObject
@@ -37,6 +38,36 @@ public class UserData : ScriptableObject
     [SerializeField] private int quest1CoinReward = 100;
     [SerializeField] private int quest2CoinReward = 200;
     [SerializeField] private int quest3CoinReward = 300;
+
+    [Header("Player Skills")]
+    [Tooltip("รายชื่อสกิลที่ผู้เล่นซื้อหรือปลดล็อคแล้ว")]
+    public List<Skill> OwnedSkills = new List<Skill>();
+
+    // เช็คว่ามีสกิลนี้หรือยัง
+    public bool HasSkill(Skill skill)
+    {
+        return OwnedSkills.Contains(skill);
+    }
+
+    // เพิ่มสกิลเข้าตัวผู้เล่น
+    public void UnlockSkill(Skill skill)
+    {
+        if (!HasSkill(skill))
+        {
+            OwnedSkills.Add(skill);
+        }
+    }
+
+    // ฟังก์ชันสำหรับจ่ายเงิน
+    public bool TrySpendCoins(int amount)
+    {
+        if (TotalCoins >= amount)
+        {
+            TotalCoins -= amount;
+            return true;
+        }
+        return false;
+    }
 
     public void ResetProgression()
     {

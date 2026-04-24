@@ -16,6 +16,8 @@ MonoBehaviour:
   skillName: Spreading Roots
   description: 'If an ally kills an enemy, team heals 100 HP (3 turns). [SP: 20]'
   skillIcon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}
+  skillType: 2
+  Tier: 1
   SkillPoint: 20
   TargetType: 1
   TargetCount: 1

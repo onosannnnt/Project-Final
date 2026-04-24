@@ -16,6 +16,8 @@ MonoBehaviour:
   skillName: Boiling Blood
   description: 'Team deals +50% damage but cannot be healed for 2 turns. [SP: 40]'
   skillIcon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}
+  skillType: 2
+  Tier: 2
   SkillPoint: 40
   TargetType: 1
   TargetCount: 1

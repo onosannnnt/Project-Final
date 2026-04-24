@@ -16,6 +16,8 @@ MonoBehaviour:
   skillName: Blooming Save
   description: 'Heal 500 HP. Gain 3 Frenzy Stack. [SP: 35]'
   skillIcon: {fileID: 21300000, guid: ea61475f2ca0f4eeba50601040774701, type: 3}
+  skillType: 1
+  Tier: 2
   SkillPoint: 35
   TargetType: 0
   TargetCount: 0

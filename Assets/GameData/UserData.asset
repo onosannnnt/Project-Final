@@ -21,7 +21,8 @@ MonoBehaviour:
   TotalCoins: 0
   PendingQuestCoins: 0
   PendingRewardQuestIndex: -1
-  tutorialCoinReward: 9
-  quest1CoinReward: 9
-  quest2CoinReward: 9
+  tutorialCoinReward: 100
+  quest1CoinReward: 200
+  quest2CoinReward: 250
   quest3CoinReward: 0
+  OwnedSkills: []
