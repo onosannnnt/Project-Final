@@ -138,6 +138,7 @@ RectTransform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1514557137162464142}
+  - {fileID: 5250353627434800609}
   - {fileID: 1980161816640474872}
   - {fileID: 7770516053224017844}
   m_Father: {fileID: 638757405302400597}
@@ -236,16 +237,16 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3161185528136002616}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.00018129}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0}
+  m_LocalScale: {x: 19.418331, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1514557137162464142}
+  m_Father: {fileID: 3234684152306241524}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -34.862, y: 0.00007450581}
-  m_SizeDelta: {x: 69.725, y: 100}
+  m_AnchoredPosition: {x: -698.4, y: 0.00007450581}
+  m_SizeDelta: {x: 71.639, y: 100}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &2389140020220793088
 CanvasRenderer:
@@ -275,7 +276,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: c50ae0822d89a4a0ba84534ad099336d, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -464,8 +465,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: -0.000034391}
   m_LocalScale: {x: 19.41833, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 5250353627434800609}
+  m_Children: []
   m_Father: {fileID: 3234684152306241524}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -501,7 +501,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: e7e3c494291a44cba80c10385861df0c, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -766,15 +766,15 @@ MonoBehaviour:
   healthBarForeground: {fileID: 3161185528136002616}
   breakArmorText: {fileID: 1588384611004194450}
   breakStatusImage: {fileID: 1965859158435385423}
-  physicalBreakStatusSprite: {fileID: 21300000, guid: 60a5ceff1b9f91e44ba837c2f13ca147,
+  physicalBreakStatusSprite: {fileID: 21300000, guid: 442da4d8fae1f496090f903afc008b3e,
     type: 3}
-  fireBreakStatusSprite: {fileID: 21300000, guid: 07f1626437c34cd4f91851a0a0bc51d5,
+  fireBreakStatusSprite: {fileID: 21300000, guid: fd1a23f79012f44039254abb8029db80,
     type: 3}
-  frostBreakStatusSprite: {fileID: 21300000, guid: 98abc6e7a7db4774f89ae113295256bd,
+  frostBreakStatusSprite: {fileID: 21300000, guid: 57f103376ceea4a5db6c3df3893aebd6,
     type: 3}
-  lightningBreakStatusSprite: {fileID: 21300000, guid: 3ad45e5643fdb3f4f892d2bb316d8847,
+  lightningBreakStatusSprite: {fileID: 21300000, guid: c0ccedb0f1e0c48b5b306824ba1eec51,
     type: 3}
-  windBreakStatusSprite: {fileID: 21300000, guid: 8467f003c056e804c8d5e4c914abce1e,
+  windBreakStatusSprite: {fileID: 21300000, guid: 269b04d349c6b4908ab3facf582c3584,
     type: 3}
   hideBreakStatusWhenNone: 1
   vulnerableDamageBonus: 0.15

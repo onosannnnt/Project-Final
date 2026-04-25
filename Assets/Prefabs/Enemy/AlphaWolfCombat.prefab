@@ -73,7 +73,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 76eddb217450b054686671a53262aaf0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8546a29af5377844f8b13c0449ac87d0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -574,9 +574,9 @@ GameObject:
   m_Component:
   - component: {fileID: 638757405302400597}
   - component: {fileID: 1294968933682025695}
-  - component: {fileID: 7912682552883244}
+  - component: {fileID: 8334374694962473149}
   m_Layer: 0
-  m_Name: BeeQueenCombat
+  m_Name: AlphaWolfCombat
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -645,7 +645,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.82116413, y: 1.784737}
   m_EdgeRadius: 0
---- !u!114 &7912682552883244
+--- !u!114 &8334374694962473149
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -654,7 +654,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6702360306364772165}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca406677d45019240a4279520a883f16, type: 3}
+  m_Script: {fileID: 11500000, guid: 4dfd9a66013cf4dc9b26497574cd6124, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   DamageTextPrefab: {fileID: 827353491416033085, guid: c4b672b6114e644118bff5090eaf7a83,
@@ -664,9 +664,9 @@ MonoBehaviour:
   FloatDuration: 1
   SpreadAmount: 0.3
   RandomSpawnOffset: 0.1
-  stats: {fileID: 11400000, guid: 308b77466f5f494459a261a768ec6487, type: 2}
-  skills: {fileID: 11400000, guid: 12dd7adc14cdf2448884ab64d275e0ae, type: 2}
-  healthBarForeground: {fileID: 0}
+  stats: {fileID: 11400000, guid: 989af1bdc09f640f3a949ac9ed1dcfca, type: 2}
+  skills: {fileID: 11400000, guid: 4e63f494e62c54767baa743649951d6f, type: 2}
+  healthBarForeground: {fileID: 9121815875517389897}
   breakArmorText: {fileID: 1588384611004194450}
   breakStatusImage: {fileID: 4346448736133913830}
   physicalBreakStatusSprite: {fileID: 21300000, guid: 442da4d8fae1f496090f903afc008b3e,
@@ -687,6 +687,7 @@ MonoBehaviour:
   lightningArmorRecoveryRatio: 0.7
   currentBreakState: 0
   currentBreakArmor: 0
+  damageBuffPerDeath: 0.1
 --- !u!1 &7181939115337276224
 GameObject:
   m_ObjectHideFlags: 0
@@ -760,7 +761,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8954031037550722348}
   m_LocalRotation: {x: 0, y: 0.035073906, z: 0, w: 0.99938476}
-  m_LocalPosition: {x: 0, y: 0, z: -0.043}
+  m_LocalPosition: {x: 0, y: 0, z: -0.056}
   m_LocalScale: {x: 0.0004, y: 0.0004, z: 0.0004}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -768,7 +769,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 4.02, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0.684, y: 0.229}
+  m_AnchoredPosition: {x: 0.869, y: 0.229}
   m_SizeDelta: {x: 1643.665, y: 434.3307}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &3949138823655047742

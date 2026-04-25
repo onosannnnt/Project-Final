@@ -67,7 +67,7 @@ MonoBehaviour:
   skillNameText: {fileID: 4815078829302975481}
   elementIconImage: {fileID: 1806535960864784767}
   noneElementSprite: {fileID: 0}
-  physicalElementSprite: {fileID: 21300000, guid: 60a5ceff1b9f91e44ba837c2f13ca147,
+  physicalElementSprite: {fileID: 21300000, guid: 442da4d8fae1f496090f903afc008b3e,
     type: 3}
   fireElementSprite: {fileID: 21300000, guid: fd1a23f79012f44039254abb8029db80, type: 3}
   frostElementSprite: {fileID: 21300000, guid: 57f103376ceea4a5db6c3df3893aebd6, type: 3}

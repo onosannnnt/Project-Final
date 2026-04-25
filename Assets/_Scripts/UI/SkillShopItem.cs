@@ -158,11 +158,21 @@ public class SkillShopItem : MonoBehaviour
         {
             userData.UnlockSkill(skillData);
 
-            // สั่งให้ร้านค้าทั้งหมดรีเฟรช UI (เพราะเงินเราลดลง สกิลอื่นอาจจะซื้อไม่ได้แล้ว)
+            // 1. สั่งให้ร้านค้ารีเฟรชปุ่ม (กันเงินไม่พอซื้อสกิลอื่น)
             if (shopController != null)
             {
                 shopController.RefreshAllItems();
             }
+
+            // ==========================================
+            // 2. เพิ่มโค้ดส่วนนี้ เพื่อสั่งให้หน้าสกิลรีเฟรชทันที!
+            // ==========================================
+            SkillListManager skillManager = FindFirstObjectByType<SkillListManager>(FindObjectsInactive.Include);
+            if (skillManager != null)
+            {
+                skillManager.RefreshAllData();
+            }
+            // ==========================================
         }
     }
 }

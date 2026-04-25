@@ -10,6 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 712068ecc01d545b9a31d14ba66c3665, type: 3}
-  m_Name: P2SkillLoadout
+  m_Name: SkillLoadout
   m_EditorClassIdentifier: 
-  EquippedSkills: []
+  EquippedSkills:
+  - {fileID: 11400000, guid: e722a22672c614181819a877985b719e, type: 2}
+  - {fileID: 11400000, guid: 49d0fa441ca97442a8c5191b682762fd, type: 2}
+  - {fileID: 11400000, guid: 9fee0739f8f2144688bbeadd9a569a6d, type: 2}

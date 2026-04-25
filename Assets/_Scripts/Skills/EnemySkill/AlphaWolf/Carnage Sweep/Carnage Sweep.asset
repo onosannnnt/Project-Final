@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
+  m_Name: Carnage Sweep
+  m_EditorClassIdentifier: 
+  skillID: 306
+  skillName: Carnage Sweep
+  description: 
+  skillIcon: {fileID: 21300000, guid: 1f1aaf4286d2c4ea495a95b2bba8abaa, type: 3}
+  skillType: 0
+  Tier: 0
+  SkillPoint: 0
+  TargetType: 2
+  TargetCount: 1
+  reducesArmor: 0
+  SkillEffects:
+  - {fileID: 11400000, guid: 03f54b633f4eb4f61aa4bbb645ec017c, type: 2}

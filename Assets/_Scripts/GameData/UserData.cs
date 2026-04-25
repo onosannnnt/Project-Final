@@ -39,6 +39,10 @@ public class UserData : ScriptableObject
     [SerializeField] private int quest2CoinReward = 200;
     [SerializeField] private int quest3CoinReward = 300;
 
+    [Header("Player Loadouts")]
+    [Tooltip("ใส่ไฟล์ SkillLoadout ของผู้เล่นที่ต้องการให้ล้างค่าตอนเริ่มเกมใหม่")]
+    public List<SkillLoadout> playerLoadoutsToReset = new List<SkillLoadout>();
+
     [Header("Player Skills")]
     [Tooltip("รายชื่อสกิลที่ผู้เล่นซื้อหรือปลดล็อคแล้ว")]
     public List<Skill> OwnedSkills = new List<Skill>();
@@ -69,6 +73,7 @@ public class UserData : ScriptableObject
         return false;
     }
 
+    [ContextMenu("Reset Game Progress")]
     public void ResetProgression()
     {
         GamePhase = 1;
@@ -78,6 +83,34 @@ public class UserData : ScriptableObject
         TotalCoins = 0;
         PendingQuestCoins = 0;
         PendingRewardQuestIndex = -1;
+
+        // 1. ลบสกิลที่มี
+        if (OwnedSkills != null)
+        {
+            OwnedSkills.Clear();
+        }
+
+        // ==========================================
+        // 2. ล้างช่องสวมใส่สกิล (Loadout)
+        // ==========================================
+        if (playerLoadoutsToReset != null)
+        {
+            foreach (var loadout in playerLoadoutsToReset)
+            {
+                if (loadout != null && loadout.EquippedSkills != null)
+                {
+                    loadout.EquippedSkills.Clear();
+
+                    // บังคับให้ Unity เซฟค่าการล้างช่องลงไฟล์ด้วย (สำคัญมาก ไม่งั้นตอนกด Play ค่าอาจจะกลับมา)
+#if UNITY_EDITOR
+                    UnityEditor.EditorUtility.SetDirty(loadout);
+#endif
+                }
+            }
+        }
+        // ==========================================
+
+        Debug.Log("Game progress and loadouts have been reset via Inspector!");
     }
 
     public bool IsQuestCompleted(int questIndex)

@@ -6,7 +6,9 @@ using UnityEngine.UI;
 
 public class SkillListManager : MonoBehaviour
 {
+    [Header("Databases")]
     public List<Skill> allSkills;
+    public UserData userData;
 
     [Header("Prefabs & Parents")]
     public GameObject skillSlotPrefab;
@@ -14,7 +16,7 @@ public class SkillListManager : MonoBehaviour
 
     [Header("Loadout Settings")]
     public GameObject selectedSkillPrefab;
-    public SelectedSlot[] selectedSlots; // ลาก 5 ช่องบนใน Scene มาใส่ที่นี่
+    public SelectedSlot[] selectedSlots;
 
     [Header("Scene References")]
     public GameObject bubbleBoxInScene;
@@ -36,15 +38,37 @@ public class SkillListManager : MonoBehaviour
     [SerializeField] private Color activeTabColor = new Color(0.35f, 0.75f, 1f, 1f);
     [SerializeField] private Color inactiveTabColor = Color.white;
 
+    // void Start()
+    // {
+    //     // ล้างทุกอย่างให้เกลี้ยงตั้งแต่วินาทีแรกที่เห็น
+    //     ForceInitialCleanup();
+
+    //     GenerateSkillList();
+    //     LoadActiveLoadoutIntoSlots();
+    //     UpdateLoadoutTabVisuals();
+    //     InitializeElementTestModal();
+    // }
+
     void Start()
     {
-        // ล้างทุกอย่างให้เกลี้ยงตั้งแต่วินาทีแรกที่เห็น
-        ForceInitialCleanup();
-
-        GenerateSkillList();
-        LoadActiveLoadoutIntoSlots();
-        UpdateLoadoutTabVisuals();
         InitializeElementTestModal();
+    }
+    private void OnEnable()
+    {
+        // ทุกครั้งที่ GameObject นี้ถูกเปิด (SetActive(true)) ให้รีเฟรชข้อมูลใหม่
+        RefreshAllData();
+    }
+
+    public void RefreshAllData()
+    {
+        // 1. สร้างปุ่มสกิลใหม่ทั้งหมด (มันจะไปดึงจาก userData.OwnedSkills ล่าสุด)
+        GenerateSkillList();
+
+        // 2. โหลด Loadout กลับเข้าไปใหม่ เพื่อให้ปุ่มที่เคยถูกเลือกไว้ แสดงสถานะว่า "กำลังใส่อยู่" ได้ถูกต้อง
+        LoadActiveLoadoutIntoSlots();
+
+        // 3. อัปเดตสี Tab
+        UpdateLoadoutTabVisuals();
     }
 
     private void InitializeElementTestModal()
@@ -67,18 +91,41 @@ public class SkillListManager : MonoBehaviour
             if (slot != null)
             {
                 // ใช้ฟังก์ชัน Hardcode ที่เราทำไว้
-                slot.ClearSlot(); 
+                slot.ClearSlot();
             }
         }
         // บังคับ UI ให้วาดพื้นที่ว่างๆ รอไว้เลย
         Canvas.ForceUpdateCanvases();
     }
 
+    // public void GenerateSkillList()
+    // {
+    //     foreach (Transform child in contentParent) Destroy(child.gameObject);
+    //     foreach (Skill data in allSkills)
+    //     {
+    //         GameObject newSlot = Instantiate(skillSlotPrefab, contentParent);
+    //         SkillHoverHandler handler = newSlot.GetComponent<SkillHoverHandler>();
+    //         if (handler != null)
+    //         {
+    //             handler.SetupData(data);
+    //             handler.infoBox = bubbleBoxInScene;
+    //             handler.infoText = bubbleTextInScene;
+    //         }
+    //     }
+    // }
+
     public void GenerateSkillList()
     {
+        // ล้างปุ่มเก่าทิ้ง
         foreach (Transform child in contentParent) Destroy(child.gameObject);
-        foreach (Skill data in allSkills)
+
+        // เลือกลิสต์ที่จะสร้าง: ถ้ามี userData ให้ใช้สกิลที่มี แต่ถ้าไม่ได้ใส่ไว้ (กันเหนียว) ให้ดึงทั้งหมด
+        List<Skill> skillsToDisplay = (userData != null) ? userData.OwnedSkills : allSkills;
+
+        foreach (Skill data in skillsToDisplay)
         {
+            if (data == null) continue; // ป้องกันบัคถ้าในลิสต์มีช่องว่าง
+
             GameObject newSlot = Instantiate(skillSlotPrefab, contentParent);
             SkillHoverHandler handler = newSlot.GetComponent<SkillHoverHandler>();
             if (handler != null)
@@ -99,13 +146,13 @@ public class SkillListManager : MonoBehaviour
         {
             if (slot != null && slot.isOccupied && slot.skillData == skillData)
             {
-                return false; 
+                return false;
             }
         }
 
         foreach (var slot in selectedSlots)
         {
-            if (slot != null && !slot.isOccupied) 
+            if (slot != null && !slot.isOccupied)
             {
                 slot.SetSkill(handler, selectedSkillPrefab, skillData);
                 if (handler != null) handler.SetSelected(true);
@@ -114,8 +161,8 @@ public class SkillListManager : MonoBehaviour
             }
         }
         return false;
-        
-        
+
+
     }
 
     public void DeselectSkill(SkillHoverHandler handler)
@@ -158,11 +205,11 @@ public class SkillListManager : MonoBehaviour
                 activeLoadout.EquippedSkills.Add(slot.skillData);
             }
         }
-        
+
         // บันทึกสถานะ (ใช้เฉพาะใน Editor เพื่อให้ค่าไม่หายเวลาปิดเกม)
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         UnityEditor.EditorUtility.SetDirty(activeLoadout);
-        #endif
+#endif
     }
 
     public void SetActiveLoadoutIndex(int index)
@@ -320,6 +367,6 @@ public class SkillListManager : MonoBehaviour
             }
         }
 
-// // Debug.Log(loadout);
+        // // Debug.Log(loadout);
     }
 }
