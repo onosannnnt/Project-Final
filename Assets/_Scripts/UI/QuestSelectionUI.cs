@@ -197,6 +197,10 @@ public class QuestSelectionUI : MonoBehaviour
         ClearSelection();
     }
 
+    private void OnDisable()
+    {
+    }
+
     private void BindButtons()
     {
         for (int i = 0; i < questSlots.Count; i++)
@@ -260,6 +264,7 @@ public class QuestSelectionUI : MonoBehaviour
         {
             panelRoot.SetActive(true);
         }
+        GameInput.SetInputLock(true);
 
         RefreshQuestDetails();
         ClearSelection();
@@ -271,6 +276,7 @@ public class QuestSelectionUI : MonoBehaviour
         {
             panelRoot.SetActive(false);
         }
+        GameInput.SetInputLock(false);
 
         onPanelClosed?.Invoke();
     }

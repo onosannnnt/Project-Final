@@ -4,11 +4,8 @@ using System.Collections.Generic;
 public class NecromancerBossCombat : BossCombat
 {
     [Header("Buff Mechanics")]
-    [Tooltip("เปอร์เซ็นต์ดาเมจที่เพิ่มขึ้นต่อลูกน้อง 1 ตัวที่ตาย (เช่น 0.1 = 10%)")]
-    [SerializeField] private float damageBuffPerDeath = 0.1f;
-
-    // เก็บค่า Multiplier พลังโจมตีปัจจุบัน (เริ่มต้นที่ 1.0 คือดาเมจปกติ 100%)
-    private float currentDamageMultiplier = 1.0f;
+    [Tooltip("ใส่ข้อมูล Buff ที่ต้องการให้บอสได้รับเมื่อลูกน้องตาย 1 ตัว")]
+    [SerializeField] private Buff minionDeathBuff;
 
     // ใช้เช็คว่าเทิร์นที่แล้วมีลูกน้องกี่ตัว เพื่อดูว่ามีลูกน้องตายไหม
     private int previousMinionCount = 0;
@@ -38,7 +35,6 @@ public class NecromancerBossCombat : BossCombat
         int currentMinionCount = 0;
         foreach (var enemy in FindObjectsOfType<EnemyCombat>())
         {
-            // ตรวจสอบว่ายังไม่ตาย และไม่ใช่ตัวบอสเอง
             if (!enemy.IsDead() && enemy != this)
             {
                 currentMinionCount++;
@@ -50,10 +46,15 @@ public class NecromancerBossCombat : BossCombat
         {
             int deadMinionsThisTurn = previousMinionCount - currentMinionCount;
 
-            // เพิ่มความเก่งให้บอสตามจำนวนลูกน้องที่ตาย
-            currentDamageMultiplier += (damageBuffPerDeath * deadMinionsThisTurn);
-
-            Debug.Log($"<color=red>ลูกน้องตายไป {deadMinionsThisTurn} ตัว! บอสโกรธขึ้น ดาเมจตอนนี้: {currentDamageMultiplier * 100}%</color>");
+            // วนลูปแอด Buff เข้าตัวบอสตามจำนวนลูกน้องที่ตาย (เพื่อให้กลายเป็น Stack)
+            if (minionDeathBuff != null && buffController != null)
+            {
+                for (int i = 0; i < deadMinionsThisTurn; i++)
+                {
+                    buffController.AddBuff(minionDeathBuff);
+                }
+                Debug.Log($"<color=red>ลูกน้องตายไป {deadMinionsThisTurn} ตัว! บอสได้รับบัฟความโกรธ {deadMinionsThisTurn} Stack!</color>");
+            }
         }
 
         Skill selectedSkill = null;
@@ -63,8 +64,6 @@ public class NecromancerBossCombat : BossCombat
         {
             selectedSkill = summonSkill;
             Debug.Log("ลูกน้องตายหมดแล้ว! บอสใช้สกิล Summon เรียกลูกน้องชุดใหม่");
-
-            // หมายเหตุ: เราไม่จำเป็นต้องใส่ Cooldown แบบตัวเก่า เพราะเงื่อนไขบังคับว่าต้อง "ลูกน้องหมด" ถึงจะเรียกได้
         }
         else
         {
@@ -78,17 +77,8 @@ public class NecromancerBossCombat : BossCombat
         }
 
         // 6. อัปเดตจำนวนลูกน้องไว้เช็คในเทิร์นถัดไป
-        // (ถ้าเทิร์นนี้ใช้สกิล Summon เทิร์นหน้าจำนวนลูกน้องจะเพิ่มขึ้นเอง ทำให้ไม่ติดบัคเข้าเงื่อนไขตาย)
         previousMinionCount = currentMinionCount;
 
         return selectedSkill;
-    }
-
-    /// <summary>
-    /// ฟังก์ชันนี้เอาไว้ให้ระบบคำนวณดาเมจ (เช่น ใน Skill หรือ Effect) ดึงไปคูณกับดาเมจพื้นฐาน
-    /// </summary>
-    public float GetDamageMultiplier()
-    {
-        return currentDamageMultiplier;
     }
 }

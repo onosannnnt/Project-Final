@@ -28,4 +28,6 @@ MonoBehaviour:
   playerLoadoutsToReset:
   - {fileID: 11400000, guid: 5a526a6ae7db0422c9d63b916530c938, type: 2}
   - {fileID: 11400000, guid: 3009cfca1047fa744ab37803320dd422, type: 2}
+  HasChosenStarterBuild: 0
   OwnedSkills: []
+  TrialSkills: []

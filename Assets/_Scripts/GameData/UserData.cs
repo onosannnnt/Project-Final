@@ -43,23 +43,70 @@ public class UserData : ScriptableObject
     [Tooltip("ใส่ไฟล์ SkillLoadout ของผู้เล่นที่ต้องการให้ล้างค่าตอนเริ่มเกมใหม่")]
     public List<SkillLoadout> playerLoadoutsToReset = new List<SkillLoadout>();
 
+    [Tooltip("True if the player has already chosen their starter build.")]
+    public bool HasChosenStarterBuild;
+
     [Header("Player Skills")]
     [Tooltip("รายชื่อสกิลที่ผู้เล่นซื้อหรือปลดล็อคแล้ว")]
     public List<Skill> OwnedSkills = new List<Skill>();
 
+    [Tooltip("รายชื่อสกิลชั่วคราวที่ได้จากระบบ Starter Build (จะหายไปหลังจบ Tutorial)")]
+    public List<Skill> TrialSkills = new List<Skill>();
+
     // เช็คว่ามีสกิลนี้หรือยัง
     public bool HasSkill(Skill skill)
     {
-        return OwnedSkills.Contains(skill);
+        return OwnedSkills.Contains(skill) || TrialSkills.Contains(skill);
     }
 
     // เพิ่มสกิลเข้าตัวผู้เล่น
     public void UnlockSkill(Skill skill)
     {
-        if (!HasSkill(skill))
+        if (!OwnedSkills.Contains(skill))
         {
             OwnedSkills.Add(skill);
         }
+    }
+
+    public void AddTrialSkills(List<Skill> skills)
+    {
+        foreach (var skill in skills)
+        {
+            if (skill != null && !TrialSkills.Contains(skill))
+            {
+                TrialSkills.Add(skill);
+            }
+        }
+    }
+
+    public void RemoveTrialSkills()
+    {
+        // 1. Collect all skills that are strictly trial skills
+        List<Skill> skillsToRemove = new List<Skill>(TrialSkills);
+
+        // 2. Clear from trial list
+        TrialSkills.Clear();
+
+        // 3. Remove from all loadouts if they were equipped
+        if (playerLoadoutsToReset != null)
+        {
+            foreach (var loadout in playerLoadoutsToReset)
+            {
+                if (loadout != null && loadout.EquippedSkills != null)
+                {
+                    // Remove all trial skills from this loadout
+                    loadout.EquippedSkills.RemoveAll(s => skillsToRemove.Contains(s));
+                    
+#if UNITY_EDITOR
+                    UnityEditor.EditorUtility.SetDirty(loadout);
+#endif
+                }
+            }
+        }
+
+#if UNITY_EDITOR
+        UnityEditor.EditorUtility.SetDirty(this);
+#endif
     }
 
     // ฟังก์ชันสำหรับจ่ายเงิน
@@ -83,11 +130,17 @@ public class UserData : ScriptableObject
         TotalCoins = 0;
         PendingQuestCoins = 0;
         PendingRewardQuestIndex = -1;
+        HasChosenStarterBuild = false;
 
         // 1. ลบสกิลที่มี
         if (OwnedSkills != null)
         {
             OwnedSkills.Clear();
+        }
+
+        if (TrialSkills != null)
+        {
+            TrialSkills.Clear();
         }
 
         // ==========================================
@@ -204,6 +257,12 @@ public class UserData : ScriptableObject
 
         earnedCoins = GetQuestCoinReward(questIndex);
         AddPendingQuestCoins(earnedCoins, questIndex);
+
+        // Remove trial skills if tutorial is completed
+        if (questIndex == TutorialQuestIndex)
+        {
+            RemoveTrialSkills();
+        }
 
         ClearSelectedQuest();
         return true;

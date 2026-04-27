@@ -15,6 +15,6 @@ MonoBehaviour:
   isTutorial: 0
   waves:
   - enemies:
-    - enemyPrefab: {fileID: 6702360306364772165, guid: 630e186e9988bb14db951e26a00f7958,
+    - enemyPrefab: {fileID: 6702360306364772165, guid: f6e105cb35a0e41d29f03d9e133f8e22,
         type: 3}
       positionIndex: 4

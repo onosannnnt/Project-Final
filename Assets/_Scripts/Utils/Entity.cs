@@ -37,7 +37,7 @@ public abstract class Entity : MonoBehaviour
     {
         currentHealth = GetStat(StatType.MaxHealth);
         currentSkillPoint = (int)GetStat(StatType.MaxSkillPoint);
-        
+
         if (skills != null)
         {
             skillManager.SetSkills(skills.EquippedSkills);
@@ -98,7 +98,7 @@ public abstract class Entity : MonoBehaviour
 
         currentHealth = math.max(currentHealth - appliedDamage, 0);
         OnHealthChanged?.Invoke(currentHealth, GetStat(StatType.MaxHealth));
-// // Debug.Log($"{gameObject.name} took {damage.Amount} damage, current health: {CurrentHealth}/{GetStat(StatType.MaxHealth)}");
+        // // Debug.Log($"{gameObject.name} took {damage.Amount} damage, current health: {CurrentHealth}/{GetStat(StatType.MaxHealth)}");
         ShowDamage((int)appliedDamage, Utils.GetDamageColor(damage.Element), damage.IsCriticalHit);
         if (currentHealth <= 0)
         {
@@ -130,25 +130,43 @@ public abstract class Entity : MonoBehaviour
         }
 
         currentHealth = Mathf.Min(currentHealth + amount, GetStat(StatType.MaxHealth));
-        OnHealthChanged?.Invoke(currentHealth, GetStat(StatType.MaxHealth));
+        TriggerHealthChanged();
         ShowDamage((int)amount, Color.green);
+    }
+
+    protected void TriggerHealthChanged()
+    {
+        OnHealthChanged?.Invoke(currentHealth, GetStat(StatType.MaxHealth));
     }
     public virtual void SetSP(int amount)
     {
         currentSkillPoint = Mathf.Clamp(currentSkillPoint + amount, 0, (int)GetStat(StatType.MaxSkillPoint));
         OnSPChanged?.Invoke(currentSkillPoint, (int)GetStat(StatType.MaxSkillPoint));
-// // Debug.Log($"{gameObject.name} SP changed by {amount}, current SP: {CurrentSP}/{(int)GetStat(StatType.MaxSkillPoint)}");
+        // // Debug.Log($"{gameObject.name} SP changed by {amount}, current SP: {CurrentSP}/{(int)GetStat(StatType.MaxSkillPoint)}");
 
     }
 
     public float GetStat(StatType stat)
     {
+        // 1. เช็คความปลอดภัย: ถ้า stats (ScriptableObject) เป็น Null ให้หยุดทำงานทันที
+        if (stats == null)
+        {
+            Debug.LogWarning($"[Entity] {gameObject.name} is missing its Stats ScriptableObject!");
+            return 0f;
+        }
+
         float baseStat = stats.GetBase(stat);
         float flatStat = 0;
         float MultiplierStat = 1f;
 
+        // 2. เช็คความปลอดภัย: ถ้า buffController ยังไม่ถูกสร้าง (เช่น ในช่วงเสี้ยววินาทีที่ Awake) ให้คืนค่า Base ไปก่อน
+        if (buffController == null) return baseStat;
+
         foreach (var buff in buffController.GetAllBuffs())
         {
+            // เช็ค Data ของบัฟเพื่อกันเหนียว
+            if (buff.Data == null || buff.Data.modifiers == null) continue;
+
             foreach (var modifier in buff.Data.modifiers)
             {
                 if (modifier.Stat != stat) continue;
@@ -168,7 +186,7 @@ public abstract class Entity : MonoBehaviour
                                     break;
                                 case StackMultiplierType.DiminishingReturn:
                                     {
-                                        int linearStacks = 5; // ปรับได้
+                                        int linearStacks = 5;
                                         for (int i = 0; i < buff.CurrentStack; i++)
                                         {
                                             if (i < linearStacks)

@@ -135,6 +135,16 @@ public class ShopTabController : MonoBehaviour
     // เก็บรายการไอเทมทั้งหมดที่ถูกสร้างขึ้นในร้านค้า
     private List<SkillShopItem> spawnedItems = new List<SkillShopItem>();
 
+    private void OnEnable()
+    {
+        GameInput.SetInputLock(true);
+    }
+
+    private void OnDisable()
+    {
+        GameInput.SetInputLock(false);
+    }
+
     private void Start()
     {
         GenerateShop();

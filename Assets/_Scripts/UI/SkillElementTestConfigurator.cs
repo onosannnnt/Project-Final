@@ -65,6 +65,16 @@ public class SkillElementTestConfigurator : MonoBehaviour
 
     private Skill activeSkill;
 
+    private void OnEnable()
+    {
+        GameInput.SetInputLock(true);
+    }
+
+    private void OnDisable()
+    {
+        GameInput.SetInputLock(false);
+    }
+
     private void Start()
     {
         RefreshOptions();

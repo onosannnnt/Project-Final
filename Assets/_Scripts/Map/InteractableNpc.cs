@@ -3,6 +3,10 @@ using UnityEngine.Serialization;
 
 public class InteractableNpc : MonoBehaviour
 {
+    [Header("Progression Check")]
+    [SerializeField] private UserData userData;
+    [SerializeField] private bool hideUntilTutorialComplete = false;
+
     [Header("NPC Panel")]
     [SerializeField] private bool openPanelOnTalk = true;
     [FormerlySerializedAs("fallbackPanel")]
@@ -39,6 +43,19 @@ public class InteractableNpc : MonoBehaviour
         {
             ConfigureBillboardComponent(talkPromptSprite, usePromptBillboard, promptBillboardMode);
             talkPromptSprite.SetActive(false);
+        }
+    }
+
+    private void Start()
+    {
+        // Check if this NPC should be hidden based on tutorial completion
+        if (hideUntilTutorialComplete && userData != null)
+        {
+            if (userData.HighestCompletedQuestIndex < UserData.TutorialQuestIndex)
+            {
+                // Tutorial not yet finished, hide this NPC
+                gameObject.SetActive(false);
+            }
         }
     }
 

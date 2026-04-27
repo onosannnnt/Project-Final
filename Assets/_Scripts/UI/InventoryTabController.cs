@@ -32,7 +32,10 @@ public class InventoryTabController : MonoBehaviour
         // 1. จัดการปุ่ม Esc (ปิดอย่างเดียวตามโค้ดล่าสุดของคุณ)
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (inventoryUI != null) inventoryUI.SetActive(false);
+            if (inventoryUI != null && inventoryUI.activeSelf)
+            {
+                CloseInventoryFromButton();
+            }
             return;
         }
 
@@ -57,6 +60,7 @@ public class InventoryTabController : MonoBehaviour
             return;
         }
         inventoryUI.SetActive(true);
+        GameInput.SetInputLock(true);
         ShowTab(index);
     }
 
@@ -66,6 +70,7 @@ public class InventoryTabController : MonoBehaviour
         if (inventoryUI != null)
         {
             inventoryUI.SetActive(false);
+            GameInput.SetInputLock(false);
         }
     }
 
@@ -83,6 +88,7 @@ public class InventoryTabController : MonoBehaviour
         // log loadout ตอนเข้าหน้า Skill
         if (allTabs[index].name == "Skill" && skillManager != null)
         {
+            skillManager.RefreshAllData();
             skillManager.LogSimpleLoadout();
         }
 

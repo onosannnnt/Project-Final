@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd9b8911206b0432e81c1a44d12d2bf0, type: 3}
+  m_Name: CEBuild
+  m_EditorClassIdentifier: 
+  buildName: 
+  buildDescription: 
+  starterSkills:
+  - {fileID: 11400000, guid: 7126a5820e8b44344b52a692c6af4db2, type: 2}
+  - {fileID: 11400000, guid: fceb4fb54f61a478698176011ff19113, type: 2}
+  - {fileID: 11400000, guid: d1c58fe4a20e84293a08627f33ed6fce, type: 2}
+  - {fileID: 11400000, guid: a8c4ef1be40ae493898372072af757a5, type: 2}
+  - {fileID: 11400000, guid: 7369144d56efa4387b6d4a97dd32d6cc, type: 2}
+  - {fileID: 11400000, guid: a6d985162719a48a4b22a22bb9e0fed4, type: 2}

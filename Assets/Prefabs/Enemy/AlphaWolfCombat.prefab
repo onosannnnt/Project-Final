@@ -687,7 +687,7 @@ MonoBehaviour:
   lightningArmorRecoveryRatio: 0.7
   currentBreakState: 0
   currentBreakArmor: 0
-  damageBuffPerDeath: 0.1
+  minionDeathBuff: {fileID: 11400000, guid: 0cac5ef3bf847428e839aaa8a5296213, type: 2}
 --- !u!1 &7181939115337276224
 GameObject:
   m_ObjectHideFlags: 0

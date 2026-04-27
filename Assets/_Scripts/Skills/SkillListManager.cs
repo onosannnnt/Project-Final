@@ -59,6 +59,10 @@ public class SkillListManager : MonoBehaviour
         RefreshAllData();
     }
 
+    private void OnDisable()
+    {
+    }
+
     public void RefreshAllData()
     {
         // 1. สร้างปุ่มสกิลใหม่ทั้งหมด (มันจะไปดึงจาก userData.OwnedSkills ล่าสุด)
@@ -119,8 +123,34 @@ public class SkillListManager : MonoBehaviour
         // ล้างปุ่มเก่าทิ้ง
         foreach (Transform child in contentParent) Destroy(child.gameObject);
 
-        // เลือกลิสต์ที่จะสร้าง: ถ้ามี userData ให้ใช้สกิลที่มี แต่ถ้าไม่ได้ใส่ไว้ (กันเหนียว) ให้ดึงทั้งหมด
-        List<Skill> skillsToDisplay = (userData != null) ? userData.OwnedSkills : allSkills;
+        // เลือกลิสต์ที่จะสร้าง: รวมทั้งสกิลที่ถาวร (Owned) และสกิลชั่วคราว (Trial)
+        List<Skill> skillsToDisplay = new List<Skill>();
+        if (userData != null)
+        {
+            // Add owned skills
+            if (userData.OwnedSkills != null)
+            {
+                foreach (var s in userData.OwnedSkills)
+                {
+                    if (s != null && !skillsToDisplay.Contains(s)) skillsToDisplay.Add(s);
+                }
+            }
+
+            // Add trial skills
+            if (userData.TrialSkills != null && userData.TrialSkills.Count > 0)
+            {
+                Debug.Log($"[SkillListManager] Loading {userData.TrialSkills.Count} trial skills.");
+                foreach (var s in userData.TrialSkills)
+                {
+                    if (s != null && !skillsToDisplay.Contains(s)) skillsToDisplay.Add(s);
+                }
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[SkillListManager] UserData is missing! Falling back to allSkills database.");
+            skillsToDisplay = allSkills;
+        }
 
         foreach (Skill data in skillsToDisplay)
         {

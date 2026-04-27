@@ -47,12 +47,14 @@ public class Movement : MonoBehaviour
             }
         }
 
-        float x = Input.GetAxis("Horizontal");
-        float y = Input.GetAxis("Vertical");
-        Vector3 moveDir = new Vector3(x, 0, y);
+        Vector2 inputVector = Vector2.zero;
+        if (gameInput != null)
+        {
+            inputVector = gameInput.GetMovementVectorNormalized();
+        }
+        
+        Vector3 moveDir = new Vector3(inputVector.x, 0, inputVector.y);
         rb.velocity = moveDir * moveSpeed;
-
-
 
         if (moveDir != Vector3.zero)
         {
@@ -63,11 +65,11 @@ public class Movement : MonoBehaviour
             isWalking = false;
         }
 
-        if (x != 0 && x < 0)
+        if (inputVector.x != 0 && inputVector.x < 0)
         {
             sr.flipX = true;
         }
-        else if (x != 0 && x > 0)
+        else if (inputVector.x != 0 && inputVector.x > 0)
         {
             sr.flipX = false;
         }
