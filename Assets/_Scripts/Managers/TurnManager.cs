@@ -55,7 +55,7 @@ public class TurnManager : Singleton<TurnManager>
         }
 
         SetState(TurnState.PlayerTurnState);
-        combatID = await NetworkManager.GetLatestCombatID();
+        // combatID = await NetworkManager.GetLatestCombatID();
         List<SkillLogs> skillLogs = new List<SkillLogs>();
 
         if (PlayerTeamManager.Instance != null && PlayerTeamManager.Instance.ActiveTeamMembers.Count > 0)
@@ -74,11 +74,11 @@ public class TurnManager : Singleton<TurnManager>
             }
         }
 
-        await NetworkManager.SaveCombatSkillLoadoutLogs(new CombatSkillLoadoutLogs
-        {
-            CombatID = combatID,
-            SkillLoadut = skillLogs
-        });
+        // await NetworkManager.SaveCombatSkillLoadoutLogs(new CombatSkillLoadoutLogs
+        // {
+        //     CombatID = combatID,
+        //     SkillLoadut = skillLogs
+        // });
     }
     public void SetState(TurnState newState)
     {
@@ -518,7 +518,7 @@ public class TurnManager : Singleton<TurnManager>
             // actionQueue.RemoveAt(0);
             actionQueue.Remove(currentAction);
             ShowLog(log);
-            NetworkManager.SaveCombatActionLogs(log);
+            // NetworkManager.SaveCombatActionLogs(log);
             // SaveLogJson(log);
             List<GameObject> remainingEnemies = GetAllEnemies();
             remainingEnemies.RemoveAll(enemy => enemy.GetComponent<EnemyCombat>().IsDead());

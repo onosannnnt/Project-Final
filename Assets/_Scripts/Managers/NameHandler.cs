@@ -39,9 +39,10 @@ public class NameHandler : MonoBehaviour
             PlayerPrefs.SetString("PlayerName", playerName);
             userData.ResetProgression();
             userData.Username = playerName;
-            UserResponse response = await NetworkManager.SavePlayerData(userData);
-            userData.ID = response.ID;
-            userData.Username = response.Username;
+            // UserResponse response = await NetworkManager.SavePlayerData(userData);
+            // userData.ID = response.ID;
+            // userData.Username = response.Username;
+            userData.ID = Random.Range(1000, 9999); // Assign a random dummy ID
             PlayerPrefs.Save();
 
 

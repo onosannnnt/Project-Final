@@ -17,10 +17,10 @@ public class NameingUI : Singleton<NameingUI>
         string username = nameInputField.text;
         userData.ResetProgression();
         userData.Username = username;
-        UserResponse response = await NetworkManager.SavePlayerData(userData);
-        userData.ID = response.ID;
-        userData.Username = response.Username;
-
+        // UserResponse response = await NetworkManager.SavePlayerData(userData);
+        // userData.ID = response.ID;
+        // userData.Username = response.Username;
+        userData.ID = Random.Range(1000, 9999);
 
 
         Loader.Load(Loader.Scenes.Overworld);
