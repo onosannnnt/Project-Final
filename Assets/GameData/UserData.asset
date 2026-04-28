@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68a93d19ed5314d84a7a239a7de394af, type: 3}
   m_Name: UserData
   m_EditorClassIdentifier: 
-  ID: 0
-  Username: erj
+  ID: 2128
+  Username: ggg
   GamePhase: 1
   SelectedQuestIndex: -1
-  HighestCompletedQuestIndex: -1
+  HighestCompletedQuestIndex: 0
   IsGameFinished: 0
-  TotalCoins: 0
+  TotalCoins: 100
   PendingQuestCoins: 0
   PendingRewardQuestIndex: -1
   tutorialCoinReward: 100
@@ -28,6 +28,6 @@ MonoBehaviour:
   playerLoadoutsToReset:
   - {fileID: 11400000, guid: 5a526a6ae7db0422c9d63b916530c938, type: 2}
   - {fileID: 11400000, guid: 3009cfca1047fa744ab37803320dd422, type: 2}
-  HasChosenStarterBuild: 0
+  HasChosenStarterBuild: 1
   OwnedSkills: []
   TrialSkills: []

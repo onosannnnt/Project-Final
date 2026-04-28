@@ -23,7 +23,7 @@ MonoBehaviour:
   StackCalculationType: 0
   Threshold: 0
   DiminishingReturnDecayFactor: 0
-  targetType: 0
+  targetType: 2
   modifiers: []
   preventLethalDamage: 0
   preventHealing: 0
