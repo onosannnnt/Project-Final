@@ -150,7 +150,7 @@ public class EnemyCombat : Entity
         }
     }
 
-    public void ReduceArmor(int amount, DamageElement breakElement = DamageElement.None)
+    public virtual void ReduceArmor(int amount, DamageElement breakElement = DamageElement.None)
     {
         if (currentBreakState != BreakState.Normal) return; // Only reduce armor if normal
         

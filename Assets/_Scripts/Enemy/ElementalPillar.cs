@@ -50,6 +50,13 @@ public class ElementalPillar : EnemyCombat
         if (breakStatusImage != null) breakStatusImage.gameObject.SetActive(false);
     }
 
+    public override bool CanTakeTurn() => false;
+
+    public override void ReduceArmor(int amount, DamageElement breakElement = DamageElement.None)
+    {
+        // Elemental Pillars don't have armor to reduce
+    }
+
     public DamageElement GetCurrentElement()
     {
         if (currentPattern == null || currentPattern.Count == 0) return DamageElement.None;

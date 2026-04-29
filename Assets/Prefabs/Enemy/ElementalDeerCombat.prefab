@@ -779,10 +779,10 @@ MonoBehaviour:
   windBuff: {fileID: 11400000, guid: c38fbcfdb6ec942da9874f2ec075d685, type: 2}
   bossSpriteRenderer: {fileID: 3869637223405476119}
   defaultSprite: {fileID: 21300000, guid: 3a639db116a2a47d3aa0552574427d14, type: 3}
-  fireSprite: {fileID: 21300000, guid: 6aff1564c388a4bb49eda22642d553e5, type: 3}
-  frostSprite: {fileID: 21300000, guid: 97bd8a8291bcc4c87b9039f24f91c10b, type: 3}
-  lightningSprite: {fileID: 21300000, guid: 64a4111ecaaba416d96fbe8cbd59ed6a, type: 3}
-  windSprite: {fileID: 21300000, guid: f3273c6f551724765bb2971eb1c4a964, type: 3}
+  fireSprite: {fileID: 21300000, guid: 35d9da8be1b48435ab748b58cf99eb16, type: 3}
+  frostSprite: {fileID: 21300000, guid: 1b1c7220f71464f79bd2a906e58b8b2c, type: 3}
+  lightningSprite: {fileID: 21300000, guid: 043d2c648f1c24b39be9bff09e5aeb56, type: 3}
+  windSprite: {fileID: 21300000, guid: 31a3ae3c3b3ed4417a2091b97fb6c473, type: 3}
   summonPillarsSkill: {fileID: 11400000, guid: 456ecf9ad4288425694139a877578425, type: 2}
   resetPillarsSkill: {fileID: 11400000, guid: 614af5cc0da474e0e956ba6a292429b1, type: 2}
   pillarPrefab: {fileID: 7355221764276375092, guid: 0eaee320f09ad4140b9c648bc5ebf149,

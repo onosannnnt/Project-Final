@@ -140,6 +140,11 @@ public class Skill : ScriptableObject
 
     public bool Execute(Entity caster, Entity target, CombatActionLog log)
     {
+        if (SkillEffects == null || SkillEffects.Count == 0)
+        {
+            return false;
+        }
+
         bool hit = true;
         foreach (var effect in SkillEffects)
         {

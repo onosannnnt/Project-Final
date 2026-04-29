@@ -234,6 +234,10 @@ public class TurnManager : Singleton<TurnManager>
         foreach (GameObject enemy in enemies)
         {
             Entity enemyEntity = enemy.GetComponent<EnemyCombat>();
+            
+            // Skip entities that don't take turns (like Elemental Pillars)
+            if (!enemyEntity.CanTakeTurn()) continue;
+
             Skill chosenSkill;
 
             // Check against the base BossCombat class, not a specific boss

@@ -28,6 +28,8 @@ public abstract class Entity : MonoBehaviour
     public event System.Action<float, float> OnHealthChanged;
     public event System.Action<int, int> OnSPChanged;
 
+    public virtual bool CanTakeTurn() => true;
+
     protected virtual void Awake()
     {
         if (stats != null) stats = stats.Clone();
