@@ -15,10 +15,10 @@ MonoBehaviour:
   ID: 2128
   Username: ggg
   GamePhase: 1
-  SelectedQuestIndex: -1
-  HighestCompletedQuestIndex: 0
+  SelectedQuestIndex: 0
+  HighestCompletedQuestIndex: -1
   IsGameFinished: 0
-  TotalCoins: 100
+  TotalCoins: 0
   PendingQuestCoins: 0
   PendingRewardQuestIndex: -1
   tutorialCoinReward: 100
@@ -30,4 +30,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3009cfca1047fa744ab37803320dd422, type: 2}
   HasChosenStarterBuild: 1
   OwnedSkills: []
-  TrialSkills: []
+  TrialSkills:
+  - {fileID: 11400000, guid: 25ff8610d4d945d4fa36703e5a504cff, type: 2}
+  - {fileID: 11400000, guid: 960ab9b50c23d4b80aa308ff09c2cc5e, type: 2}
+  - {fileID: 11400000, guid: 2bbf253faab41468f974deef9e5586d7, type: 2}
+  - {fileID: 11400000, guid: 86b6d2d6369ea9640be32041f5d08a49, type: 2}
+  - {fileID: 11400000, guid: 722595add0b174647aea6ea04c50e891, type: 2}
+  - {fileID: 11400000, guid: 4e97e858d89a4604d9e586ff7865a25b, type: 2}

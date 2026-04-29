@@ -11,11 +11,11 @@ public enum BreakState
 
 public class EnemyCombat : Entity
 {
-    [SerializeField] private GameObject healthBarForeground;
-    [SerializeField] private TMPro.TextMeshProUGUI breakArmorText; // Add this for UI
+    [SerializeField] protected GameObject healthBarForeground;
+    [SerializeField] protected TMPro.TextMeshProUGUI breakArmorText; // Add this for UI
 
     [Header("Break Status Visual")]
-    [SerializeField] private Image breakStatusImage;
+    [SerializeField] protected Image breakStatusImage;
     [SerializeField] private Sprite physicalBreakStatusSprite;
     [SerializeField] private Sprite fireBreakStatusSprite;
     [SerializeField] private Sprite frostBreakStatusSprite;
@@ -95,7 +95,7 @@ public class EnemyCombat : Entity
         UpdateBreakStatusVisual();
     }
 
-    private void UpdateArmorUI()
+    protected virtual void UpdateArmorUI()
     {
         if (breakArmorText != null)
         {
@@ -145,7 +145,7 @@ public class EnemyCombat : Entity
                 if (activePlayer.GetEnemyTarget() == this)
                     Highlight(Color.red);
                 else
-                    Highlight(Color.yellow);
+                    Highlight(Color.white); // Don't show yellow for non-targets
             }
         }
     }
@@ -324,7 +324,7 @@ public class EnemyCombat : Entity
         }
     }
 
-    private void UpdateBreakStatusVisual()
+    protected virtual void UpdateBreakStatusVisual()
     {
         if (breakStatusImage == null)
         {
@@ -412,7 +412,25 @@ public class EnemyCombat : Entity
     }
     public void Highlight(Color color)
     {
-        GameObject EnemyVisual = transform.Find("EnemyVisual").gameObject;
-        EnemyVisual.GetComponent<SpriteRenderer>().color = color;
+        // Stop tinting the character sprite
+        Transform visualTransform = transform.Find("EnemyVisual");
+        if (visualTransform != null)
+        {
+            SpriteRenderer sr = visualTransform.GetComponent<SpriteRenderer>();
+            if (sr != null) sr.color = Color.white;
+        }
+
+        if (targetIndicator != null)
+        {
+            bool isHighlighted = color != Color.white;
+            targetIndicator.SetActive(isHighlighted);
+            
+            if (isHighlighted)
+            {
+                // Apply the highlight color (Red/Yellow) to the indicator instead of the character
+                SpriteRenderer indicatorSR = targetIndicator.GetComponent<SpriteRenderer>();
+                if (indicatorSR != null) indicatorSR.color = color;
+            }
+        }
     }
 }

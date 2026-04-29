@@ -17,6 +17,39 @@ public class ElementalPillar : EnemyCombat
 
     [SerializeField] private int currentIndex = 0;
 
+    protected override void Start()
+    {
+        base.Start();
+
+        // Hide UI elements for Elemental Pillar
+        if (healthBarForeground != null && healthBarForeground.transform.parent != null)
+        {
+            healthBarForeground.transform.parent.gameObject.SetActive(false);
+        }
+
+        if (breakArmorText != null)
+        {
+            breakArmorText.gameObject.SetActive(false);
+        }
+
+        if (breakStatusImage != null)
+        {
+            breakStatusImage.gameObject.SetActive(false);
+        }
+    }
+
+    protected override void UpdateArmorUI()
+    {
+        // Keep hidden
+        if (breakArmorText != null) breakArmorText.gameObject.SetActive(false);
+    }
+
+    protected override void UpdateBreakStatusVisual()
+    {
+        // Keep hidden
+        if (breakStatusImage != null) breakStatusImage.gameObject.SetActive(false);
+    }
+
     public DamageElement GetCurrentElement()
     {
         if (currentPattern == null || currentPattern.Count == 0) return DamageElement.None;

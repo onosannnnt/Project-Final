@@ -12,6 +12,7 @@ public abstract class Entity : MonoBehaviour
     [Header("Spread Settings")]
     public float SpreadAmount = 0.3f;       // How far left/right the text will drift
     public float RandomSpawnOffset = 0.1f; // Slight scatter so they don't spawn perfectly overlapping
+    [SerializeField] protected GameObject targetIndicator;
     [Header("Properties")]
     [SerializeField] protected EntitiesBaseStat stats; // Base stats from ScriptableObject
     [SerializeField] private SkillLoadout skills;

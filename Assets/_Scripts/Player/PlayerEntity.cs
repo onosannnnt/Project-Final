@@ -34,14 +34,25 @@ public abstract class PlayerEntity : Entity
 
     public virtual void Highlight(Color color)
     {
+        // Stop tinting the character sprite
         Transform visual = transform.Find("PlayerVisual");
-        if (visual != null)
+        SpriteRenderer sr = null;
+        if (visual != null) sr = visual.GetComponent<SpriteRenderer>();
+        else sr = GetComponentInChildren<SpriteRenderer>();
+        
+        if (sr != null) sr.color = Color.white;
+
+        if (targetIndicator != null)
         {
-            visual.GetComponent<SpriteRenderer>().color = color;
-        }
-        else
-        {
-            GetComponentInChildren<SpriteRenderer>().color = color;
+            bool isHighlighted = color != Color.white;
+            targetIndicator.SetActive(isHighlighted);
+            
+            if (isHighlighted)
+            {
+                // Apply the highlight color to the indicator
+                SpriteRenderer indicatorSR = targetIndicator.GetComponent<SpriteRenderer>();
+                if (indicatorSR != null) indicatorSR.color = color;
+            }
         }
     }
 
@@ -70,7 +81,7 @@ public abstract class PlayerEntity : Entity
                     if (enemy == enemyTarget)
                         enemy.Highlight(Color.red);
                     else
-                        enemy.Highlight(Color.yellow);
+                        enemy.Highlight(Color.white); // Don't show indicators for non-targets
                 }
             }
             else if (selectedSkill.TargetCount == TargetCount.All)

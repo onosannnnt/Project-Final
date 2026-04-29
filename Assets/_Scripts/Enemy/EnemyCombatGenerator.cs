@@ -3,17 +3,17 @@ using UnityEngine;
 public class EnemyGenerator : Singleton<EnemyGenerator>
 {
     [SerializeField] private Transform worldParent;
-    
+
     [Header("Quest/Phase Setups")]
     public QuestEnemies[] quests;
 
     private Vector3[] spawnPositions = new Vector3[]
     {
-        new Vector3(-2.085f, -0.771f, 0f), // ตำแหน่งที่ 1 (ซ้ายสุด)
-        new Vector3(-1.596f, -0.493f, 0f), // ตำแหน่งที่ 2 (ซ้าย)
-        new Vector3(-0.568f, 0.209f, 0f),  // ตำแหน่งที่ 3 (ขวาสุด)
-        new Vector3(-1.126f, -0.097f, 0f),  // ตำแหน่งที่ 4 (ขวา)
-        new Vector3(-1.919f, 0.139f, 0f)  // ตำแหน่งที่ 5 (กลาง)
+        new Vector3(-2.033f, -0.941f, 0f), // ตำแหน่งที่ 1 (ซ้ายสุด)
+        new Vector3(-1.507f, -0.663f, 0f), // ตำแหน่งที่ 2 (ซ้าย)
+        new Vector3(-0.516f, 0.039f, 0f),  // ตำแหน่งที่ 3 (ขวาสุด)
+        new Vector3(-1.027f, -0.267f, 0f),  // ตำแหน่งที่ 4 (ขวา)
+        new Vector3(-1.966f, -0.031f, 0f)  // ตำแหน่งที่ 5 (กลาง)
     };
 
     [SerializeField] private UserData userData; // Injected globally via Inspector (ScriptableObject)
@@ -31,65 +31,65 @@ public class EnemyGenerator : Singleton<EnemyGenerator>
     {
         // แนะนำให้ลบส่วนนี้ออก แล้วให้ TurnManager เป็นคนเรียกแทนเมื่อพร้อม
         // EnemyGenerator.Instance.GenerateInitialEnemy(); 
-        Invoke(nameof(GenerateInitialEnemy), 0.1f); 
+        Invoke(nameof(GenerateInitialEnemy), 0.1f);
     }
 
-public void GenerateInitialEnemy() // เปลี่ยนเป็น public เพื่อให้ระบบอื่นเรียกได้
-{
-    if (worldParent != null)
+    public void GenerateInitialEnemy() // เปลี่ยนเป็น public เพื่อให้ระบบอื่นเรียกได้
     {
-        foreach (Transform child in worldParent)
+        if (worldParent != null)
         {
-            if (child != null && child.CompareTag("Enemy"))
+            foreach (Transform child in worldParent)
             {
-                return;
+                if (child != null && child.CompareTag("Enemy"))
+                {
+                    return;
+                }
             }
+        }
+
+        if (TurnManager.Instance != null && TurnManager.Instance.currentWave == 1)
+        {
+            GenerateEnemy();
         }
     }
 
-    if (TurnManager.Instance != null && TurnManager.Instance.currentWave == 1)
+    public QuestEnemies GetCurrentQuest()
     {
-        GenerateEnemy();
-    }
-}
+        if (quests == null || quests.Length == 0) return null;
+        int questIndex = 0;
 
-public QuestEnemies GetCurrentQuest()
-{
-    if (quests == null || quests.Length == 0) return null;
-    int questIndex = 0;
-    
-    if (userData != null)
-    {
-        questIndex = userData.SelectedQuestIndex;
+        if (userData != null)
+        {
+            questIndex = userData.SelectedQuestIndex;
+        }
+
+        questIndex = Mathf.Clamp(questIndex, 0, quests.Length - 1);
+        return quests[questIndex];
     }
 
-    questIndex = Mathf.Clamp(questIndex, 0, quests.Length - 1);
-    return quests[questIndex];
-}
-
-public void GenerateEnemy()
-{
-    // ป้องกัน Error กรณีไม่ได้ใส่ข้อมูลใน Inspector
-    if (quests == null || quests.Length == 0)
+    public void GenerateEnemy()
     {
-        Debug.LogError("[EnemyGenerator] Quests array is empty! Cannot spawn enemies.");
-        return;
-    }
+        // ป้องกัน Error กรณีไม่ได้ใส่ข้อมูลใน Inspector
+        if (quests == null || quests.Length == 0)
+        {
+            Debug.LogError("[EnemyGenerator] Quests array is empty! Cannot spawn enemies.");
+            return;
+        }
 
-    int currentWave = 1;
-    int maxWave = 3;
-    int questIndex = 0;
+        int currentWave = 1;
+        int maxWave = 3;
+        int questIndex = 0;
 
-    if (TurnManager.Instance != null && userData != null)
-    {
-        questIndex = userData.SelectedQuestIndex;
-        currentWave = TurnManager.Instance.currentWave;
-        maxWave = (int)TurnManager.Instance.GetMaxWave(); 
-    }
+        if (TurnManager.Instance != null && userData != null)
+        {
+            questIndex = userData.SelectedQuestIndex;
+            currentWave = TurnManager.Instance.currentWave;
+            maxWave = (int)TurnManager.Instance.GetMaxWave();
+        }
 
         questIndex = Mathf.Clamp(questIndex, 0, quests.Length - 1);
         QuestEnemies currentQuest = quests[questIndex];
-        
+
         if (currentQuest.waves == null || currentQuest.waves.Length == 0)
         {
             Debug.LogError("[EnemyGenerator] Quest " + currentQuest.name + " has no waves defined. Cannot spawn enemies.");
@@ -105,7 +105,7 @@ public void GenerateEnemy()
         for (int i = 0; i < currentWaveConfig.enemies.Length; i++)
         {
             EnemySpawnConfig spawnConfig = currentWaveConfig.enemies[i];
-            
+
             if (spawnConfig.enemyPrefab == null) continue;
 
             // บังคับเกิดตรงจุดที่กำหนด

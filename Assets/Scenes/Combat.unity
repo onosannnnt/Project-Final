@@ -11297,7 +11297,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1488581264}
   m_HandleRect: {fileID: 1488581263}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 0.9999999
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -13451,7 +13451,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 586141599}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.9999999
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -15361,7 +15361,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 985369183}
   m_HandleRect: {fileID: 985369182}
   m_Direction: 2
-  m_Value: 1.0000002
+  m_Value: 1
   m_Size: 0.7313047
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -25951,6 +25951,7 @@ GameObject:
   - component: {fileID: 2038754877}
   - component: {fileID: 2038754879}
   - component: {fileID: 2038754878}
+  - component: {fileID: 2038754880}
   m_Layer: 5
   m_Name: Streak
   m_TagString: Untagged
@@ -25974,8 +25975,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -96.5, y: -54.599976}
-  m_SizeDelta: {x: 58.335, y: 50}
+  m_AnchoredPosition: {x: -96.5, y: -41.4}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2038754878
 MonoBehaviour:
@@ -26074,6 +26075,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2038754876}
   m_CullTransparentMesh: 1
+--- !u!114 &2038754880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2038754876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 2
+  m_VerticalFit: 2
 --- !u!1 &2042233318
 GameObject:
   m_ObjectHideFlags: 0
