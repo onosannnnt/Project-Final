@@ -32,6 +32,18 @@ public abstract class PlayerEntity : Entity
         return enemyTarget;
     }
 
+    public override void SetSP(int amount)
+    {
+        if (TurnManager.Instance != null && TurnManager.Instance.UseSharedPlayerSkillPointPool)
+        {
+            TurnManager.Instance.RestoreSharedPlayerSkillPoints(amount);
+        }
+        else
+        {
+            base.SetSP(amount);
+        }
+    }
+
     public virtual void Highlight(Color color)
     {
         // Stop tinting the character sprite

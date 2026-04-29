@@ -141,10 +141,17 @@ public abstract class Entity : MonoBehaviour
     }
     public virtual void SetSP(int amount)
     {
-        currentSkillPoint = Mathf.Clamp(currentSkillPoint + amount, 0, (int)GetStat(StatType.MaxSkillPoint));
-        OnSPChanged?.Invoke(currentSkillPoint, (int)GetStat(StatType.MaxSkillPoint));
-        // // Debug.Log($"{gameObject.name} SP changed by {amount}, current SP: {CurrentSP}/{(int)GetStat(StatType.MaxSkillPoint)}");
+        SetSPInternal(amount);
+    }
 
+    public void SetSPInternal(int amount, bool isAbsolute = false)
+    {
+        if (isAbsolute)
+            currentSkillPoint = Mathf.Clamp(amount, 0, (int)GetStat(StatType.MaxSkillPoint));
+        else
+            currentSkillPoint = Mathf.Clamp(currentSkillPoint + amount, 0, (int)GetStat(StatType.MaxSkillPoint));
+            
+        OnSPChanged?.Invoke(currentSkillPoint, (int)GetStat(StatType.MaxSkillPoint));
     }
 
     public float GetStat(StatType stat)

@@ -17,6 +17,7 @@ public class TurnManager : Singleton<TurnManager>
     [SerializeField] private int phase3SPRestore = 30; // Restore Z SP per turn in Phase 3
     [Header("Team Resource Settings")]
     [SerializeField] private bool useSharedPlayerSkillPointPool = true;
+    public bool UseSharedPlayerSkillPointPool => useSharedPlayerSkillPointPool;
     private TurnState currentState;
     private List<ActionQueue> actionQueue = new List<ActionQueue>();
     public int turnRound = 0;
@@ -341,7 +342,7 @@ public class TurnManager : Singleton<TurnManager>
                 SkillID = skill != null ? skill.skillID : -1,
                 SkillName = skill?.skillName ?? "Unknown Skill",
 
-                ActionPointUsed = skill?.SkillPoint ?? 0,
+                ActionPointUsed = GetSkillCost(skill),
                 ActionPointRecovery = 0,
                 ActionSpeed = currentAction.ActionSpeed,
                 DamageEffectLogs = new(),
@@ -372,15 +373,16 @@ public class TurnManager : Singleton<TurnManager>
                 entity.buffController.OnTurnStart(entity, log);
                 if (entity.CanAction() == true)
                 {
+                    int actualCost = GetSkillCost(skill);
                     bool canUseSkill = useSharedPlayerSkillPointPool
-                        ? TryConsumeSharedPlayerSkillPoints(skill.SkillPoint)
-                        : entity.CurrentSP >= skill.SkillPoint;
+                        ? TryConsumeSharedPlayerSkillPoints(actualCost)
+                        : entity.CurrentSP >= actualCost;
 
                     if (canUseSkill)
                     {
                         if (!useSharedPlayerSkillPointPool)
                         {
-                            entity.SetSP(-skill.SkillPoint);
+                            entity.SetSP(-actualCost);
                         }
 
                         switch (skill.TargetType)
@@ -483,33 +485,52 @@ public class TurnManager : Singleton<TurnManager>
                 // enemyCombat.buffController.OnTurnStart(enemyCombat, log);
                 if (entity.CanAction() == true)
                 {
-                    switch (skill.TargetType)
+                    int actualCost = GetSkillCost(skill);
+                    if (enemyCombat.CurrentSP >= actualCost)
                     {
-                        case TargetType.Self:
-                            // Boss targets itself for heals/buffs
-                            enemyCombat.skillManager.UseSkill(skill, enemyCombat, log);
-                            break;
-                        case TargetType.Enemy:
-                            // Boss targets the player (or active player)
-                            Entity enemyTarget = target;
-                            if (enemyTarget == null || enemyTarget.CurrentHealth <= 0)
-                            {
-                                enemyTarget = GetActualTargetForEnemy(enemyCombat);
-                            }
+                        enemyCombat.SetSP(-actualCost);
 
-                            if (enemyTarget != null && enemyTarget.CurrentHealth > 0)
-                            {
-                                enemyCombat.skillManager.UseSkill(skill, enemyTarget, log);
-                            }
-                            else
-                            {
-                                // // Debug.Log("Player is dead. Enemy action cancelled.");
-                            }
-                            break;
-                        case TargetType.Ally:
-                            // Treat ally casts as self for now
-                            enemyCombat.skillManager.UseSkill(skill, enemyCombat, log);
-                            break;
+                        switch (skill.TargetType)
+                        {
+                            case TargetType.Self:
+                                // Boss targets itself for heals/buffs
+                                enemyCombat.skillManager.UseSkill(skill, enemyCombat, log);
+                                break;
+                            case TargetType.Enemy:
+                                // Boss targets the player (or active player)
+                                Entity enemyTarget = target;
+                                if (enemyTarget == null || enemyTarget.CurrentHealth <= 0)
+                                {
+                                    enemyTarget = GetActualTargetForEnemy(enemyCombat);
+                                }
+
+                                if (enemyTarget != null && enemyTarget.CurrentHealth > 0)
+                                {
+                                    if (skill.TargetCount == TargetCount.Single)
+                                    {
+                                        enemyCombat.skillManager.UseSkill(skill, enemyTarget, log);
+                                    }
+                                    else if (skill.TargetCount == TargetCount.All)
+                                    {
+                                        if (PlayerTeamManager.Instance != null)
+                                        {
+                                            foreach (var player in PlayerTeamManager.Instance.GetAliveMembers())
+                                            {
+                                                enemyCombat.skillManager.UseSkill(skill, player, log);
+                                            }
+                                        }
+                                    }
+                                }
+                                break;
+                            case TargetType.Ally:
+                                // Treat ally casts as self for now
+                                enemyCombat.skillManager.UseSkill(skill, enemyCombat, log);
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log($"{enemyCombat.gameObject.name} not enough SP for {skill.skillName}");
                     }
                 }
                 enemyCombat.buffController.OnTurnEnd(enemyCombat);
@@ -681,6 +702,41 @@ public class TurnManager : Singleton<TurnManager>
         return currentState;
     }
 
+    public int GetSkillCost(Skill skill)
+    {
+        if (skill == null) return 0;
+        return skill.SkillPoint;
+    }
+
+    public int GetProjectedAvailableSP(Entity entity)
+    {
+        int currentSP = useSharedPlayerSkillPointPool ? GetSharedPlayerCurrentSkillPoints() : (int)entity.CurrentSP;
+        int reservedSP = 0;
+
+        foreach (var action in pendingPlayerActions)
+        {
+            int actionCost = GetSkillCost(action.Skill);
+            if (useSharedPlayerSkillPointPool)
+            {
+                // In shared pool, all pending player actions consume from the same pool
+                if (action.Caster is PlayerEntity)
+                {
+                    reservedSP += actionCost;
+                }
+            }
+            else
+            {
+                // In individual pool, only actions from this specific entity matter
+                if (action.Caster == entity)
+                {
+                    reservedSP += actionCost;
+                }
+            }
+        }
+
+        return currentSP - reservedSP;
+    }
+
     public int GetCurrentPhase()
     {
         // Determine phase based on global game progression instead of wave
@@ -773,7 +829,7 @@ public class TurnManager : Singleton<TurnManager>
         return true;
     }
 
-    private void RestoreSharedPlayerSkillPoints(int amount)
+    public void RestoreSharedPlayerSkillPoints(int amount)
     {
         int currentShared = GetSharedPlayerCurrentSkillPoints();
         SetSharedPlayerSkillPoints(currentShared + amount);
@@ -819,8 +875,7 @@ public class TurnManager : Singleton<TurnManager>
         foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
         {
             if (member == null) continue;
-            int delta = clampedShared - member.CurrentSP;
-            member.SetSP(delta);
+            member.SetSPInternal(clampedShared, true);
         }
     }
 
@@ -895,7 +950,7 @@ public class TurnManager : Singleton<TurnManager>
             {
                 if (member == null) continue;
                 member.Heal(member.GetStat(StatType.MaxHealth));
-                member.SetSP((int)member.GetStat(StatType.MaxSkillPoint));
+                member.SetSPInternal((int)member.GetStat(StatType.MaxSkillPoint), true);
             }
         }
     }

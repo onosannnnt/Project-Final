@@ -128,7 +128,10 @@ public class SkillPanelUI : Singleton<SkillPanelUI>
                 hoverHandler.SetSkillData(skill); 
             }           
             
-            if (activePlayer.CurrentSP < skill.SkillPoint)
+            int cost = TurnManager.Instance != null ? TurnManager.Instance.GetSkillCost(skill) : skill.SkillPoint;
+            int availableSP = TurnManager.Instance != null ? TurnManager.Instance.GetProjectedAvailableSP(activePlayer) : activePlayer.CurrentSP;
+
+            if (availableSP < cost)
             {
                 skillButton.GetComponent<Button>().interactable = false;
             }

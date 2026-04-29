@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7669417321767940976}
   - component: {fileID: 3869637223405476119}
+  - component: {fileID: 155041454518349327}
   m_Layer: 0
   m_Name: EnemyVisual
   m_TagString: Untagged
@@ -26,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 1700964800280031131}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.027, y: 0.08, z: 0.0039}
+  m_LocalPosition: {x: 0.095, y: -0.365, z: 0.0039}
   m_LocalScale: {x: 0.124562554, y: 0.124562554, z: 0.124562554}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -73,7 +74,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 8546a29af5377844f8b13c0449ac87d0, type: 3}
+  m_Sprite: {fileID: 2065526856, guid: c92439a2d10124e708592ccb8a8b8021, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -84,6 +85,27 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &155041454518349327
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1700964800280031131}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: eaba3770f2d7648c4acd3a507c0e90f6, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2024774761972065294
 GameObject:
   m_ObjectHideFlags: 0
@@ -186,7 +208,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2898973329459691350}
   m_LocalRotation: {x: 0, y: 0.035073906, z: 0, w: 0.99938476}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.004}
   m_LocalScale: {x: 0.0004, y: 0.0004, z: 0.0004}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -198,7 +220,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 4.02, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -0.002, y: 0.704}
+  m_AnchoredPosition: {x: 0.053, y: 0.475}
   m_SizeDelta: {x: 1624.6536, y: 512.751}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &4882286171464627782
@@ -590,7 +612,7 @@ Transform:
   m_GameObject: {fileID: 5344707592305209508}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0149998665, y: 0.139, z: 0.0039000511}
+  m_LocalPosition: {x: 0.083, y: 0.076, z: 0.0039000511}
   m_LocalScale: {x: 0.08158, y: 0.08078, z: 0.09297}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -636,7 +658,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 99
   m_Sprite: {fileID: 21300000, guid: 63f73e118847f4420af66083a7e1e89a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -679,8 +701,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3234684152306241524}
   - {fileID: 7669417321767940976}
+  - {fileID: 3234684152306241524}
   - {fileID: 3315072658428132362}
   - {fileID: 4963059527311806056}
   m_Father: {fileID: 0}
@@ -847,7 +869,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8954031037550722348}
   m_LocalRotation: {x: 0, y: 0.035073906, z: 0, w: 0.99938476}
-  m_LocalPosition: {x: 0, y: 0, z: -0.056}
+  m_LocalPosition: {x: 0, y: 0, z: -0.041}
   m_LocalScale: {x: 0.0004, y: 0.0004, z: 0.0004}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -855,7 +877,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 4.02, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0.869, y: 0.229}
+  m_AnchoredPosition: {x: 0.652, y: 0.131}
   m_SizeDelta: {x: 1643.665, y: 434.3307}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &3949138823655047742

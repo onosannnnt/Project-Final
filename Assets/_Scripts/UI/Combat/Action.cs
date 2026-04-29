@@ -1,10 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Serialization;
 
 public class ActionBarUI : Singleton<ActionBarUI>
 {
     [SerializeField] private Button SkillsButton;
-    [SerializeField] private Button InventoryButton;
+    [FormerlySerializedAs("InventoryButton")]
+    [SerializeField] private Button BasicAttackButton;
+    [SerializeField] private Skill basicAttackSkill;
     
     [Header("Anchor Slot Position (Preferred)")]
     [Tooltip("If enabled, panel snaps to the anchor assigned for active player index.")]
@@ -32,6 +35,17 @@ public class ActionBarUI : Singleton<ActionBarUI>
     private void OnEnable()
     {
         UpdatePanelPosition();
+        UpdateBasicAttackInteractable();
+    }
+
+    private void UpdateBasicAttackInteractable()
+    {
+        PlayerEntity activePlayer = TurnManager.Instance != null ? TurnManager.Instance.CurrentActivePlayer : null;
+        if (activePlayer == null || basicAttackSkill == null || BasicAttackButton == null) return;
+
+        int cost = TurnManager.Instance.GetSkillCost(basicAttackSkill);
+        int availableSP = TurnManager.Instance.GetProjectedAvailableSP(activePlayer);
+        BasicAttackButton.interactable = (availableSP >= cost);
     }
 
     private void UpdatePanelPosition()
@@ -96,9 +110,20 @@ public class ActionBarUI : Singleton<ActionBarUI>
             SkillPanelUI.Instance.SetUpSkillPanel();
             gameObject.SetActive(false);
         });
-        InventoryButton.onClick.AddListener(() =>
+
+        BasicAttackButton.onClick.AddListener(() =>
         {
-// // Debug.Log("Inventory Button Clicked");
+            PlayerEntity activePlayer = TurnManager.Instance != null ? TurnManager.Instance.CurrentActivePlayer : null;
+            if (activePlayer == null || basicAttackSkill == null) return;
+
+            activePlayer.SetSelectedSkill(basicAttackSkill);
+            activePlayer.HandleSelectSkill();
+            if (TargetingPanel.instance != null)
+            {
+                TargetingPanel.instance.SetActivePanel(true);
+            }
+            activePlayer.SetPlayerState(PlayerActionState.Targeting);
+            gameObject.SetActive(false);
         });
     }
 
