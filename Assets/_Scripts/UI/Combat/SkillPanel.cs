@@ -26,30 +26,52 @@ public class SkillPanelUI : Singleton<SkillPanelUI>
     [Tooltip("Offset applied per party index (0,1,2,...) to avoid manual per-player positions.")]
     [SerializeField] private Vector2 uiOffsetPerPlayer = new Vector2(250, 0);
 
+    private bool handlersSetUp = false;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        SetUpEventHandlers();
+    }
+
     private void Start()
     {
-        BackButton.onClick.AddListener(() =>
-        {
-            gameObject.SetActive(false);
-            ActionBarUI.Instance.gameObject.SetActive(true);
-            PlayerEntity activeEntity = TurnManager.Instance != null ? TurnManager.Instance.CurrentActivePlayer : null;
-            if (activeEntity != null)
-            {
-                activeEntity.SetPlayerState(PlayerActionState.Idle);
-                activeEntity.SetSelectedSkill(null);
-            }
-            if (TargetingPanel.instance != null)
-            {
-                TargetingPanel.instance.SetActivePanel(false);
-            }
-
-        });
         gameObject.SetActive(false);
     }
 
     private void OnEnable()
     {
         UpdatePanelPosition();
+    }
+
+    private void SetUpEventHandlers()
+    {
+        if (handlersSetUp) return;
+
+        if (BackButton != null)
+        {
+            BackButton.onClick.AddListener(() =>
+            {
+                gameObject.SetActive(false);
+                if (ActionBarUI.Instance != null)
+                {
+                    ActionBarUI.Instance.gameObject.SetActive(true);
+                }
+                
+                PlayerEntity activeEntity = TurnManager.Instance != null ? TurnManager.Instance.CurrentActivePlayer : null;
+                if (activeEntity != null)
+                {
+                    activeEntity.SetPlayerState(PlayerActionState.Idle);
+                    activeEntity.SetSelectedSkill(null);
+                }
+                if (TargetingPanel.instance != null)
+                {
+                    TargetingPanel.instance.SetActivePanel(false);
+                }
+            });
+        }
+
+        handlersSetUp = true;
     }
 
     private void UpdatePanelPosition()

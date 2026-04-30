@@ -33,7 +33,11 @@ public class BossFireBuff : Buff
             float current = (float)buffState.CustomState["currentBonus"];
             float newValue = Mathf.Min(MaxPercent, current + StepPercent);
             buffState.CustomState["currentBonus"] = newValue;
-            Debug.Log($"<color=red>[Fire Buff]</color> บอสโกรธขึ้น! ดาเมจโบนัสเพิ่มเป็น {newValue * 100}%");
+            
+            // Increment stack for UI
+            buffState.CurrentStack = Mathf.Min(5, buffState.CurrentStack + 1);
+            
+            Debug.Log($"<color=red>[Fire Buff]</color> บอสโกรธขึ้น! ดาเมจโบนัสเพิ่มเป็น {newValue * 100}% (Stack: {buffState.CurrentStack})");
         }
     }
 

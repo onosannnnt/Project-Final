@@ -13,20 +13,26 @@ public class StatInfoUI : MonoBehaviour
     [SerializeField] private GameObject BuffCardPrefab;
     [SerializeField] private Image HealthbarFG;
     [SerializeField] private TMP_Text HealthText;
-    [SerializeField] private Transform BuffParent;
-    [SerializeField] private GameObject BuffIconPrefab;
+    [SerializeField] private Image SkillPointBarFG;
+    [SerializeField] private TMP_Text SkillPointText;
     [SerializeField] private Transform StatusBuffParent;
     [SerializeField] private GameObject StatusBuffPrefab;
+
+    [Header("Visibility Settings")]
+    [SerializeField] private GameObject customObjectToHide;
+    [SerializeField] private bool hideCustomObject = false;
 
     private Entity Entity;
     private List<ActiveBuff> Buffs;
     private List<ActiveBuff> Debuffs;
     private float maxWitdthHealthbar;
+    private float maxWitdthSkillPointBar;
     private void Start()
     {
         gameObject.SetActive(false);
         ExitButton.onClick.AddListener(OnExitClicked);
         if (HealthbarFG != null) maxWitdthHealthbar = HealthbarFG.rectTransform.sizeDelta.x;
+        if (SkillPointBarFG != null) maxWitdthSkillPointBar = SkillPointBarFG.rectTransform.sizeDelta.x;
     }
     private void Update()
     {
@@ -34,18 +40,22 @@ public class StatInfoUI : MonoBehaviour
         if (TurnManager.Instance.GetTurnState() != TurnState.PlayerTurnState) gameObject.SetActive(false);
         SetupBuffPanel();
         SetupHealthBar();
-        SetBuffs();
+        SetupSkillPointBar();
         SetStatusBuff();
     }
     private void OnEnable()
     {
-        if (TargetingPanel.instance == null) return;
-        TargetingPanel.instance.gameObject.SetActive(false);
+        if (hideCustomObject && customObjectToHide != null)
+        {
+            customObjectToHide.SetActive(false);
+        }
     }
     private void OnDisable()
     {
-        if (TargetingPanel.instance == null) return;
-        TargetingPanel.instance.gameObject.SetActive(true);
+        if (hideCustomObject && customObjectToHide != null)
+        {
+            customObjectToHide.SetActive(true);
+        }
     }
     public void SetEntity(Entity entity)
     {
@@ -79,7 +89,8 @@ public class StatInfoUI : MonoBehaviour
             {
                 GameObject buffGO = Instantiate(BuffCardPrefab, BuffTransform);
                 BuffItemUI ui = buffGO.GetComponent<BuffItemUI>();
-                ui.Setup($"{buff.Data.BuffName}({buff.CurrentDuration})", buff.Data.Description, buff.Data.Icon, buff.CurrentStack);
+                // ui.Setup($"{buff.Data.BuffName}({buff.CurrentDuration})", buff.Data.Description, buff.Data.Icon, buff.CurrentStack);
+                ui.Setup($"{buff.Data.BuffName}", buff.Data.Description, buff.Data.Icon, buff.CurrentStack, buff.CurrentDuration, buff.Data.isPermanent);
             }
         }
 
@@ -89,7 +100,8 @@ public class StatInfoUI : MonoBehaviour
             {
                 GameObject debuffGO = Instantiate(BuffCardPrefab, DebuffTransform);
                 BuffItemUI ui = debuffGO.GetComponent<BuffItemUI>();
-                ui.Setup($"{debuff.Data.BuffName}({debuff.CurrentDuration})", debuff.Data.Description, debuff.Data.Icon, debuff.CurrentStack);
+                // ui.Setup($"{debuff.Data.BuffName}({debuff.CurrentDuration})", debuff.Data.Description, debuff.Data.Icon, debuff.CurrentStack);
+                ui.Setup($"{debuff.Data.BuffName}", debuff.Data.Description, debuff.Data.Icon, debuff.CurrentStack, debuff.CurrentDuration, debuff.Data.isPermanent);
             }
         }
     }
@@ -106,24 +118,33 @@ public class StatInfoUI : MonoBehaviour
 
         HealthText.text = $"{Entity.CurrentHealth} / {Entity.GetStat(StatType.MaxHealth)}";
     }
-    private void SetBuffs()
+    private void SetupSkillPointBar()
     {
-        if (BuffParent == null) return;
-        foreach (Transform child in BuffParent)
+        if (SkillPointBarFG == null) return;
+
+        // Hide SP bar for entities that aren't players (like enemies)
+        if (Entity is not PlayerEntity)
         {
-            Destroy(child.gameObject);
+            SkillPointBarFG.transform.parent.gameObject.SetActive(false);
+            return;
         }
-        if (Entity == null) return;
-        List<ActiveBuff> Buffs = Entity.buffController.GetBuffsByType(BuffType.Buff);
-        if (Buffs.Count == 0) BuffParent.gameObject.SetActive(false);
-        else BuffParent.gameObject.SetActive(true);
-        foreach (var buff in Buffs)
+
+        SkillPointBarFG.transform.parent.gameObject.SetActive(true);
+        
+        int currentSP = Entity.CurrentSP;
+        int maxSP = (int)Entity.GetStat(StatType.MaxSkillPoint);
+
+        // If using shared SP pool, override values
+        if (TurnManager.Instance != null && TurnManager.Instance.UseSharedPlayerSkillPointPool)
         {
-            GameObject buffObj = Instantiate(BuffIconPrefab, BuffParent.transform);
-            buffObj.GetComponent<Image>().sprite = buff.Data.Icon;
-            buffObj.transform.Find("Duration").GetComponentInChildren<TextMeshProUGUI>().text = BuffStackColor(buff.CurrentDuration) + $"{buff.CurrentDuration}</color>";
-            buffObj.transform.Find("Stack").GetComponentInChildren<TextMeshProUGUI>().text = BuffStackColor(buff.CurrentStack) + $"{buff.CurrentStack}</color>";
+            currentSP = TurnManager.Instance.ResourceManager.GetSharedPlayerCurrentSkillPoints();
+            maxSP = TurnManager.Instance.ResourceManager.GetSharedPlayerMaxSkillPoints();
         }
+
+        float spRatio = maxSP > 0 ? (float)currentSP / maxSP : 0;
+        SkillPointBarFG.rectTransform.sizeDelta = new Vector2(maxWitdthSkillPointBar * spRatio, SkillPointBarFG.rectTransform.sizeDelta.y);
+
+        SkillPointText.text = $"{currentSP} / {maxSP}";
     }
     private void SetStatusBuff()
     {

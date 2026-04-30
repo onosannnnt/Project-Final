@@ -31,7 +31,11 @@ public class BossWindBuff : Buff
             float current = (float)buffState.CustomState["currentMissChance"];
             float newValue = Mathf.Min(MaxMissChance, current + StepMissChance);
             buffState.CustomState["currentMissChance"] = newValue;
-            Debug.Log($"<color=green>[Wind Buff]</color> พายุแรงขึ้น! โอกาสหลบหลีกเพิ่มเป็น {newValue}%");
+
+            // Increment stack for UI
+            buffState.CurrentStack = Mathf.Min(5, buffState.CurrentStack + 1);
+
+            Debug.Log($"<color=green>[Wind Buff]</color> พายุแรงขึ้น! โอกาสหลบหลีกเพิ่มเป็น {newValue}% (Stack: {buffState.CurrentStack})");
         }
     }
 

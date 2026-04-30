@@ -36,7 +36,7 @@ public abstract class PlayerEntity : Entity
     {
         if (TurnManager.Instance != null && TurnManager.Instance.UseSharedPlayerSkillPointPool)
         {
-            TurnManager.Instance.RestoreSharedPlayerSkillPoints(amount);
+            TurnManager.Instance.ResourceManager.RestoreSharedPlayerSkillPoints(amount);
         }
         else
         {

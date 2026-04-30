@@ -34,7 +34,11 @@ public class BossLightningBuff : Buff
             buffState.CustomState["currentPenalty"] = newValue;
 
             GlobalSpPenaltyPercent = newValue;
-            Debug.Log($"<color=yellow>[Lightning Buff]</color> ไฟฟ้าลัดวงจร! ผู้เล่นใช้สกิลแพงขึ้น {newValue * 100}%");
+
+            // Increment stack for UI
+            buffState.CurrentStack = Mathf.Min(5, buffState.CurrentStack + 1);
+
+            Debug.Log($"<color=yellow>[Lightning Buff]</color> ไฟฟ้าลัดวงจร! ผู้เล่นใช้สกิลแพงขึ้น {newValue * 100}% (Stack: {buffState.CurrentStack})");
         }
     }
 

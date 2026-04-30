@@ -27,13 +27,39 @@ public class ActionBarUI : Singleton<ActionBarUI>
     [Tooltip("Offset applied per party index (0,1,2,...) to avoid manual per-player positions.")]
     [SerializeField] private Vector2 uiOffsetPerPlayer = new Vector2(250, 0);
 
-    private void Start()
+    private bool handlersSetUp = false;
+
+    protected override void Awake()
     {
+        base.Awake();
         SetUpEventHandlers();
+    }
+
+    private PlayerEntity lastActivePlayer;
+
+    private void Update()
+    {
+        PlayerEntity activePlayer = TurnManager.Instance != null ? TurnManager.Instance.CurrentActivePlayer : null;
+        
+        // If the active player has changed, refresh the panel
+        if (activePlayer != lastActivePlayer)
+        {
+            UpdatePanelPosition();
+            UpdateBasicAttackInteractable();
+            lastActivePlayer = activePlayer;
+        }
+        
+        // Optional: If you want it to strictly follow the world position every frame 
+        // (in case players move), you can call UpdatePanelPosition() here.
+        if (followActivePlayerWorldPosition && activePlayer != null)
+        {
+            UpdatePanelPosition();
+        }
     }
 
     private void OnEnable()
     {
+        lastActivePlayer = TurnManager.Instance != null ? TurnManager.Instance.CurrentActivePlayer : null;
         UpdatePanelPosition();
         UpdateBasicAttackInteractable();
     }
@@ -104,27 +130,62 @@ public class ActionBarUI : Singleton<ActionBarUI>
 
     private void SetUpEventHandlers()
     {
-        SkillsButton.onClick.AddListener(() =>
-        {
-            SkillPanelUI.Instance.gameObject.SetActive(true);
-            SkillPanelUI.Instance.SetUpSkillPanel();
-            gameObject.SetActive(false);
-        });
+        if (handlersSetUp) return;
 
-        BasicAttackButton.onClick.AddListener(() =>
+        if (SkillsButton != null)
         {
-            PlayerEntity activePlayer = TurnManager.Instance != null ? TurnManager.Instance.CurrentActivePlayer : null;
-            if (activePlayer == null || basicAttackSkill == null) return;
-
-            activePlayer.SetSelectedSkill(basicAttackSkill);
-            activePlayer.HandleSelectSkill();
-            if (TargetingPanel.instance != null)
+            SkillsButton.onClick.AddListener(() =>
             {
-                TargetingPanel.instance.SetActivePanel(true);
-            }
-            activePlayer.SetPlayerState(PlayerActionState.Targeting);
-            gameObject.SetActive(false);
-        });
+                PlayerEntity activePlayer = TurnManager.Instance != null ? TurnManager.Instance.CurrentActivePlayer : null;
+                if (activePlayer != null)
+                {
+                    // Cancel basic attack targeting if active
+                    if (activePlayer.GetPlayerState == PlayerActionState.Targeting)
+                    {
+                        activePlayer.SetSelectedSkill(null);
+                        activePlayer.SetPlayerState(PlayerActionState.Idle);
+                        if (TargetingPanel.instance != null)
+                        {
+                            TargetingPanel.instance.SetActivePanel(false);
+                        }
+                        // Reset highlights
+                        activePlayer.Highlight(Color.white);
+                        foreach (var enemy in FindObjectsOfType<EnemyCombat>())
+                        {
+                            enemy.Highlight(Color.white);
+                        }
+                    }
+                }
+
+                if (SkillPanelUI.Instance != null)
+                {
+                    SkillPanelUI.Instance.gameObject.SetActive(true);
+                    SkillPanelUI.Instance.SetUpSkillPanel();
+                    gameObject.SetActive(false);
+                }
+            });
+        }
+
+        if (BasicAttackButton != null)
+        {
+            BasicAttackButton.onClick.AddListener(() =>
+            {
+                PlayerEntity activePlayer = TurnManager.Instance != null ? TurnManager.Instance.CurrentActivePlayer : null;
+                if (activePlayer == null || basicAttackSkill == null) return;
+
+                activePlayer.SetSelectedSkill(basicAttackSkill);
+                activePlayer.HandleSelectSkill();
+                if (TargetingPanel.instance != null)
+                {
+                    TargetingPanel.instance.SetActivePanel(true);
+                }
+                activePlayer.SetPlayerState(PlayerActionState.Targeting);
+                // Don't hide ActionPanel (ActionBarUI) when targeting basic attack
+                // gameObject.SetActive(false); 
+            });
+        }
+
+        handlersSetUp = true;
     }
 
 }

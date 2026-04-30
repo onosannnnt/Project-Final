@@ -1,73 +1,41 @@
-e# Project Final - Unity Combat System
+# Project Overview: Unity Turn-Based Combat Game
 
-A turn-based RPG combat system built in Unity 2022.3. It features a modular architecture driven by ScriptableObjects for stats, skills, and status effects.
+This project is a Unity-based turn-based combat game built with **Unity 2022.3.62f2** and the **Universal Render Pipeline (URP)**. It features a robust system for skills, buffs, and player progression driven by `ScriptableObjects`.
 
-## Project Overview
+## Core Technologies
+- **Unity Engine:** 2022.3.62f2
+- **Render Pipeline:** Universal Render Pipeline (URP)
+- **Input System:** Unity Input System (com.unity.inputsystem)
+- **UI:** TextMesh Pro, uGUI
+- **Logic:** C# (async/await supported)
 
-- **Engine:** Unity 2022.3.62f2
-- **Genre:** Turn-based RPG / Combat Simulator
-- **Core Systems:**
-  - **Combat:** Speed-based turn management via `TurnManager`.
-  - **Stats:** ScriptableObject-driven entity stats (`EntitiesBaseStat`).
-  - **Skills:** Composable skill system using `Skill` and `SkillEffect` subclasses.
-  - **Buffs:** Extensible status effect system (`BuffManager`, `BuffEffect`).
-  - **UI:** Combat feedback including damage numbers, action queues, and skill selection.
+## Architecture and Design Patterns
+- **Singleton Pattern:** Many core managers (e.g., `TurnManager`, `PlayerTeamManager`) inherit from a `Singleton<T>` base class for global access.
+- **ScriptableObject-Driven Data:** Game data, including player stats (`UserData`), skills (`Skill`), and effects (`BuffEffect`, `DamageEffect`), are defined using `ScriptableObjects` to allow for easy balancing and modularity.
+- **Component-Based Entities:** Combatants (players and enemies) are built as components (e.g., `PlayerEntity`, `EnemyCombat`) that interface with the `TurnManager`.
+- **State Management:** The `TurnManager` handles the high-level game state (PlayerTurn, EnemyTurn, etc.) using an asynchronous flow.
 
-## Directory Structure
-
-- `Assets/_Scripts/Managers/`: Core system managers (Turn, Skill, Buff, etc.).
-- `Assets/_Scripts/BaseScriptableObject/`: Data definitions and effect implementations.
-  - `SkillUseEffect.cs/`: (Directory) Specialized skill effects like `BloodRageEffect`, `TauntEffect`, etc.
-- `Assets/_Scripts/Utils/`: Shared utilities, enums, and the base `Entity` class.
-- `Assets/_Scripts/Player/` & `Assets/_Scripts/Enemy/`: Specialized entity implementations.
-- `Assets/_Scripts/UI/`: Combat and Overworld UI systems.
-- `Assets/Scenes/`: Game scenes (`MainMenu`, `Loading`, `Overworld`, `Combat`).
-- `Assets/GameData/`: ScriptableObject instances for game configuration.
-
-## Building and Running
-
-- **Unity Version:** Use Unity 2022.3.62f2.
-- **Main Scenes:**
-  1. `MainMenu`: Initial entry point.
-  2. `Overworld`: World exploration and quest initiation.
-  3. `Combat`: Direct combat testing.
-- **Typical Flow:** Start from `MainMenu` or `Loading` to ensure all singleton managers (like `UserData`) are properly initialized.
+## Project Structure
+- `Assets/_Scripts/`: Main source code directory.
+    - `Managers/`: Core systems like `TurnManager`, `CombatActionProcessor`, and `BuffManager`.
+    - `GameData/`: Persistent data structures like `UserData` and `SkillLoadout`.
+    - `BaseScriptableObject/`: Base definitions for modular skills and effects.
+    - `Player/` & `Enemy/`: Specific logic for combat entities.
+    - `Utils/`: Utility classes, including `Singleton` and `.env` loader.
+- `Assets/Prefabs/`: Reusable game objects for UI, players, and enemies.
+- `Assets/Scenes/`: Project scenes (Combat, MainMenu, Overworld, etc.).
+- `ProjectSettings/`: Unity project configuration files.
 
 ## Development Conventions
+- **Naming:** Follows standard C# conventions (PascalCase for classes and public members, camelCase for private fields).
+- **Singletons:** Access managers via `ManagerClassName.Instance`.
+- **Modular Effects:** When adding new combat effects, extend from `SkillUseEffect` or `BuffEffect` and create a corresponding `ScriptableObject` asset.
+- **Environment Variables:** Supports `.env` files for configuration via `Dotenv.cs`.
 
-### 1. Entity Architecture
+## Building and Running
+1.  **Open in Unity Editor:** Use Unity Hub to open the project with version `2022.3.62f2`.
+2.  **Scene Entry:** Start from `MainMenu.unity` or `Overworld.unity` for a full game flow, or `Combat.unity` for direct combat testing.
+3.  **Tests:** Unity Test Framework is included; check the Test Runner for existing tests.
 
-All combatants must inherit from `Entity.cs`.
-
-- **Stats:** Uses `EntitiesBaseStat`. Call `Clone()` in `Awake` to prevent modifying assets.
-- **Health/SP:** Managed in `Entity`, triggers events `OnHealthChanged` and `OnSPChanged`.
-- **Buffs:** All entities have a `BuffManager` to handle status effects and stat modifiers.
-
-### 2. ScriptableObject-Driven Design
-
-- **Stats:** Define base stats in `EntitiesBaseStat` (Note: file named `EnititiesStat.cs`). Supports legacy core stats and a list of `AdditionalStats` for flexibility.
-- **Skills:** `Skill` assets define target types, costs, and a list of `SkillEffect` objects.
-- **Effects:** Inherit from `SkillEffect` to create new combat behaviors. Specialized effects are organized under the `SkillUseEffect.cs/` directory.
-
-### 3. Turn Management (`TurnManager`)
-
-Operates in a state machine:
-
-- `PlayerTurnState`: Players select skills and targets.
-- `SpeedCompareState`: Sorts all actions by the `ActionSpeed` stat.
-- `ActionState`: Executes actions sequentially from the `actionQueue`.
-- Supports shared or individual Skill Point (SP) pools.
-
-### 4. Coding Style
-
-- **Naming:** PascalCase for methods/properties, camelCase for private fields.
-- **Inspector:** Use `[SerializeField]` for private fields that need to be exposed.
-- **Composition:** Prefer adding new `SkillEffect` types over modifying the core `Skill` class.
-
-## Key Files
-
-- `Assets/_Scripts/Utils/Entity.cs`: The foundation for all players and enemies.
-- `Assets/_Scripts/Managers/TurnManager.cs`: The central combat loop.
-- `Assets/_Scripts/BaseScriptableObject/Skill.cs`: Defines how skills are structured.
-- `Assets/_Scripts/BaseScriptableObject/EnititiesStat.cs`: Defines base statistics.
-- `Assets/_Scripts/Utils/Enum/PlayerType.cs`: Contains central enums like `StatType` and `SkillType`.
+---
+*Generated by Gemini CLI*

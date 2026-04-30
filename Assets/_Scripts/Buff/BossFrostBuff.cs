@@ -36,7 +36,11 @@ public class BossFrostBuff : Buff
         {
             float newValue = Mathf.Min(MaxHealFlat, currentHeal + StepHealFlat);
             buffState.CustomState["currentHeal"] = newValue;
-            Debug.Log($"<color=cyan>[Ice Buff]</color> พลังน้ำแข็งแกร่งขึ้น! เทิร์นหน้าจะฮีล {newValue} หน่วย");
+
+            // Increment stack for UI
+            buffState.CurrentStack = Mathf.Min(5, buffState.CurrentStack + 1);
+
+            Debug.Log($"<color=cyan>[Ice Buff]</color> พลังน้ำแข็งแกร่งขึ้น! เทิร์นหน้าจะฮีล {newValue} หน่วย (Stack: {buffState.CurrentStack})");
         }
     }
 }

@@ -17,10 +17,21 @@ MonoBehaviour:
   - enemies:
     - enemyPrefab: {fileID: 6702360306364772165, guid: e4dd33fc5de054c9f9059e4dffe6a311,
         type: 3}
-      positionIndex: 0
+      positionIndex: 1
+    - enemyPrefab: {fileID: 6702360306364772165, guid: e4dd33fc5de054c9f9059e4dffe6a311,
+        type: 3}
+      positionIndex: 3
+  - enemies:
     - enemyPrefab: {fileID: 6702360306364772165, guid: e4dd33fc5de054c9f9059e4dffe6a311,
         type: 3}
       positionIndex: 1
     - enemyPrefab: {fileID: 6702360306364772165, guid: e4dd33fc5de054c9f9059e4dffe6a311,
         type: 3}
+      positionIndex: 3
+    - enemyPrefab: {fileID: 6702360306364772165, guid: e4dd33fc5de054c9f9059e4dffe6a311,
+        type: 3}
       positionIndex: 2
+  - enemies:
+    - enemyPrefab: {fileID: 6702360306364772165, guid: 630e186e9988bb14db951e26a00f7958,
+        type: 3}
+      positionIndex: 4

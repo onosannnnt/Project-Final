@@ -11,13 +11,11 @@ public class TurnManager : Singleton<TurnManager>
     [Header("Phase Information")]
     [SerializeField] private UserData userData;
 
-    [Header("Skill Point Restoration per Phase")]
-    [SerializeField] private int phase1SPRestore = 10; // Restore X SP per turn in Phase 1
-    [SerializeField] private int phase2SPRestore = 20; // Restore Y SP per turn in Phase 2
-    [SerializeField] private int phase3SPRestore = 30; // Restore Z SP per turn in Phase 3
-    [Header("Team Resource Settings")]
-    [SerializeField] private bool useSharedPlayerSkillPointPool = true;
-    public bool UseSharedPlayerSkillPointPool => useSharedPlayerSkillPointPool;
+    private CombatLogger combatLogger;
+    private CombatActionProcessor actionProcessor;
+    public CombatResourceManager ResourceManager => resourceManager;
+    private CombatResourceManager resourceManager;
+    public bool UseSharedPlayerSkillPointPool => resourceManager.UseSharedPlayerSkillPointPool;
     private TurnState currentState;
     private List<ActionQueue> actionQueue = new List<ActionQueue>();
     public int turnRound = 0;
@@ -34,11 +32,18 @@ public class TurnManager : Singleton<TurnManager>
 
     private async void Start()
     {
+        resourceManager = GetComponent<CombatResourceManager>();
+        combatLogger = GetComponent<CombatLogger>();
+        actionProcessor = GetComponent<CombatActionProcessor>();
+
+        resourceManager.Initialize(userData);
+        actionProcessor.Initialize(this);
+
         combatResultResolved = false;
         EnsureTeamReady();
 
-        ApplyPhaseStats();
-        SyncSharedPlayerSkillPoints();
+        resourceManager.ApplyPhaseStats(currentWave);
+        resourceManager.SyncSharedPlayerSkillPoints();
 
         if (EnemyGenerator.Instance != null && EnemyGenerator.Instance.GetCurrentQuest() != null)
         {
@@ -210,8 +215,8 @@ public class TurnManager : Singleton<TurnManager>
             {
                 currentWave += 1;
                 EnemyGenerator.Instance?.GenerateEnemy();
-                ApplyPhaseStats();
-                SyncSharedPlayerSkillPoints();
+                resourceManager.ApplyPhaseStats(currentWave);
+                resourceManager.SyncSharedPlayerSkillPoints();
             }
             else
             {
@@ -259,7 +264,7 @@ public class TurnManager : Singleton<TurnManager>
         SetState(TurnState.ActionState);
     }
 
-    private Entity GetActualTargetForEnemy(Entity enemyEntity)
+    public Entity GetActualTargetForEnemy(Entity enemyEntity)
     {
         // 1. Check if the enemy is taunted
         if (enemyEntity.buffController != null)
@@ -372,179 +377,26 @@ public class TurnManager : Singleton<TurnManager>
                     log.AddEntityLog(new EntityStatData(enemyEntity));
                 }
             }
-            if (entity is PlayerEntity)
+
+            // --- BUFF TURN START ---
+            entity.buffController.OnTurnStart(entity, log);
+
+            // --- EXECUTE SKILL (DELEGATED) ---
+            if (entity.CanAction())
             {
-                entity.buffController.OnTurnStart(entity, log);
-                if (entity.CanAction() == true)
-                {
-                    int actualCost = GetSkillCost(skill);
-                    bool canUseSkill = useSharedPlayerSkillPointPool
-                        ? TryConsumeSharedPlayerSkillPoints(actualCost)
-                        : entity.CurrentSP >= actualCost;
-
-                    if (canUseSkill)
-                    {
-                        if (!useSharedPlayerSkillPointPool)
-                        {
-                            entity.SetSP(-actualCost);
-                        }
-
-                        switch (skill.TargetType)
-                        {
-                            case TargetType.Self:
-                                entity.skillManager.UseSkill(skill, entity, log);
-                                break;
-                            case TargetType.Enemy:
-                                if (skill.TargetCount == TargetCount.Single)
-                                {
-                                    if (target != null && target.CurrentHealth > 0)
-                                    {
-                                        entity.skillManager.UseSkill(skill, target, log);
-                                    }
-                                    else
-                                    {
-                                        // // Debug.Log("Target is already dead. Action cancelled.");
-                                    }
-                                }
-                                else if (skill.TargetCount == TargetCount.All)
-                                {
-                                    bool hasValidTarget = false;
-                                    EnemyCombat primaryTarget = target as EnemyCombat;
-                                    bool primaryAssignedFromFallback = false;
-
-                                    foreach (var t in GetAllEnemies())
-                                    {
-                                        EnemyCombat enemyTarget = t.GetComponent<EnemyCombat>();
-                                        if (enemyTarget != null && !enemyTarget.IsDead())
-                                        {
-                                            bool allowWindSpread = false;
-                                            if (primaryTarget != null)
-                                            {
-                                                allowWindSpread = enemyTarget == primaryTarget;
-                                            }
-                                            else if (!primaryAssignedFromFallback)
-                                            {
-                                                // Fallback: if no explicit primary exists, allow only the first alive target.
-                                                allowWindSpread = true;
-                                                primaryAssignedFromFallback = true;
-                                            }
-
-                                            entity.skillManager.UseSkill(skill, enemyTarget, log, allowWindSpread);
-                                            hasValidTarget = true;
-                                        }
-                                    }
-
-                                    if (!hasValidTarget)
-                                    {
-                                        // // Debug.Log("No valid targets left for AoE skill. Action cancelled.");
-                                    }
-                                }
-                                break;
-                            case TargetType.Ally:
-                                if (skill.TargetCount == TargetCount.All)
-                                {
-                                    bool hasAllyTarget = false;
-                                    if (PlayerTeamManager.Instance != null)
-                                    {
-                                        foreach (var ally in PlayerTeamManager.Instance.GetAliveMembers())
-                                        {
-                                            entity.skillManager.UseSkill(skill, ally, log);
-                                            hasAllyTarget = true;
-                                        }
-                                    }
-
-                                    if (!hasAllyTarget)
-                                    {
-                                        entity.skillManager.UseSkill(skill, entity, log);
-                                    }
-                                }
-                                else
-                                {
-                                    if (target != null && target.CurrentHealth > 0)
-                                    {
-                                        entity.skillManager.UseSkill(skill, target, log);
-                                    }
-                                    else
-                                    {
-                                        entity.skillManager.UseSkill(skill, entity, log);
-                                    }
-                                }
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        // // Debug.Log("Not enough SP to use " + skill.name);
-                    }
-                }
-                entity.buffController.OnTurnEnd(entity);
-                PlayerActionQueueUI?.SetActionQueue(currentAction);
+                actionProcessor.ExecuteAction(currentAction, log);
             }
-            else if (entity is EnemyCombat enemyCombat)
-            {
-                if (enemyCombat != null)
-                {
-                    enemyCombat.buffController.OnTurnStart(enemyCombat, log);
-                }
-                // enemyCombat.buffController.OnTurnStart(enemyCombat, log);
-                if (entity.CanAction() == true)
-                {
-                    int actualCost = GetSkillCost(skill);
-                    if (enemyCombat.CurrentSP >= actualCost)
-                    {
-                        enemyCombat.SetSP(-actualCost);
 
-                        switch (skill.TargetType)
-                        {
-                            case TargetType.Self:
-                                // Boss targets itself for heals/buffs
-                                enemyCombat.skillManager.UseSkill(skill, enemyCombat, log);
-                                break;
-                            case TargetType.Enemy:
-                                // Boss targets the player (or active player)
-                                Entity enemyTarget = target;
-                                if (enemyTarget == null || enemyTarget.CurrentHealth <= 0)
-                                {
-                                    enemyTarget = GetActualTargetForEnemy(enemyCombat);
-                                }
+            // --- BUFF TURN END ---
+            entity.buffController.OnTurnEnd(entity);
 
-                                if (enemyTarget != null && enemyTarget.CurrentHealth > 0)
-                                {
-                                    if (skill.TargetCount == TargetCount.Single)
-                                    {
-                                        enemyCombat.skillManager.UseSkill(skill, enemyTarget, log);
-                                    }
-                                    else if (skill.TargetCount == TargetCount.All)
-                                    {
-                                        if (PlayerTeamManager.Instance != null)
-                                        {
-                                            foreach (var player in PlayerTeamManager.Instance.GetAliveMembers())
-                                            {
-                                                enemyCombat.skillManager.UseSkill(skill, player, log);
-                                            }
-                                        }
-                                    }
-                                }
-                                break;
-                            case TargetType.Ally:
-                                // Treat ally casts as self for now
-                                enemyCombat.skillManager.UseSkill(skill, enemyCombat, log);
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        Debug.Log($"{enemyCombat.gameObject.name} not enough SP for {skill.skillName}");
-                    }
-                }
-                enemyCombat.buffController.OnTurnEnd(enemyCombat);
-                EnemyActionQueueUI?.SetActionQueue(currentAction);
-            }
-            // actionQueue.RemoveAt(0);
+            // --- UPDATE UI AND REMOVE FROM QUEUE ---
+            if (entity is PlayerEntity) PlayerActionQueueUI?.SetActionQueue(currentAction);
+            else EnemyActionQueueUI?.SetActionQueue(currentAction);
+
             actionQueue.Remove(currentAction);
-            ShowLog(log);
-            // NetworkManager.SaveCombatActionLogs(log);
-            // SaveLogJson(log);
+            combatLogger.ShowLog(log);
+
             List<GameObject> remainingEnemies = GetAllEnemies();
             remainingEnemies.RemoveAll(enemy => enemy.GetComponent<EnemyCombat>().IsDead());
             if (remainingEnemies.Count == 0 && currentWave >= wave)
@@ -585,7 +437,7 @@ public class TurnManager : Singleton<TurnManager>
         }
 
         // Restore skill points based on current phase
-        RestoreSkillPointsByPhase();
+        resourceManager.RestoreSkillPointsByPhase(GetAllEnemies());
 
         // Advance the weather at the end of the round, right before the next starts
         if (WeatherManager.Instance != null)
@@ -714,13 +566,13 @@ public class TurnManager : Singleton<TurnManager>
 
     public int GetProjectedAvailableSP(Entity entity)
     {
-        int currentSP = useSharedPlayerSkillPointPool ? GetSharedPlayerCurrentSkillPoints() : (int)entity.CurrentSP;
+        int currentSP = UseSharedPlayerSkillPointPool ? resourceManager.GetSharedPlayerCurrentSkillPoints() : (int)entity.CurrentSP;
         int reservedSP = 0;
 
         foreach (var action in pendingPlayerActions)
         {
             int actionCost = GetSkillCost(action.Skill);
-            if (useSharedPlayerSkillPointPool)
+            if (UseSharedPlayerSkillPointPool)
             {
                 // In shared pool, all pending player actions consume from the same pool
                 if (action.Caster is PlayerEntity)
@@ -743,12 +595,7 @@ public class TurnManager : Singleton<TurnManager>
 
     public int GetCurrentPhase()
     {
-        // Determine phase based on global game progression instead of wave
-        if (userData != null)
-        {
-            return userData.GamePhase;
-        }
-        return 1; // Default to Phase 1 if UserData is not assigned
+        return resourceManager.GetCurrentPhase();
     }
 
     public float GetMaxWave()
@@ -756,130 +603,11 @@ public class TurnManager : Singleton<TurnManager>
         return wave;
     }
 
-    private void RestoreSkillPointsByPhase()
-    {
-        int currentPhase = GetCurrentPhase();
-        int spToRestore = 0;
-
-        switch (currentPhase)
-        {
-            case 1:
-                spToRestore = phase1SPRestore;
-                break;
-            case 2:
-                spToRestore = phase2SPRestore;
-                break;
-            case 3:
-                spToRestore = phase3SPRestore;
-                break;
-            default:
-                spToRestore = 0;
-                break;
-        }
-
-        if (spToRestore > 0)
-        {
-            if (useSharedPlayerSkillPointPool)
-            {
-                RestoreSharedPlayerSkillPoints(spToRestore);
-            }
-            else
-            {
-                // Restore SP to alive players
-                if (PlayerTeamManager.Instance != null)
-                {
-                    foreach (var member in PlayerTeamManager.Instance.GetAliveMembers())
-                    {
-                        member.SetSP(spToRestore);
-                    }
-                }
-            }
-
-            // Restore SP to all alive enemies
-            foreach (GameObject enemyObj in GetAllEnemies())
-            {
-                EnemyCombat enemy = enemyObj.GetComponent<EnemyCombat>();
-                if (enemy != null && !enemy.IsDead())
-                {
-                    enemy.SetSP(spToRestore);
-                    // // Debug.Log($"[Phase {currentPhase}] {enemy.gameObject.name} restored {spToRestore} SP at end of turn");
-                }
-            }
-        }
-    }
-
     private void EnsureTeamReady()
     {
         if (PlayerTeamManager.Instance != null && PlayerTeamManager.Instance.ActiveTeamMembers.Count == 0)
         {
             PlayerTeamManager.Instance.SpawnTeam();
-        }
-    }
-
-    private void SyncSharedPlayerSkillPoints()
-    {
-        if (!useSharedPlayerSkillPointPool) return;
-        int currentShared = GetSharedPlayerCurrentSkillPoints();
-        SetSharedPlayerSkillPoints(currentShared);
-    }
-
-    private bool TryConsumeSharedPlayerSkillPoints(int cost)
-    {
-        if (!useSharedPlayerSkillPointPool) return false;
-        int currentShared = GetSharedPlayerCurrentSkillPoints();
-        if (currentShared < cost) return false;
-
-        SetSharedPlayerSkillPoints(currentShared - cost);
-        return true;
-    }
-
-    public void RestoreSharedPlayerSkillPoints(int amount)
-    {
-        int currentShared = GetSharedPlayerCurrentSkillPoints();
-        SetSharedPlayerSkillPoints(currentShared + amount);
-    }
-
-    private int GetSharedPlayerCurrentSkillPoints()
-    {
-        if (PlayerTeamManager.Instance == null) return 0;
-
-        foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
-        {
-            if (member != null)
-            {
-                return member.CurrentSP;
-            }
-        }
-
-        return 0;
-    }
-
-    private int GetSharedPlayerMaxSkillPoints()
-    {
-        if (PlayerTeamManager.Instance == null) return 0;
-
-        int minMaxSp = int.MaxValue;
-        foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
-        {
-            if (member == null) continue;
-            int memberMaxSp = Mathf.RoundToInt(member.GetStat(StatType.MaxSkillPoint));
-            minMaxSp = Mathf.Min(minMaxSp, memberMaxSp);
-        }
-
-        return minMaxSp == int.MaxValue ? 0 : minMaxSp;
-    }
-
-    private void SetSharedPlayerSkillPoints(int value)
-    {
-        if (PlayerTeamManager.Instance == null) return;
-
-        int maxShared = GetSharedPlayerMaxSkillPoints();
-        int clampedShared = Mathf.Clamp(value, 0, maxShared);
-
-        foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
-        {
-            if (member == null) continue;
-            member.SetSPInternal(clampedShared, true);
         }
     }
 
@@ -901,107 +629,6 @@ public class TurnManager : Singleton<TurnManager>
             }
             currentTeamMemberIndex++;
         }
-    }
-
-    private void ApplyPhaseStats()
-    {
-        int phase = GetCurrentPhase();
-        if (PlayerTeamManager.Instance == null || PlayerTeamManager.Instance.ActiveTeamMembers.Count == 0) return;
-
-        // Apply to all active players
-        foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
-        {
-            if (member == null || member.Stats == null) continue;
-
-            switch (phase)
-            {
-                case 1:
-                    member.Stats.SetBase(StatType.MaxHealth, 1000);
-                    member.Stats.SetBase(StatType.MaxSkillPoint, 100);
-                    break;
-                case 2:
-                    member.Stats.SetBase(StatType.MaxHealth, 2000);
-                    member.Stats.SetBase(StatType.MaxSkillPoint, 200);
-                    break;
-                case 3:
-                    member.Stats.SetBase(StatType.MaxHealth, 3000);
-                    member.Stats.SetBase(StatType.MaxSkillPoint, 300);
-                    break;
-                default:
-                    member.Stats.SetBase(StatType.MaxHealth, 3000);
-                    member.Stats.SetBase(StatType.MaxSkillPoint, 300);
-                    break;
-            }
-        }
-
-        // Heal to full HP/SP to reflect the new max values if it's the start of battle
-        // Or if it's a tutorial quest and not the last wave
-        bool isTutorial = false;
-        if (EnemyGenerator.Instance != null)
-        {
-            QuestEnemies currentQuest = EnemyGenerator.Instance.GetCurrentQuest();
-            if (currentQuest != null && currentQuest.isTutorial)
-            {
-                isTutorial = true;
-            }
-        }
-
-        bool isStartOfBattle = (currentWave == 1);
-
-        if (isStartOfBattle || isTutorial)
-        {
-            foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
-            {
-                if (member == null) continue;
-                member.Heal(member.GetStat(StatType.MaxHealth));
-                member.SetSPInternal((int)member.GetStat(StatType.MaxSkillPoint), true);
-            }
-        }
-    }
-    private void ShowLog(CombatActionLog log)
-    {
-        System.Text.StringBuilder sb = new System.Text.StringBuilder();
-
-        // 1. หัวข้อ: [Turn X] ใคร ทำอะไร
-        sb.Append($"<color=#4EC9B0>{log.CasterName}</color> ใช้ <b>{log.SkillName}</b> ➜ ");
-
-        // 2. รวบรวมผลลัพธ์ (Damage, Heal, Buff) มาต่อท้ายในบรรทัดเดียว
-        bool hasEffect = false;
-
-        // เช็ค Damage
-        if (log.DamageEffectLogs != null && log.DamageEffectLogs.Count > 0)
-        {
-            foreach (var dmg in log.DamageEffectLogs)
-            {
-                sb.Append($"[<color=red>{dmg.AppliedTarget} -{dmg.Damage}</color>] ");
-            }
-            hasEffect = true;
-        }
-
-        // เช็ค Heal
-        if (log.HealEffectLogs != null && log.HealEffectLogs.Count > 0)
-        {
-            foreach (var heal in log.HealEffectLogs)
-            {
-                sb.Append($"[<color=green>{heal.AppliedTarget} +{heal.HealAmount}</color>] ");
-            }
-            hasEffect = true;
-        }
-
-        // เช็ค Buff/Debuff
-        if (log.BuffEffectLogs != null && log.BuffEffectLogs.Count > 0)
-        {
-            foreach (var buff in log.BuffEffectLogs)
-            {
-                sb.Append($"[<color=yellow>{buff.AppliedTarget} {buff.Buff}</color>] ");
-            }
-            hasEffect = true;
-        }
-
-        if (!hasEffect) sb.Append("<i>(ไม่มีผลกระทบ)</i>");
-
-        // ปริ้นท์ออก Console บรรทัดเดียวจบ!
-        Debug.Log(sb.ToString());
     }
     public void RemoveActionQueue(Entity entity)
     {

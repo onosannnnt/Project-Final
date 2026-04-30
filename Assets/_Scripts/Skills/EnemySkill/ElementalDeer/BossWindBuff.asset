@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BossWindBuff
   m_EditorClassIdentifier: 
   BuffName: Wind Attunement
-  Description: Has 5% chance to dodge atttack per stacks. (Max 6)
+  Description: Has 5% chance to dodge atttack per stacks. (Max 5)
   Icon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}
   buffType: 0
   isPermanent: 1
@@ -29,4 +29,4 @@ MonoBehaviour:
   preventHealing: 0
   BaseMissChance: 5
   StepMissChance: 5
-  MaxMissChance: 30
+  MaxMissChance: 25
