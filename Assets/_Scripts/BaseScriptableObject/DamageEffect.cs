@@ -3,37 +3,43 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "DamageEffect", menuName = "ScriptableObjects/SkillEffect/DamageEffect")]
 public class DamageEffect : SkillEffect
 {
-    [SerializeField] public DamageType DamageType;
-    [Tooltip("Damage Multiplier is not be in percent (1 = 100%, 1.5 = 150%)")]
-    [SerializeField] public float DamageMultiplier;
-    [SerializeField] public StatScale statScale;
+    [SerializeField] public float BaseDamage;
+    [SerializeField] public DamageElement Element;
+    [SerializeField] public float Accuracy = 100f;
+    [Range(0f, 100f)]
+    [SerializeField] public float CriticalHitChance = 5f;
 
-    public DamageEffect(DamageType damageType, float damageMultiplier)
+    public override bool IsElementalAttackEffect => true;
+    public override bool IsDotElementSource => false;
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
     {
-        DamageType = damageType;
-        DamageMultiplier = damageMultiplier;
-    }
+        // 1. Accuracy Check
+        if (Random.Range(0f, 100f) > Accuracy)
+        {
+            target.ShowDamage(0, Color.white);
+            return false;
+        }
 
-    public override void Execute(Entity caster, Entity target)
-    {
-        Debug.Log(caster.gameObject.name + " used " + DamageType + " DamageEffect on " + target.gameObject.name);
+        // 2. Base Damage Calculation with +- 15% variance
+        float variance = Random.Range(0.85f, 1.15f);
+        float finalDamage = BaseDamage * variance;
 
-        StatType scalingStat = Utils.GetScalingStat(statScale);
-        float baseStat = caster.GetStat(scalingStat);
+        // 3. Critical Hit Check
+        bool isCrit = Random.Range(0f, 100f) <= CriticalHitChance;
+        if (isCrit)
+        {
+            finalDamage *= 1.5f;
+        }
 
-        float damageMultiplierStat = 0f;
-        StatType multiplierStatType = Utils.GetDamageMultiplierStat(DamageType);
-        if (multiplierStatType != StatType.None)
-            damageMultiplierStat = caster.GetStat(multiplierStatType);
+        // ใน DamageEffect.cs
+        if (target is PuzzleBossCombat puzzleBoss)
+        {
+            finalDamage *= puzzleBoss.GetVulnerabilityMultiplier();
+        }
 
-        float finalDamage =
-            DamageMultiplier *
-            baseStat *
-            (1 + damageMultiplierStat);
-        Debug.Log($"Base Stat: {baseStat}, Damage Multiplier: {DamageMultiplier}, Damage Multiplier Stat: {damageMultiplierStat}, Final Damage before crit: {finalDamage}");
-
-        Damage damage = new Damage(DamageType, finalDamage);
+        Damage damage = new Damage(finalDamage, Element, isCrit);
         DamageCtx ctx = new DamageCtx(caster, target, damage);
-        DamageSystem.Process(ctx);
+        DamageSystem.Process(ctx, log);
+        return true;
     }
 }

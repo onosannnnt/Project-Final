@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7401980dc50a04460a7ba2d9ba0a542f, type: 3}
   m_Name: RacoonStat
   m_EditorClassIdentifier: 
-  entityName: Raccoon
+  EntityName: Raccoon
   Icon: {fileID: -1102573834, guid: 1281f6e90a34745d6b62e3a9fecdd0c1, type: 3}
-  Level: 1
-  ExperiencePoints: 0
-  Strength: 0
-  Intelligence: 0
-  Agility: 0
-  MaxHealth: 100
-  MaxSkillPoint: 100
-  MaxSkillSlot: 3
-  PhysicalAttack: 10
-  MagicAttack: 0
-  FireDamageMultiplier: 0
-  ColdDamageMultiplier: 0
-  LightningDamageMultiplier: 0
-  Armour: 0
-  FireResistance: 0
-  ColdResistance: 0
-  LightningResistance: 0
+  MaxHealth: 800
+  MaxSkillPoint: 500
+  MaxBreakArmor: 3
   ActionSpeed: 20
-  CriticalHitChance: 0.3
-  CriticalHitDamageMultiplier: 1.5
-  Accuracy: 1000
-  EvasionRate: 0
-  StatusEffectResistance: 0
-  StatusHitChance: 0

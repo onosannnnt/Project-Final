@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3f7db84748b437448ef8a451a0a8e9c, type: 3}
+  m_Name: TurnStartStackGainBuff
+  m_EditorClassIdentifier: 
+  BuffName: Photosynthesis
+  Description: Gain 3 Frenzy Stacks at the start of turn
+  Icon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}
+  buffType: 0
+  isPermanent: 0
+  Duration: 3
+  isStackable: 0
+  MaxStack: 0
+  StackCalculationType: 0
+  Threshold: 0
+  DiminishingReturnDecayFactor: 0
+  targetType: 0
+  modifiers: []
+  preventLethalDamage: 0
+  BuffToGain: {fileID: 11400000, guid: 3d5cae4c40374de4885c1e1a820a5eeb, type: 2}
+  StacksPerTurn: 3

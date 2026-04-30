@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c46aedc9ed1084bb3abe687953decc10, type: 3}
   m_Name: PhyDmg
   m_EditorClassIdentifier: 
-  DamageType: 0
-  DamageMultiplier: 0.6
-  statScale: 0
+  BaseDamage: 45
+  Element: 0
+  Accuracy: 100
+  CriticalHitChance: 5

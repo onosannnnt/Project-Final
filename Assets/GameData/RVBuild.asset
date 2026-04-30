@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd9b8911206b0432e81c1a44d12d2bf0, type: 3}
+  m_Name: RVBuild
+  m_EditorClassIdentifier: 
+  buildName: 
+  buildIcon: {fileID: 0}
+  buildDescription: 
+  starterSkills:
+  - {fileID: 11400000, guid: 25ff8610d4d945d4fa36703e5a504cff, type: 2}
+  - {fileID: 11400000, guid: 960ab9b50c23d4b80aa308ff09c2cc5e, type: 2}
+  - {fileID: 11400000, guid: 2bbf253faab41468f974deef9e5586d7, type: 2}
+  - {fileID: 11400000, guid: 86b6d2d6369ea9640be32041f5d08a49, type: 2}
+  - {fileID: 11400000, guid: 722595add0b174647aea6ea04c50e891, type: 2}
+  - {fileID: 11400000, guid: 4e97e858d89a4604d9e586ff7865a25b, type: 2}

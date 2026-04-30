@@ -38,7 +38,7 @@ public class SelectedSkillDisplay : MonoBehaviour, IPointerEnterHandler, IPointe
         // ตอนนี้ skillData ไม่เป็น Null แล้ว ข้อมูลจะแสดงผลได้
         if (manager != null && manager.bubbleBoxInScene != null && skillData != null)
         {
-            manager.bubbleTextInScene.text = skillData.description;
+            manager.bubbleTextInScene.text = skillData.GetTooltipDescription();
             manager.bubbleBoxInScene.transform.position = transform.position - offset;
             manager.bubbleBoxInScene.SetActive(true);
         }

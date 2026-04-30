@@ -10,12 +10,47 @@ public class SkillManager
         this.owner = owner;
     }
 
-    public void UseSkill(Skill skill, Entity target)
+    public void UseSkill(Skill skill, Entity target, CombatActionLog log, bool allowWindSpread = true)
     {
-        Debug.Log(owner.gameObject.name + " is using skill: " + skill.skillName + " on " + target.gameObject.name);
+        // // Debug.Log(owner.gameObject.name + " is using skill: " + skill.skillName + " on " + target.gameObject.name);
         if (skill == null || target == null) return;
-        skill.Execute(owner, target);
-        Debug.Log(owner.gameObject.name + " has " + owner.CurrentHealth + " HP and " + owner.CurrentSP + " SP after using skill: " + skill.skillName);
+
+        EnemyCombat enemyContext = target as EnemyCombat;
+        if (enemyContext != null)
+        {
+            enemyContext.BeginIncomingSkillDamageContext(allowWindSpread);
+        }
+
+        try
+        {
+            bool skillHit = skill.Execute(owner, target, log);
+            DamageElement breakElement = skill.GetElement();
+
+            // --- Break Mechanic ---
+            if (skillHit && owner is PlayerEntity && target is EnemyCombat enemyTarget && skill.reducesArmor)
+            {
+                if (skill.TargetType == TargetType.Enemy)
+                {
+                    if (skill.TargetCount == TargetCount.Single)
+                    {
+                        enemyTarget.ReduceArmor(2, breakElement);
+                    }
+                    else if (skill.TargetCount == TargetCount.All)
+                    {
+                        enemyTarget.ReduceArmor(1, breakElement);
+                    }
+                }
+            }
+        }
+        finally
+        {
+            if (enemyContext != null)
+            {
+                enemyContext.EndIncomingSkillDamageContext();
+            }
+        }
+
+        // // Debug.Log(owner.gameObject.name + " has " + owner.CurrentHealth + " HP and " + owner.CurrentSP + " SP after using skill: " + skill.skillName);
     }
     public List<Skill> GetSkills()
     {

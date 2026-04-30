@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Collections;
 
 public class InventoryTabController : MonoBehaviour
 {
@@ -31,7 +32,10 @@ public class InventoryTabController : MonoBehaviour
         // 1. จัดการปุ่ม Esc (ปิดอย่างเดียวตามโค้ดล่าสุดของคุณ)
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (inventoryUI != null) inventoryUI.SetActive(false);
+            if (inventoryUI != null && inventoryUI.activeSelf)
+            {
+                CloseInventoryFromButton();
+            }
             return;
         }
 
@@ -50,13 +54,24 @@ public class InventoryTabController : MonoBehaviour
     public void OpenInventory(int index)
     {
         // ป้องกัน Error: เช็คว่า Index อยู่ในขอบเขตและตัวแปรไม่เป็น Null
-        if (index < 0 || index >= allTabs.Count || inventoryUI == null || allTabs[index].panel == null) 
+        if (index < 0 || index >= allTabs.Count || inventoryUI == null || allTabs[index].panel == null)
         {
             Debug.LogWarning("ตรวจเช็ค Inspector: อาจจะลืมลาก Panel หรือตั้งค่า Index ผิด");
             return;
         }
-            inventoryUI.SetActive(true);
-            ShowTab(index);
+        inventoryUI.SetActive(true);
+        GameInput.SetInputLock(true);
+        ShowTab(index);
+    }
+
+    // For UI Button OnClick() close action
+    public void CloseInventoryFromButton()
+    {
+        if (inventoryUI != null)
+        {
+            inventoryUI.SetActive(false);
+            GameInput.SetInputLock(false);
+        }
     }
 
     public void ShowTab(int index)
@@ -73,6 +88,7 @@ public class InventoryTabController : MonoBehaviour
         // log loadout ตอนเข้าหน้า Skill
         if (allTabs[index].name == "Skill" && skillManager != null)
         {
+            skillManager.RefreshAllData();
             skillManager.LogSimpleLoadout();
         }
 

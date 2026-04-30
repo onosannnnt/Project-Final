@@ -1,53 +1,123 @@
 using UnityEngine;
 
-public class EnemyGenerator : MonoBehaviour
+public class EnemyGenerator : Singleton<EnemyGenerator>
 {
-    [SerializeField] private GameObject Enemy;
     [SerializeField] private Transform worldParent;
-    [SerializeField] private int enemy = 1;
-    void Start()
+
+    [Header("Quest/Phase Setups")]
+    public QuestEnemies[] quests;
+
+    private Vector3[] spawnPositions = new Vector3[]
     {
-        GenerateEnemy();
+        new Vector3(-2.033f, -0.941f, 0f), // ตำแหน่งที่ 1 (ซ้ายสุด)
+        new Vector3(-1.507f, -0.663f, 0f), // ตำแหน่งที่ 2 (ซ้าย)
+        new Vector3(-0.516f, 0.039f, 0f),  // ตำแหน่งที่ 3 (ขวาสุด)
+        new Vector3(-1.027f, -0.267f, 0f),  // ตำแหน่งที่ 4 (ขวา)
+        new Vector3(-1.966f, -0.031f, 0f)  // ตำแหน่งที่ 5 (กลาง)
+    };
+
+    [SerializeField] private UserData userData; // Injected globally via Inspector (ScriptableObject)
+
+    public Vector3 GetSpawnPosition(int index)
+    {
+        if (index >= 0 && index < spawnPositions.Length)
+        {
+            return spawnPositions[index];
+        }
+        return Vector3.zero; // default
     }
 
-    // private void GenerateEnemy()
-    // {
-    //     int enemyCount = Random.Range(3, enemy + 1); // Generate between 1 to enemy
-    //     if (enemyCount <= 0) return;
-    //     switch (enemyCount)
-    //     {
-    //         case 1:
-    //             Instantiate(Enemy, new Vector3(-1f, 0.6f, 0), Quaternion.Euler(0, -50, 0), worldParent);
-    //             break;
-    //         case 2:
-    //             Instantiate(Enemy, new Vector3(-1, 0.6f, -1), Quaternion.Euler(0, -50, 0), worldParent);
-    //             Instantiate(Enemy, new Vector3(-0.6f, 0.6f, 0.8f), Quaternion.Euler(0, -50, 0), worldParent);
-    //             break;
-    //         case 3:
-    //             Instantiate(Enemy, new Vector3(-2, 0.6f, 1.5f), Quaternion.Euler(0, -50, 0), worldParent);
-    //             Instantiate(Enemy, new Vector3(-1.8f, 0.6f, 0), Quaternion.Euler(0, -50, 0), worldParent);
-    //             Instantiate(Enemy, new Vector3(-1.6f, 0.6f, -1.2f), Quaternion.Euler(0, -50, 0), worldParent);
-    //             break;
-    //     }
-    // }
-    private void GenerateEnemy()
+    void Start()
     {
-        int enemyCount = Random.Range(3, enemy + 1); // Generate between 1 to enemy
-        if (enemyCount <= 0) return;
-        switch (enemyCount)
+        // แนะนำให้ลบส่วนนี้ออก แล้วให้ TurnManager เป็นคนเรียกแทนเมื่อพร้อม
+        // EnemyGenerator.Instance.GenerateInitialEnemy(); 
+        Invoke(nameof(GenerateInitialEnemy), 0.1f);
+    }
+
+    public void GenerateInitialEnemy() // เปลี่ยนเป็น public เพื่อให้ระบบอื่นเรียกได้
+    {
+        if (worldParent != null)
         {
-            case 1:
-                Instantiate(Enemy, new Vector3(-1.38f, 0.03f, -0.57f), Quaternion.Euler(0, -50, 0), worldParent);
-                break;
-            case 2:
-                Instantiate(Enemy, new Vector3(-1.38f, 0.03f, -0.57f), Quaternion.Euler(0, -50, 0), worldParent);
-                Instantiate(Enemy, new Vector3(-0.93f, 0.03f, -1.52f), Quaternion.Euler(0, -50, 0), worldParent);
-                break;
-            case 3:
-                Instantiate(Enemy, new Vector3(-1.38f, 0.03f, -0.57f), Quaternion.Euler(0, -50, 0), worldParent);
-                Instantiate(Enemy, new Vector3(-0.93f, 0.03f, -1.52f), Quaternion.Euler(0, -50, 0), worldParent);
-                Instantiate(Enemy, new Vector3(-0.91f, -0.21f, 0.72f), Quaternion.Euler(0, -50, 0), worldParent);
-                break;
+            foreach (Transform child in worldParent)
+            {
+                if (child != null && child.CompareTag("Enemy"))
+                {
+                    return;
+                }
+            }
+        }
+
+        if (TurnManager.Instance != null && TurnManager.Instance.currentWave == 1)
+        {
+            GenerateEnemy();
+        }
+    }
+
+    public QuestEnemies GetCurrentQuest()
+    {
+        if (quests == null || quests.Length == 0) return null;
+        int questIndex = 0;
+
+        if (userData != null)
+        {
+            questIndex = userData.SelectedQuestIndex;
+        }
+
+        questIndex = Mathf.Clamp(questIndex, 0, quests.Length - 1);
+        return quests[questIndex];
+    }
+
+    public void GenerateEnemy()
+    {
+        // ป้องกัน Error กรณีไม่ได้ใส่ข้อมูลใน Inspector
+        if (quests == null || quests.Length == 0)
+        {
+            Debug.LogError("[EnemyGenerator] Quests array is empty! Cannot spawn enemies.");
+            return;
+        }
+
+        int currentWave = 1;
+        int maxWave = 3;
+        int questIndex = 0;
+
+        if (TurnManager.Instance != null && userData != null)
+        {
+            questIndex = userData.SelectedQuestIndex;
+            currentWave = TurnManager.Instance.currentWave;
+            maxWave = (int)TurnManager.Instance.GetMaxWave();
+        }
+
+        questIndex = Mathf.Clamp(questIndex, 0, quests.Length - 1);
+        QuestEnemies currentQuest = quests[questIndex];
+
+        if (currentQuest.waves == null || currentQuest.waves.Length == 0)
+        {
+            Debug.LogError("[EnemyGenerator] Quest " + currentQuest.name + " has no waves defined. Cannot spawn enemies.");
+            return;
+        }
+
+        // เช็ค index wave ให้อยู่ในขอบเขต (ลดลง 1 เพราะ wave เริ่มจาก 1 แต่ index เริ่มจาก 0)
+        int waveIndex = Mathf.Clamp(currentWave - 1, 0, currentQuest.waves.Length - 1);
+        WaveConfig currentWaveConfig = currentQuest.waves[waveIndex];
+
+        Quaternion spawnRotation = Quaternion.Euler(0, 0, 0);
+
+        for (int i = 0; i < currentWaveConfig.enemies.Length; i++)
+        {
+            EnemySpawnConfig spawnConfig = currentWaveConfig.enemies[i];
+
+            if (spawnConfig.enemyPrefab == null) continue;
+
+            // บังคับเกิดตรงจุดที่กำหนด
+            int spawnIndex = Mathf.Clamp(spawnConfig.positionIndex, 0, spawnPositions.Length - 1);
+
+            GameObject newEnemy = Instantiate(spawnConfig.enemyPrefab, spawnPositions[spawnIndex], spawnRotation, worldParent);
+
+            EnemyCombat enemy = newEnemy.GetComponent<EnemyCombat>();
+            if (enemy != null)
+            {
+                enemy.SetEntityID(i + 1);
+            }
         }
     }
 }

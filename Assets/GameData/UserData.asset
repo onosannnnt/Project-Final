@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68a93d19ed5314d84a7a239a7de394af, type: 3}
+  m_Name: UserData
+  m_EditorClassIdentifier: 
+  ID: 7028
+  Username: type01
+  GamePhase: 1
+  SelectedQuestIndex: -1
+  HighestCompletedQuestIndex: -1
+  IsGameFinished: 0
+  TotalCoins: 0
+  PendingQuestCoins: 0
+  PendingRewardQuestIndex: -1
+  tutorialCoinReward: 100
+  quest1CoinReward: 200
+  quest2CoinReward: 250
+  quest3CoinReward: 0
+  playerLoadoutsToReset:
+  - {fileID: 11400000, guid: 5a526a6ae7db0422c9d63b916530c938, type: 2}
+  - {fileID: 11400000, guid: 3009cfca1047fa744ab37803320dd422, type: 2}
+  HasChosenStarterBuild: 0
+  OwnedSkills: []
+  TrialSkills: []

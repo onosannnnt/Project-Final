@@ -2,38 +2,90 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 using TMPro;
+using UnityEngine.UI;
 
 public class SkillListManager : MonoBehaviour
 {
+    [Header("Databases")]
     public List<Skill> allSkills;
-    public List<SkillSet> availableSets;
-    public List<SkillSetHandler> setHandlers = new List<SkillSetHandler>();
-    private SkillSet currentActiveSet = null;
+    public UserData userData;
 
     [Header("Prefabs & Parents")]
     public GameObject skillSlotPrefab;
     public Transform contentParent;
-    public GameObject skillSetPrefab;
-    public Transform setContentParent;
 
     [Header("Loadout Settings")]
     public GameObject selectedSkillPrefab;
-    public SelectedSlot[] selectedSlots; // ลาก 5 ช่องบนใน Scene มาใส่ที่นี่
+    public SelectedSlot[] selectedSlots;
 
     [Header("Scene References")]
     public GameObject bubbleBoxInScene;
     public TextMeshProUGUI bubbleTextInScene;
 
+    [Header("Element Test Modal")]
+    [SerializeField] private GameObject skillElementTestModal;
+    [SerializeField] private SkillElementTestConfigurator skillElementTestConfigurator;
+    [SerializeField] private bool hideElementTestModalOnStart = true;
+
     [Header("Data Saving")]
-    public SkillLoadout playerLoadout;
+    [Tooltip("Assign loadout assets in player order (index 0 = player 1, index 1 = player 2).")]
+    public SkillLoadout[] playerLoadouts;
+    [SerializeField] private int activeLoadoutIndex = 0;
+
+    [Header("Loadout Tab Colors")]
+    [SerializeField] private Image player1TabImage;
+    [SerializeField] private Image player2TabImage;
+    [SerializeField] private Color activeTabColor = new Color(0.35f, 0.75f, 1f, 1f);
+    [SerializeField] private Color inactiveTabColor = Color.white;
+
+    // void Start()
+    // {
+    //     // ล้างทุกอย่างให้เกลี้ยงตั้งแต่วินาทีแรกที่เห็น
+    //     ForceInitialCleanup();
+
+    //     GenerateSkillList();
+    //     LoadActiveLoadoutIntoSlots();
+    //     UpdateLoadoutTabVisuals();
+    //     InitializeElementTestModal();
+    // }
 
     void Start()
     {
-        // ล้างทุกอย่างให้เกลี้ยงตั้งแต่วินาทีแรกที่เห็น
-        ForceInitialCleanup();
-        
+        InitializeElementTestModal();
+    }
+    private void OnEnable()
+    {
+        // ทุกครั้งที่ GameObject นี้ถูกเปิด (SetActive(true)) ให้รีเฟรชข้อมูลใหม่
+        RefreshAllData();
+    }
+
+    private void OnDisable()
+    {
+    }
+
+    public void RefreshAllData()
+    {
+        // 1. สร้างปุ่มสกิลใหม่ทั้งหมด (มันจะไปดึงจาก userData.OwnedSkills ล่าสุด)
         GenerateSkillList();
-        GenerateSetList();
+
+        // 2. โหลด Loadout กลับเข้าไปใหม่ เพื่อให้ปุ่มที่เคยถูกเลือกไว้ แสดงสถานะว่า "กำลังใส่อยู่" ได้ถูกต้อง
+        LoadActiveLoadoutIntoSlots();
+
+        // 3. อัปเดตสี Tab
+        UpdateLoadoutTabVisuals();
+    }
+
+    private void InitializeElementTestModal()
+    {
+        if (skillElementTestModal == null)
+        {
+            return;
+        }
+
+        if (hideElementTestModalOnStart)
+        {
+            skillElementTestModal.SetActive(false);
+        }
     }
 
     void ForceInitialCleanup()
@@ -43,18 +95,67 @@ public class SkillListManager : MonoBehaviour
             if (slot != null)
             {
                 // ใช้ฟังก์ชัน Hardcode ที่เราทำไว้
-                slot.ClearSlot(); 
+                slot.ClearSlot();
             }
         }
         // บังคับ UI ให้วาดพื้นที่ว่างๆ รอไว้เลย
         Canvas.ForceUpdateCanvases();
     }
 
+    // public void GenerateSkillList()
+    // {
+    //     foreach (Transform child in contentParent) Destroy(child.gameObject);
+    //     foreach (Skill data in allSkills)
+    //     {
+    //         GameObject newSlot = Instantiate(skillSlotPrefab, contentParent);
+    //         SkillHoverHandler handler = newSlot.GetComponent<SkillHoverHandler>();
+    //         if (handler != null)
+    //         {
+    //             handler.SetupData(data);
+    //             handler.infoBox = bubbleBoxInScene;
+    //             handler.infoText = bubbleTextInScene;
+    //         }
+    //     }
+    // }
+
     public void GenerateSkillList()
     {
+        // ล้างปุ่มเก่าทิ้ง
         foreach (Transform child in contentParent) Destroy(child.gameObject);
-        foreach (Skill data in allSkills)
+
+        // เลือกลิสต์ที่จะสร้าง: รวมทั้งสกิลที่ถาวร (Owned) และสกิลชั่วคราว (Trial)
+        List<Skill> skillsToDisplay = new List<Skill>();
+        if (userData != null)
         {
+            // Add owned skills
+            if (userData.OwnedSkills != null)
+            {
+                foreach (var s in userData.OwnedSkills)
+                {
+                    if (s != null && !skillsToDisplay.Contains(s)) skillsToDisplay.Add(s);
+                }
+            }
+
+            // Add trial skills
+            if (userData.TrialSkills != null && userData.TrialSkills.Count > 0)
+            {
+                Debug.Log($"[SkillListManager] Loading {userData.TrialSkills.Count} trial skills.");
+                foreach (var s in userData.TrialSkills)
+                {
+                    if (s != null && !skillsToDisplay.Contains(s)) skillsToDisplay.Add(s);
+                }
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[SkillListManager] UserData is missing! Falling back to allSkills database.");
+            skillsToDisplay = allSkills;
+        }
+
+        foreach (Skill data in skillsToDisplay)
+        {
+            if (data == null) continue; // ป้องกันบัคถ้าในลิสต์มีช่องว่าง
+
             GameObject newSlot = Instantiate(skillSlotPrefab, contentParent);
             SkillHoverHandler handler = newSlot.GetComponent<SkillHoverHandler>();
             if (handler != null)
@@ -66,128 +167,32 @@ public class SkillListManager : MonoBehaviour
         }
     }
 
-    public void GenerateSetList()
-    {
-        if (setContentParent != null)
-            foreach (Transform child in setContentParent) Destroy(child.gameObject);
-
-        foreach (SkillSet setData in availableSets)
-        {
-            if (setData == null) continue;
-            GameObject newSetBtn = Instantiate(skillSetPrefab, setContentParent);
-            SkillSetHandler handler = newSetBtn.GetComponent<SkillSetHandler>();
-            if (handler != null)
-            {
-                handler.skillSetData = setData;
-                handler.UpdateUI();
-                RegisterSetHandler(handler);
-            }
-        }
-    }
-
-    public void SelectFullSet(SkillSetHandler handler)
-    {
-        // แทนที่จะรันโค้ดสดๆ ให้เรียกผ่าน Coroutine
-        StartCoroutine(DoSelectFullSet(handler));
-    }
-
-    IEnumerator DoSelectFullSet(SkillSetHandler handler)
-    {
-        // 1. ล้างของเก่า
-        DeselectFullSet();
-        DeselectFullSet();
-        
-        // 2. รอ 1 เฟรม (เพื่อให้ Unity ลบ Object เก่าทิ้งจาก Memory จริงๆ)
-        yield return new UnityEngine.WaitForEndOfFrame();
-        
-        // 3. ค่อยบรรจุสกิลใหม่
-        foreach (Skill s in handler.skillSetData.selectedSkills)
-        {
-            SkillHoverHandler skillUI = FindHandlerBySkill(s);
-            if (skillUI != null)
-            {
-                TrySelectSkill(skillUI, s);
-            }
-        }
-
-        DeselectFullSet(); 
-        DeselectFullSet();
-
-        // 2. รอ 1 เฟรม (เพื่อให้ Unity ลบ Object เก่าทิ้งจาก Memory จริงๆ)
-        yield return new UnityEngine.WaitForEndOfFrame();
-        
-        // 3. ค่อยบรรจุสกิลใหม่
-        foreach (Skill s in handler.skillSetData.selectedSkills)
-        {
-            SkillHoverHandler skillUI = FindHandlerBySkill(s);
-            if (skillUI != null)
-            {
-                TrySelectSkill(skillUI, s);
-            }
-        }
-        
-        ActivateSetUI(handler.skillSetData);
-        SaveLoadout();
-    }
-
-    public void DeselectFullSet()
-    {
-        foreach (Transform child in contentParent)
-        {
-            SkillHoverHandler h = child.GetComponent<SkillHoverHandler>();
-            if (h != null)
-            {
-                // บังคับ Reset เป็น false ทุกอย่าง
-                h.SetSelected(false, false); 
-                h.ApplySetVisuals(null);
-                
-                // เพิ่มบรรทัดนี้เพื่อความชัวร์ (ถ้า isSelected เป็น private ให้เปลี่ยนเป็น public)
-                h.isSelected = false; 
-            }
-        }
-        
-        // 1. คืนค่าปุ่มสกิลทั้งหมดใน List
-        foreach (Transform child in contentParent)
-        {
-            if (child == null) continue;
-            SkillHoverHandler h = child.GetComponent<SkillHoverHandler>();
-            if (h != null)
-            {
-                h.SetSelected(false, false);
-                h.ApplySetVisuals(null);
-            }
-        }
-
-        // 2. ล้าง 5 ช่องบน
-        foreach (var slot in selectedSlots)
-        {
-            if (slot != null) slot.ClearSlot();
-        }
-
-        DeactivateSetUI();
-        currentActiveSet = null;
-        SaveLoadout();
-
-        // 3. บังคับให้ UI คำนวณตำแหน่งและภาพใหม่ทันที
-        Canvas.ForceUpdateCanvases();
-    }
-
     public bool TrySelectSkill(SkillHoverHandler handler, Skill skillData)
     {
+        if (GetActiveLoadout() == null) return false;
+
+        // Check if the skill is already selected to prevent duplicates
         foreach (var slot in selectedSlots)
         {
-            // เปลี่ยนจาก isFull เป็น isOccupied ตามชื่อใหม่ใน SelectedSlot
-            if (slot != null && !slot.isOccupied) 
+            if (slot != null && slot.isOccupied && slot.skillData == skillData)
+            {
+                return false;
+            }
+        }
+
+        foreach (var slot in selectedSlots)
+        {
+            if (slot != null && !slot.isOccupied)
             {
                 slot.SetSkill(handler, selectedSkillPrefab, skillData);
-                handler.SetSelected(true); // สั่งติ๊กถูกม่วงที่ปุ่มเล็ก
+                if (handler != null) handler.SetSelected(true);
                 SaveLoadout();
                 return true;
             }
         }
         return false;
-        
-        
+
+
     }
 
     public void DeselectSkill(SkillHoverHandler handler)
@@ -197,40 +202,12 @@ public class SkillListManager : MonoBehaviour
             if (slot != null && slot.currentHandler == handler)
             {
                 slot.ClearSlot();
-                handler.SetSelected(false);
+                if (handler != null) handler.SetSelected(false);
                 SaveLoadout();
                 break;
             }
         }
     }
-
-    public void CheckForSetMatch()
-    {
-        List<Skill> currentSkills = new List<Skill>();
-        foreach (var slot in selectedSlots)
-            if (slot != null && slot.isOccupied) currentSkills.Add(slot.skillData);
-
-        foreach (var set in availableSets)
-        {
-            if (IsSetMatch(currentSkills, set.selectedSkills))
-            {
-                ActivateSetUI(set);
-                return;
-            }
-        }
-        DeactivateSetUI();
-    }
-
-    private bool IsSetMatch(List<Skill> current, List<Skill> setSkills)
-    {
-        if (current.Count != setSkills.Count) return false;
-        foreach (var s in setSkills) if (!current.Contains(s)) return false;
-        return true;
-    }
-
-    public void RegisterSetHandler(SkillSetHandler h) { if (!setHandlers.Contains(h)) setHandlers.Add(h); }
-    private void ActivateSetUI(SkillSet set) { currentActiveSet = set; foreach (var h in setHandlers) if (h != null) h.SetState(h.skillSetData == set); }
-    private void DeactivateSetUI() { currentActiveSet = null; foreach (var h in setHandlers) if (h != null) h.SetState(false); }
 
     private SkillHoverHandler FindHandlerBySkill(Skill target)
     {
@@ -244,24 +221,164 @@ public class SkillListManager : MonoBehaviour
 
     public void SaveLoadout()
     {
-        if (playerLoadout == null) return;
+        SkillLoadout activeLoadout = GetActiveLoadout();
+        if (activeLoadout == null) return;
 
         // ล้างข้อมูลเก่าใน ScriptableObject
-        playerLoadout.EquippedSkills.Clear();
+        activeLoadout.EquippedSkills.Clear();
 
         // วนลูปเช็คช่องที่เลือกอยู่แล้วเพิ่มเข้าไปใน List
         foreach (var slot in selectedSlots)
         {
             if (slot != null && slot.isOccupied && slot.skillData != null)
             {
-                playerLoadout.EquippedSkills.Add(slot.skillData);
+                activeLoadout.EquippedSkills.Add(slot.skillData);
             }
         }
-        
+
         // บันทึกสถานะ (ใช้เฉพาะใน Editor เพื่อให้ค่าไม่หายเวลาปิดเกม)
-        #if UNITY_EDITOR
-        UnityEditor.EditorUtility.SetDirty(playerLoadout);
-        #endif
+#if UNITY_EDITOR
+        UnityEditor.EditorUtility.SetDirty(activeLoadout);
+#endif
+    }
+
+    public void SetActiveLoadoutIndex(int index)
+    {
+        SaveLoadout();
+
+        if (playerLoadouts == null || playerLoadouts.Length == 0)
+        {
+            activeLoadoutIndex = 0;
+            ForceInitialCleanup();
+            return;
+        }
+
+        activeLoadoutIndex = Mathf.Clamp(index, 0, playerLoadouts.Length - 1);
+        LoadActiveLoadoutIntoSlots();
+        UpdateLoadoutTabVisuals();
+    }
+
+    public void SelectPlayer1Loadout()
+    {
+        SetActiveLoadoutIndex(0);
+    }
+
+    public void SelectPlayer2Loadout()
+    {
+        SetActiveLoadoutIndex(1);
+    }
+
+    public int GetActiveLoadoutIndex()
+    {
+        return activeLoadoutIndex;
+    }
+
+    private SkillLoadout GetActiveLoadout()
+    {
+        if (playerLoadouts == null || playerLoadouts.Length == 0) return null;
+        if (activeLoadoutIndex < 0 || activeLoadoutIndex >= playerLoadouts.Length) return null;
+        return playerLoadouts[activeLoadoutIndex];
+    }
+
+    private void LoadActiveLoadoutIntoSlots()
+    {
+        ForceInitialCleanup();
+        ResetSkillSelections();
+
+        SkillLoadout activeLoadout = GetActiveLoadout();
+        if (activeLoadout == null) return;
+
+        int slotIndex = 0;
+        foreach (var skill in activeLoadout.EquippedSkills)
+        {
+            if (skill == null) continue;
+            if (slotIndex >= selectedSlots.Length) break;
+
+            SelectedSlot targetSlot = selectedSlots[slotIndex];
+            if (targetSlot == null)
+            {
+                slotIndex++;
+                continue;
+            }
+
+            SkillHoverHandler handler = FindHandlerBySkill(skill);
+            targetSlot.SetSkill(handler, selectedSkillPrefab, skill);
+            if (handler != null)
+            {
+                handler.SetSelected(true);
+            }
+
+            slotIndex++;
+        }
+    }
+
+    private void ResetSkillSelections()
+    {
+        foreach (Transform child in contentParent)
+        {
+            SkillHoverHandler handler = child.GetComponent<SkillHoverHandler>();
+            if (handler != null)
+            {
+                handler.SetSelected(false, false);
+            }
+        }
+    }
+
+    private void UpdateLoadoutTabVisuals()
+    {
+        if (player1TabImage != null)
+        {
+            player1TabImage.color = activeLoadoutIndex == 0 ? activeTabColor : inactiveTabColor;
+        }
+
+        if (player2TabImage != null)
+        {
+            player2TabImage.color = activeLoadoutIndex == 1 ? activeTabColor : inactiveTabColor;
+        }
+    }
+
+    public void ToggleSkillElementTestModal()
+    {
+        if (skillElementTestModal == null)
+        {
+            return;
+        }
+
+        SetSkillElementTestModalVisible(!skillElementTestModal.activeSelf);
+    }
+
+    public void ShowSkillElementTestModal()
+    {
+        SetSkillElementTestModalVisible(true);
+    }
+
+    public void HideSkillElementTestModal()
+    {
+        SetSkillElementTestModalVisible(false);
+    }
+
+    public void SetSkillElementTestModalVisible(bool isVisible)
+    {
+        if (skillElementTestModal == null)
+        {
+            return;
+        }
+
+        skillElementTestModal.SetActive(isVisible);
+        if (!isVisible)
+        {
+            return;
+        }
+
+        if (skillElementTestConfigurator == null)
+        {
+            skillElementTestConfigurator = skillElementTestModal.GetComponentInChildren<SkillElementTestConfigurator>(true);
+        }
+
+        if (skillElementTestConfigurator != null)
+        {
+            skillElementTestConfigurator.RefreshOptions();
+        }
     }
 
     public void LogSimpleLoadout()
@@ -280,6 +397,6 @@ public class SkillListManager : MonoBehaviour
             }
         }
 
-        Debug.Log(loadout);
+        // // Debug.Log(loadout);
     }
 }

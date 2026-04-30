@@ -1,17 +1,18 @@
 using UnityEngine;
+using System.Collections.Generic;
 
-public enum DamageType
+public enum DamageElement
 {
+    None,
     Physical,
     Fire,
-    Cold,
+    Frost,
     Lightning,
-    Pure
+    Wind,
+    Dot
 }
 public enum StatScale
 {
-    PhysicalAttack,
-    MagicAttack,
     Health,
     SkillPoint,
     ActionSpeed
@@ -23,55 +24,49 @@ public enum DamageColor
     Red,
     Blue,
     Green,
-    Yellow
+    Yellow,
+    Violet
 }
-
+[System.Serializable]
 public class Damage
 {
-    public DamageType Type;
     public float Amount;
+    public DamageElement Element;
     public bool IsCriticalHit;
 
-    public Damage(DamageType type, float amount, bool isCriticalHit = false)
+    public Damage(float amount, DamageElement element = DamageElement.Physical, bool isCriticalHit = false)
     {
-        Type = type;
         Amount = amount;
+        Element = element;
         IsCriticalHit = isCriticalHit;
     }
 }
 public static class Utils
 {
+    private static readonly Dictionary<StatScale, StatType> ScalingStatMap = new()
+    {
+        { StatScale.Health, StatType.MaxHealth },
+        { StatScale.SkillPoint, StatType.MaxSkillPoint },
+        { StatScale.ActionSpeed, StatType.ActionSpeed }
+    };
+
+    private static readonly Dictionary<DamageElement, Color> DamageColorMap = new()
+    {
+        { DamageElement.Physical, Color.white },
+        { DamageElement.Fire, Color.red },
+        { DamageElement.Frost, Color.cyan },
+        { DamageElement.Lightning, Color.yellow },
+        { DamageElement.Wind, new Color32(0x4F, 0xFA, 0xAA, 0xFF) }, // #4ffaaa Hex for Wind
+        { DamageElement.Dot, new Color32(0xFF, 0x33, 0xFF, 0xFF) } // #FF33FF Hex for DoT
+    };
+
     public static StatType GetScalingStat(StatScale type)
     {
-        return type switch
-        {
-            StatScale.PhysicalAttack => StatType.PhysicalAttack,
-            StatScale.MagicAttack => StatType.MagicAttack,
-            StatScale.Health => StatType.MaxHealth,
-            StatScale.SkillPoint => StatType.MaxSkillPoint,
-            StatScale.ActionSpeed => StatType.ActionSpeed,
-            _ => StatType.None
-        };
+        return ScalingStatMap.TryGetValue(type, out var stat) ? stat : StatType.None;
     }
-    public static StatType GetDamageMultiplierStat(DamageType type)
+
+    public static Color GetDamageColor(DamageElement element)
     {
-        return type switch
-        {
-            DamageType.Fire => StatType.FireDamageMultiplier,
-            DamageType.Cold => StatType.ColdDamageMultiplier,
-            DamageType.Lightning => StatType.LightningDamageMultiplier,
-            _ => StatType.None
-        };
-    }
-    public static Color GetDamageColor(DamageType type)
-    {
-        return type switch
-        {
-            DamageType.Physical => Color.white,
-            DamageType.Fire => Color.red,
-            DamageType.Cold => Color.blue,
-            DamageType.Lightning => Color.yellow,
-            _ => Color.white
-        };
+        return DamageColorMap.TryGetValue(element, out var color) ? color : Color.white;
     }
 }

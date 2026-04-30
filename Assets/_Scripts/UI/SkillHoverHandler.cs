@@ -5,6 +5,7 @@ using TMPro;
 
 public class SkillHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
+    [Header("UI References")]
     private Image bgImage;
     private Sprite originalBGSprite;
     private Image checkmarkImage;
@@ -14,6 +15,17 @@ public class SkillHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerEx
     public GameObject selectedBG;   
     public Image buttonIconImage;    
     public TextMeshProUGUI skillNameText;
+
+    [Header("Element Icon")]
+    public Image elementIconImage;
+    public Sprite noneElementSprite;
+    public Sprite physicalElementSprite;
+    public Sprite fireElementSprite;
+    public Sprite frostElementSprite;
+    public Sprite lightningElementSprite;
+    public Sprite windElementSprite;
+    public Sprite dotElementSprite;
+    [SerializeField] private bool hideElementIconWhenMissingSprite = true;
 
     [Header("Checkmark Settings")]
     public Sprite unselectedCheckmark; // ติ๊กถูกเทา
@@ -46,8 +58,48 @@ public class SkillHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerEx
     {
         skillData = data;
         if (buttonIconImage != null) buttonIconImage.sprite = data.skillIcon; 
-        skillDescription = data.description;
+        skillDescription = data.GetTooltipDescription();
         if (skillNameText != null) skillNameText.text = data.skillName;
+        ApplyElementIcon(data.GetElement());
+    }
+
+    private void ApplyElementIcon(DamageElement element)
+    {
+        if (elementIconImage == null)
+        {
+            return;
+        }
+
+        Sprite targetSprite = GetElementSprite(element);
+        if (targetSprite == null && hideElementIconWhenMissingSprite)
+        {
+            elementIconImage.gameObject.SetActive(false);
+            return;
+        }
+
+        elementIconImage.gameObject.SetActive(true);
+        elementIconImage.sprite = targetSprite;
+    }
+
+    private Sprite GetElementSprite(DamageElement element)
+    {
+        switch (element)
+        {
+            case DamageElement.Physical:
+                return physicalElementSprite;
+            case DamageElement.Fire:
+                return fireElementSprite;
+            case DamageElement.Frost:
+                return frostElementSprite;
+            case DamageElement.Lightning:
+                return lightningElementSprite;
+            case DamageElement.Wind:
+                return windElementSprite;
+            case DamageElement.Dot:
+                return dotElementSprite;
+            default:
+                return noneElementSprite;
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -88,7 +140,6 @@ public class SkillHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerEx
         if (triggerCheck) 
         {
             SkillListManager manager = Object.FindFirstObjectByType<SkillListManager>();
-            if (manager != null) manager.CheckForSetMatch();
         }
     }
 
@@ -97,14 +148,6 @@ public class SkillHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerEx
         if (checkmarkImage == null) return;
         checkmarkImage.sprite = isSelected ? selectedCheckmark : unselectedCheckmark;
         if (selectedBG != null) selectedBG.SetActive(true); 
-    }
-
-    public void ApplySetVisuals(SkillSet set)
-    {
-        if (bgImage == null) bgImage = GetComponent<Image>();
-        if (bgImage == null) return;
-
-        bgImage.sprite = (set == null) ? originalBGSprite : set.setSelectedBG;
     }
 
     void OnDisable()
