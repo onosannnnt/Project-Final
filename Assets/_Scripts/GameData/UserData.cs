@@ -256,7 +256,7 @@ public class UserData : ScriptableObject
         }
 
         earnedCoins = GetQuestCoinReward(questIndex);
-        AddPendingQuestCoins(earnedCoins, questIndex);
+        AddCoins(earnedCoins);
 
         // Remove trial skills if tutorial is completed
         if (questIndex == TutorialQuestIndex)

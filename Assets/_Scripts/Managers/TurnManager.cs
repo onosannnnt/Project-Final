@@ -471,7 +471,7 @@ public class TurnManager : Singleton<TurnManager>
             }
             else
             {
-                Debug.Log("Quest reward pending NPC turn-in: " + earnedCoins + " coins.");
+                Debug.Log("Quest reward received: " + earnedCoins + " coins. Total coins: " + userData.TotalCoins);
 
                 if (didFinishGame)
                 {
