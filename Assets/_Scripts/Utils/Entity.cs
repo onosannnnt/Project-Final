@@ -99,7 +99,7 @@ public abstract class Entity : MonoBehaviour
             appliedDamage = Mathf.Min(appliedDamage, currentHealth - 1f);
         }
 
-        currentHealth = math.max(currentHealth - appliedDamage, 0);
+        currentHealth = Mathf.Max(Mathf.Round(currentHealth - appliedDamage), 0);
         OnHealthChanged?.Invoke(currentHealth, GetStat(StatType.MaxHealth));
         // // Debug.Log($"{gameObject.name} took {damage.Amount} damage, current health: {CurrentHealth}/{GetStat(StatType.MaxHealth)}");
         ShowDamage((int)appliedDamage, Utils.GetDamageColor(damage.Element), damage.IsCriticalHit);
@@ -132,7 +132,7 @@ public abstract class Entity : MonoBehaviour
             return;
         }
 
-        currentHealth = Mathf.Min(currentHealth + amount, GetStat(StatType.MaxHealth));
+        currentHealth = Mathf.Min(Mathf.Round(currentHealth + amount), GetStat(StatType.MaxHealth));
         TriggerHealthChanged();
         ShowDamage((int)amount, Color.green);
     }

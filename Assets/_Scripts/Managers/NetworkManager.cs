@@ -19,6 +19,8 @@ public class CombatIdResponse
 
 public class NetworkManager : SingletonPersistent<NetworkManager>
 {
+    public UserData userData;
+    public SkillLoadout[] playerLoadouts;
     private static readonly HttpClient client = new HttpClient();
 
     public static async Task<UserResponse> SavePlayerData(object data)

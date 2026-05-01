@@ -21,8 +21,9 @@ public class StarterPanelUI : MonoBehaviour
 
     private void Start()
     {
-        // Condition: Only open if build not chosen AND no quests completed (-1)
-        if (userData != null && !userData.HasChosenStarterBuild && userData.HighestCompletedQuestIndex == -1)
+        // Condition: Only open if build not yet chosen.
+        // Once chosen, it stays chosen even if tutorial is failed/exited.
+        if (userData != null && !userData.HasChosenStarterBuild)
         {
             OpenStarterPanel();
         }

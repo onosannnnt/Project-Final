@@ -66,7 +66,7 @@ public class StatInfoUI : MonoBehaviour
     {
         if (BuffCardPrefab == null || BuffTransform == null || DebuffTransform == null) return;
         Buffs = Entity.buffController.GetBuffs();
-        
+
         Debuffs = new List<ActiveBuff>();
         Debuffs.AddRange(Entity.buffController.GetDebuffs());
         Debuffs.AddRange(Entity.buffController.GetBuffsByType(BuffType.CrowdControl));
@@ -116,7 +116,7 @@ public class StatInfoUI : MonoBehaviour
         float healthRatio = (float)Entity.CurrentHealth / Entity.GetStat(StatType.MaxHealth);
         HealthbarFG.rectTransform.sizeDelta = new Vector2(maxWitdthHealthbar * healthRatio, HealthbarFG.rectTransform.sizeDelta.y);
 
-        HealthText.text = $"{Entity.CurrentHealth} / {Entity.GetStat(StatType.MaxHealth)}";
+        HealthText.text = $"{(int)Entity.CurrentHealth} / {(int)Entity.GetStat(StatType.MaxHealth)}";
     }
     private void SetupSkillPointBar()
     {
@@ -130,7 +130,7 @@ public class StatInfoUI : MonoBehaviour
         }
 
         SkillPointBarFG.transform.parent.gameObject.SetActive(true);
-        
+
         int currentSP = Entity.CurrentSP;
         int maxSP = (int)Entity.GetStat(StatType.MaxSkillPoint);
 
@@ -154,11 +154,11 @@ public class StatInfoUI : MonoBehaviour
             Destroy(child.gameObject);
         }
         if (Entity == null) return;
-        
+
         List<ActiveBuff> statusBuffs = new List<ActiveBuff>();
         statusBuffs.AddRange(Entity.buffController.GetBuffsByType(BuffType.CrowdControl));
         statusBuffs.AddRange(Entity.buffController.GetBuffsByType(BuffType.Debuff));
-        
+
         if (statusBuffs.Count == 0) StatusBuffParent.gameObject.SetActive(false);
         else StatusBuffParent.gameObject.SetActive(true);
         if (statusBuffs.Count == 0) return;

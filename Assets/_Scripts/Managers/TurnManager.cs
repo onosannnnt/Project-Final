@@ -10,6 +10,7 @@ public class TurnManager : Singleton<TurnManager>
     [SerializeField] private ActionQueueUI EnemyActionQueueUI;
     [Header("Phase Information")]
     [SerializeField] private UserData userData;
+    public UserData UserData => userData;
 
     private CombatLogger combatLogger;
     private CombatActionProcessor actionProcessor;

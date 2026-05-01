@@ -392,7 +392,7 @@ public class EnemyCombat : Entity
         if (activePlayer == null) return;
         if (activePlayer.GetPlayerState != PlayerActionState.Targeting) return;
         if (activePlayer.GetSelectedSkill == null) return;
-        if (activePlayer.GetSelectedSkill.TargetType == TargetType.Self) return;
+        if (activePlayer.GetSelectedSkill.TargetType != TargetType.Enemy) return;
         
         if (activePlayer.GetEnemyTarget() == this)
         {
@@ -424,13 +424,6 @@ public class EnemyCombat : Entity
         {
             bool isHighlighted = color != Color.white;
             targetIndicator.SetActive(isHighlighted);
-            
-            if (isHighlighted)
-            {
-                // Apply the highlight color (Red/Yellow) to the indicator instead of the character
-                SpriteRenderer indicatorSR = targetIndicator.GetComponent<SpriteRenderer>();
-                if (indicatorSR != null) indicatorSR.color = color;
-            }
         }
     }
 }
