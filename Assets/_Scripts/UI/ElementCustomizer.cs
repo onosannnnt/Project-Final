@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SkillElementTestConfigurator : MonoBehaviour
+public class ElementCustomizer : MonoBehaviour
 {
     [Serializable]
     private class ElementButtonRuntime
@@ -164,18 +164,36 @@ public class SkillElementTestConfigurator : MonoBehaviour
     {
         availableSkills.Clear();
 
-        if (skillListManager != null && skillListManager.allSkills != null)
+        if (skillListManager != null && skillListManager.userData != null)
         {
-            for (int i = 0; i < skillListManager.allSkills.Count; i++)
+            UserData userData = skillListManager.userData;
+
+            // Add owned skills
+            if (userData.OwnedSkills != null)
             {
-                Skill skill = skillListManager.allSkills[i];
-                if (skill != null && !availableSkills.Contains(skill))
+                foreach (Skill skill in userData.OwnedSkills)
                 {
-                    availableSkills.Add(skill);
+                    if (skill != null && !availableSkills.Contains(skill))
+                    {
+                        availableSkills.Add(skill);
+                    }
+                }
+            }
+
+            // Add trial skills
+            if (userData.TrialSkills != null)
+            {
+                foreach (Skill skill in userData.TrialSkills)
+                {
+                    if (skill != null && !availableSkills.Contains(skill))
+                    {
+                        availableSkills.Add(skill);
+                    }
                 }
             }
         }
 
+        // Fallback skills (optional, typically used for testing or specific design needs)
         for (int i = 0; i < fallbackSkills.Count; i++)
         {
             Skill skill = fallbackSkills[i];
@@ -184,7 +202,6 @@ public class SkillElementTestConfigurator : MonoBehaviour
                 availableSkills.Add(skill);
             }
         }
-
     }
 
     private void RebuildElementOptions()
