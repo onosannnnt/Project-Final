@@ -10,6 +10,10 @@ public class Movement : MonoBehaviour
     [SerializeField] private GameInput gameInput;
     [SerializeField] private GameObject PlayerVisual;
 
+    [Header("Movement Configuration")]
+    [SerializeField] private bool invertX = false;
+    [SerializeField] private bool invertY = false;
+
     private bool isWalking;
 
     public LayerMask terrainLayer;
@@ -52,6 +56,9 @@ public class Movement : MonoBehaviour
         {
             inputVector = gameInput.GetMovementVectorNormalized();
         }
+
+        if (invertX) inputVector.x *= -1;
+        if (invertY) inputVector.y *= -1;
         
         Vector3 moveDir = new Vector3(inputVector.x, 0, inputVector.y);
         rb.velocity = moveDir * moveSpeed;

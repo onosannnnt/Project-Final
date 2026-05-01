@@ -5,6 +5,7 @@ public class GameInput : MonoBehaviour
 {
     private PlayerInputActions playerInputActions;
     public static bool IsInputLocked { get; private set; }
+    public static bool InputUnlockedThisFrame { get; private set; }
 
     void Awake()
     {
@@ -16,8 +17,17 @@ public class GameInput : MonoBehaviour
         playerInputActions.Disable();
     }
 
+    private void LateUpdate()
+    {
+        InputUnlockedThisFrame = false;
+    }
+
     public static void SetInputLock(bool isLocked)
     {
+        if (IsInputLocked && !isLocked)
+        {
+            InputUnlockedThisFrame = true;
+        }
         IsInputLocked = isLocked;
     }
 

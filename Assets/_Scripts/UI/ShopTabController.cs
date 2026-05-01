@@ -151,6 +151,14 @@ public class ShopTabController : MonoBehaviour
         SelectTab("All");
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            gameObject.SetActive(false);
+        }
+    }
+
     public void GenerateShop()
     {
         // ล้างข้อมูลเก่า

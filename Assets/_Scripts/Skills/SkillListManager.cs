@@ -24,7 +24,7 @@ public class SkillListManager : MonoBehaviour
 
     [Header("Element Test Modal")]
     [SerializeField] private GameObject skillElementTestModal;
-    [SerializeField] private SkillElementTestConfigurator skillElementTestConfigurator;
+    [SerializeField] private ElementCustomizer skillElementTestConfigurator;
     [SerializeField] private bool hideElementTestModalOnStart = true;
 
     [Header("Data Saving")]
@@ -372,7 +372,7 @@ public class SkillListManager : MonoBehaviour
 
         if (skillElementTestConfigurator == null)
         {
-            skillElementTestConfigurator = skillElementTestModal.GetComponentInChildren<SkillElementTestConfigurator>(true);
+            skillElementTestConfigurator = skillElementTestModal.GetComponentInChildren<ElementCustomizer>(true);
         }
 
         if (skillElementTestConfigurator != null)

@@ -47,6 +47,9 @@ public class UserData : ScriptableObject
     public bool HasChosenStarterBuild;
 
     [Header("Player Skills")]
+    [Tooltip("สกิลพื้นฐานที่ผู้เล่นต้องมีเสมอ (เช่น โจมตีปกติ)")]
+    public Skill DefaultSkill;
+
     [Tooltip("รายชื่อสกิลที่ผู้เล่นซื้อหรือปลดล็อคแล้ว")]
     public List<Skill> OwnedSkills = new List<Skill>();
 
@@ -56,12 +59,16 @@ public class UserData : ScriptableObject
     // เช็คว่ามีสกิลนี้หรือยัง
     public bool HasSkill(Skill skill)
     {
+        if (skill == null) return false;
+        // DefaultSkill is always "owned" but doesn't live in the OwnedSkills list
+        if (skill == DefaultSkill) return true; 
         return OwnedSkills.Contains(skill) || TrialSkills.Contains(skill);
     }
 
     // เพิ่มสกิลเข้าตัวผู้เล่น
     public void UnlockSkill(Skill skill)
     {
+        if (skill == null || skill == DefaultSkill) return;
         if (!OwnedSkills.Contains(skill))
         {
             OwnedSkills.Add(skill);
@@ -194,6 +201,19 @@ public class UserData : ScriptableObject
 
     public bool TrySetSelectedQuest(int questIndex)
     {
+        // If it's already selected, success (no change needed)
+        if (SelectedQuestIndex == questIndex)
+        {
+            return true;
+        }
+
+        // If another quest is already selected, we shouldn't overwrite it directly 
+        // to prevent potential logic issues (player should complete or clear first)
+        if (HasSelectedQuest())
+        {
+            return false;
+        }
+
         if (!CanStartQuest(questIndex))
         {
             return false;
@@ -256,7 +276,7 @@ public class UserData : ScriptableObject
         }
 
         earnedCoins = GetQuestCoinReward(questIndex);
-        AddPendingQuestCoins(earnedCoins, questIndex);
+        AddCoins(earnedCoins);
 
         // Remove trial skills if tutorial is completed
         if (questIndex == TutorialQuestIndex)
@@ -383,6 +403,16 @@ public class UserData : ScriptableObject
             return "Quest index is out of range.";
         }
 
+        if (SelectedQuestIndex == questIndex)
+        {
+            return "Quest is already active.";
+        }
+
+        if (HasSelectedQuest())
+        {
+            return "Another quest is already in progress. Complete it first.";
+        }
+
         if (IsQuestCompleted(questIndex))
         {
             return "Quest is already completed and cannot be replayed.";
@@ -390,9 +420,9 @@ public class UserData : ScriptableObject
 
         if (!IsQuestUnlocked(questIndex))
         {
-            return "Quest is locked. Complete the current quest first.";
+            return "Quest is locked. Complete the previous quest first.";
         }
 
-        return string.Empty;
+        return "Unknown reason.";
     }
 }

@@ -35,8 +35,8 @@ public class InventoryTabController : MonoBehaviour
             if (inventoryUI != null && inventoryUI.activeSelf)
             {
                 CloseInventoryFromButton();
+                return;
             }
-            return;
         }
 
         // 2. เช็คปุ่มลัดอื่นๆ

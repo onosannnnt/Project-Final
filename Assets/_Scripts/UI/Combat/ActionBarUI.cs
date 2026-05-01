@@ -8,6 +8,7 @@ public class ActionBarUI : Singleton<ActionBarUI>
     [FormerlySerializedAs("InventoryButton")]
     [SerializeField] private Button BasicAttackButton;
     [SerializeField] private Skill basicAttackSkill;
+    [SerializeField] private Button EscapeButton;
     
     [Header("Anchor Slot Position (Preferred)")]
     [Tooltip("If enabled, panel snaps to the anchor assigned for active player index.")]
@@ -46,6 +47,7 @@ public class ActionBarUI : Singleton<ActionBarUI>
         {
             UpdatePanelPosition();
             UpdateBasicAttackInteractable();
+            UpdateEscapeButtonVisibility();
             lastActivePlayer = activePlayer;
         }
         
@@ -62,6 +64,27 @@ public class ActionBarUI : Singleton<ActionBarUI>
         lastActivePlayer = TurnManager.Instance != null ? TurnManager.Instance.CurrentActivePlayer : null;
         UpdatePanelPosition();
         UpdateBasicAttackInteractable();
+        UpdateEscapeButtonVisibility();
+    }
+
+    private void UpdateEscapeButtonVisibility()
+    {
+        if (EscapeButton == null) return;
+
+        // Hide escape button during tutorial
+        if (TurnManager.Instance != null && TurnManager.Instance.currentWave == 1 && 
+            PlayerTeamManager.Instance != null)
+        {
+             // Check if we are in tutorial quest via UserData
+             UserData userData = TurnManager.Instance != null ? TurnManager.Instance.UserData : null;
+             if (userData != null && userData.SelectedQuestIndex == UserData.TutorialQuestIndex)
+             {
+                 EscapeButton.gameObject.SetActive(false);
+                 return;
+             }
+        }
+        
+        EscapeButton.gameObject.SetActive(true);
     }
 
     private void UpdateBasicAttackInteractable()
@@ -182,6 +205,19 @@ public class ActionBarUI : Singleton<ActionBarUI>
                 activePlayer.SetPlayerState(PlayerActionState.Targeting);
                 // Don't hide ActionPanel (ActionBarUI) when targeting basic attack
                 // gameObject.SetActive(false); 
+            });
+        }
+
+        if (EscapeButton != null)
+        {
+            EscapeButton.onClick.AddListener(() =>
+            {
+                UserData userData = TurnManager.Instance != null ? TurnManager.Instance.UserData : null;
+                if (userData != null)
+                {
+                    userData.ClearSelectedQuest();
+                }
+                Loader.Load(Loader.Scenes.Overworld);
             });
         }
 

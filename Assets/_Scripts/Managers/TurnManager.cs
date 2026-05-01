@@ -10,6 +10,7 @@ public class TurnManager : Singleton<TurnManager>
     [SerializeField] private ActionQueueUI EnemyActionQueueUI;
     [Header("Phase Information")]
     [SerializeField] private UserData userData;
+    public UserData UserData => userData;
 
     private CombatLogger combatLogger;
     private CombatActionProcessor actionProcessor;
@@ -471,7 +472,7 @@ public class TurnManager : Singleton<TurnManager>
             }
             else
             {
-                Debug.Log("Quest reward pending NPC turn-in: " + earnedCoins + " coins.");
+                Debug.Log("Quest reward received: " + earnedCoins + " coins. Total coins: " + userData.TotalCoins);
 
                 if (didFinishGame)
                 {

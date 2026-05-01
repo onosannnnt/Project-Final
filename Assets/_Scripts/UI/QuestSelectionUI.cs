@@ -223,6 +223,17 @@ public class QuestSelectionUI : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (panelRoot != null && panelRoot.activeSelf)
+            {
+                OnCloseButtonClicked();
+            }
+        }
+    }
+
     public void RefreshQuestDetails()
     {
         for (int i = 0; i < questSlots.Count; i++)
@@ -243,18 +254,28 @@ public class QuestSelectionUI : MonoBehaviour
             }
 
             int questIndex = slot.questIndex;
-            bool canSelect = userData.CanStartQuest(questIndex);
+            bool isActive = userData.SelectedQuestIndex == questIndex;
+            bool canStart = userData.CanStartQuest(questIndex);
             bool completed = userData.IsQuestCompleted(questIndex);
+
+            // A quest is interactable if it can be started OR if it's already active (to see details)
+            bool interactable = canStart || isActive;
 
             SetSafeText(slot.questNameText, userData.GetQuestDisplayName(questIndex));
             SetSafeText(slot.rewardText, userData.GetQuestCoinReward(questIndex).ToString());
-            SetSafeText(slot.statusText, canSelect ? "Available" : (completed ? "Completed" : "Locked"));
+            
+            string status = "Locked";
+            if (completed) status = "Completed";
+            else if (isActive) status = "Active";
+            else if (canStart) status = "Available";
+            
+            SetSafeText(slot.statusText, status);
 
-            SetSlotInteractable(slot, canSelect);
+            SetSlotInteractable(slot, interactable);
             SetSlotCompletedStyle(slot, completed);
-            SetSlotColor(slot, canSelect ? slotDefaultColor : slotDisabledColor);
-            SetSlotSelectedVisible(slot, canSelect && selectedQuestIndex == questIndex);
-            SetSlotLockVisible(slot, !canSelect && !completed);
+            SetSlotColor(slot, interactable ? slotDefaultColor : slotDisabledColor);
+            SetSlotSelectedVisible(slot, interactable && selectedQuestIndex == questIndex);
+            SetSlotLockVisible(slot, !interactable && !completed);
         }
     }
 
@@ -267,7 +288,34 @@ public class QuestSelectionUI : MonoBehaviour
         GameInput.SetInputLock(true);
 
         RefreshQuestDetails();
-        ClearSelection();
+
+        // Auto-select the active quest if there is one
+        if (userData != null && userData.HasSelectedQuest())
+        {
+            int activeQuestIndex = userData.SelectedQuestIndex;
+            int slotIndex = -1;
+            for (int i = 0; i < questSlots.Count; i++)
+            {
+                if (questSlots[i].questIndex == activeQuestIndex)
+                {
+                    slotIndex = i;
+                    break;
+                }
+            }
+
+            if (slotIndex >= 0)
+            {
+                OnQuestSlotClicked(slotIndex);
+            }
+            else
+            {
+                ClearSelection();
+            }
+        }
+        else
+        {
+            ClearSelection();
+        }
     }
 
     public void OnCloseButtonClicked()
@@ -289,13 +337,14 @@ public class QuestSelectionUI : MonoBehaviour
         }
 
         int questIndex = questSlots[slotIndex].questIndex;
-        if (!userData.CanStartQuest(questIndex))
+        bool isActive = userData.SelectedQuestIndex == questIndex;
+        if (!userData.CanStartQuest(questIndex) && !isActive)
         {
             return;
         }
 
         selectedQuestIndex = questIndex;
-        SetAcceptButtonState(true);
+        SetAcceptButtonState(!isActive, isActive ? "Accepted" : "Accept");
         RefreshSlotSelectionVisuals();
     }
 
@@ -304,6 +353,16 @@ public class QuestSelectionUI : MonoBehaviour
         if (userData == null || selectedQuestIndex < 0)
         {
             SetAcceptButtonState(false);
+            return;
+        }
+
+        // If it's already active, we don't need to accept it again
+        if (userData.SelectedQuestIndex == selectedQuestIndex)
+        {
+            if (closePanelOnAccept)
+            {
+                OnCloseButtonClicked();
+            }
             return;
         }
 
@@ -348,13 +407,14 @@ public class QuestSelectionUI : MonoBehaviour
                 continue;
             }
 
-            bool canSelect = userData.CanStartQuest(slot.questIndex);
+            bool isActive = userData.SelectedQuestIndex == slot.questIndex;
+            bool canStart = userData.CanStartQuest(slot.questIndex);
             bool completed = userData.IsQuestCompleted(slot.questIndex);
             bool isSelected = selectedQuestIndex == slot.questIndex;
 
             SetSlotCompletedStyle(slot, completed);
 
-            if (!canSelect)
+            if (!canStart && !isActive)
             {
                 SetSlotColor(slot, slotDisabledColor);
                 SetSlotSelectedVisible(slot, false);
@@ -379,7 +439,7 @@ public class QuestSelectionUI : MonoBehaviour
         }
     }
 
-    private void SetAcceptButtonState(bool enabled)
+    private void SetAcceptButtonState(bool enabled, string text = "Accept")
     {
         if (acceptButton != null)
         {
@@ -394,6 +454,7 @@ public class QuestSelectionUI : MonoBehaviour
         if (acceptButtonText != null)
         {
             acceptButtonText.color = enabled ? acceptEnabledTextColor : acceptDisabledTextColor;
+            acceptButtonText.text = text;
         }
     }
 

@@ -165,12 +165,26 @@ public class SkillShopItem : MonoBehaviour
             }
 
             // ==========================================
-            // 2. เพิ่มโค้ดส่วนนี้ เพื่อสั่งให้หน้าสกิลรีเฟรชทันที!
+            // 2. สั่งให้หน้าสกิลรีเฟรชข้อมูล (หาแบบรวมที่ปิดอยู่ด้วย)
             // ==========================================
-            SkillListManager skillManager = FindFirstObjectByType<SkillListManager>(FindObjectsInactive.Include);
-            if (skillManager != null)
+            SkillListManager[] allManagers = Resources.FindObjectsOfTypeAll<SkillListManager>();
+            foreach (var manager in allManagers)
             {
-                skillManager.RefreshAllData();
+                // ตรวจสอบว่าเป็น Object ใน Scene จริงๆ ไม่ใช่ Prefab ใน Project
+                if (manager.gameObject.scene.name != null)
+                {
+                    manager.RefreshAllData();
+                }
+            }
+
+            // 3. สั่งให้ ElementShop (ElementCustomizer) รีเฟรช Dropdown
+            ElementCustomizer[] allCustomizers = Resources.FindObjectsOfTypeAll<ElementCustomizer>();
+            foreach (var customizer in allCustomizers)
+            {
+                if (customizer.gameObject.scene.name != null)
+                {
+                    customizer.RefreshOptions();
+                }
             }
             // ==========================================
         }
