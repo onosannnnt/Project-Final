@@ -212,12 +212,20 @@ public class ActionBarUI : Singleton<ActionBarUI>
         {
             EscapeButton.onClick.AddListener(() =>
             {
-                UserData userData = TurnManager.Instance != null ? TurnManager.Instance.UserData : null;
-                if (userData != null)
+                if (CombatEscapeUI.Instance != null)
                 {
-                    userData.ClearSelectedQuest();
+                    CombatEscapeUI.Instance.OpenPanel();
                 }
-                Loader.Load(Loader.Scenes.Overworld);
+                else
+                {
+                    // Fallback cleanup logic if the UI script is missing
+                    UserData userData = TurnManager.Instance != null ? TurnManager.Instance.UserData : null;
+                    if (userData != null)
+                    {
+                        userData.ClearSelectedQuest();
+                    }
+                    Loader.Load(Loader.Scenes.Overworld);
+                }
             });
         }
 
