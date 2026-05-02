@@ -17,6 +17,7 @@ MonoBehaviour:
   description: 
   skillIcon: {fileID: 0}
   skillType: 2
+  skillStyle: 0
   Tier: 0
   SkillPoint: 0
   TargetType: 0

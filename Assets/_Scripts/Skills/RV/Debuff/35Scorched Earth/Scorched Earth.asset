@@ -18,6 +18,7 @@ MonoBehaviour:
     for 2 turns. [SP: 60]'
   skillIcon: {fileID: 21300000, guid: ea3b8a61f4add494c84dfcffa4d9cc32, type: 3}
   skillType: 3
+  skillStyle: 1
   Tier: 2
   SkillPoint: 60
   TargetType: 2

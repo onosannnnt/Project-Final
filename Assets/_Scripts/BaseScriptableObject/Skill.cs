@@ -11,6 +11,7 @@ public class Skill : ScriptableObject
     public string description;
     public Sprite skillIcon;
     public SkillType skillType;
+    public SkillStyle skillStyle;
     public int Tier;
     [Header("Cost")]
     public int SkillPoint;

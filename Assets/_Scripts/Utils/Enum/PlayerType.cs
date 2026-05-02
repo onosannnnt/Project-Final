@@ -33,3 +33,11 @@ public enum EntityModifierType
     Outgoing
 }
 
+public enum SkillStyle
+{
+    None,
+    RV,
+    EL,
+    CE
+}
+

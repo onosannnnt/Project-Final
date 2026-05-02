@@ -1,116 +1,8 @@
-// using UnityEngine;
-// using System.Collections.Generic;
-
-// public class ShopTabController : MonoBehaviour
-// {
-//     // สร้าง Enum สำหรับ Tab ต่างๆ (รวม All เข้าไปด้วย)
-//     public enum TabType
-//     {
-//         All,
-//         Attack,
-//         Buff,
-//         Debuff,
-//         Sustain
-//     }
-
-//     // สร้าง Class สำหรับจัดกลุ่ม UI 3 ชิ้นเข้าด้วยกัน
-//     [System.Serializable]
-//     public class CategoryGroup
-//     {
-//         public TabType tabType;          // เลือกประเภท
-//         public GameObject titleObj;      // ใส่ SkillType(type)
-//         public GameObject listObj;       // ใส่ (type)List
-//         public GameObject dividerObj;    // ใส่ Divider
-//     }
-
-//     [Header("Category Settings")]
-//     // List สำหรับเก็บกลุ่ม UI ทั้งหมด
-//     public List<CategoryGroup> categoryGroups;
-
-//     [Header("Shop Generation")]
-//     public GameObject sellBoxPrefab;       // ลาก Prefab "SellBox" ที่มี SkillShopItem ติดอยู่มาใส่
-//     public List<Skill> shopSkillDatabase;  // ลาก ScriptableObject Skill ทั้งหมดที่ต้องการขายมาใส่
-
-//     private void Start()
-//     {
-//         GenerateShop();
-
-//         // เริ่มต้นมาให้โชว์หมวด All ก่อน (สามารถเปลี่ยนได้)
-//         SelectTab("All");
-//     }
-
-//     public void GenerateShop()
-//     {
-//         // ล้างข้อมูลเก่าในทุกลิสต์ก่อน (AttackList, BuffList, etc.)
-//         foreach (var group in categoryGroups)
-//         {
-//             if (group.listObj != null)
-//             {
-//                 foreach (Transform child in group.listObj.transform)
-//                     Destroy(child.gameObject);
-//             }
-//         }
-
-//         // วนลูปสร้างปุ่มสกิลตามฐานข้อมูล
-//         foreach (Skill skill in shopSkillDatabase)
-//         {
-//             // ค้นหาว่าสกิลนี้ควรไปอยู่ที่ Group ไหน (เช็คตาม SkillType)
-//             CategoryGroup targetGroup = categoryGroups.Find(g => g.tabType.ToString() == skill.skillType.ToString());
-
-//             if (targetGroup != null && targetGroup.listObj != null)
-//             {
-//                 // สร้าง SellBox Prefab ลงในลิสต์ที่ถูกต้อง
-//                 GameObject newBox = Instantiate(sellBoxPrefab, targetGroup.listObj.transform);
-
-//                 // ส่งข้อมูลสกิลเข้าไปที่สคริปต์ SkillShopItem เพื่อตั้งค่า UI และราคา
-//                 SkillShopItem itemScript = newBox.GetComponent<SkillShopItem>();
-//                 if (itemScript != null)
-//                 {
-//                     itemScript.Setup(skill);
-//                 }
-//             }
-//         }
-//     }
-
-//     // ฟังก์ชันนี้ไว้ใช้ผูกกับปุ่ม (Button OnClick)
-//     // โดยรับค่าเป็น String ชื่อ Tab เช่น "Attack", "Buff", "All"
-//     public void SelectTab(string tabName)
-//     {
-//         // แปลง String เป็น Enum TabType
-//         if (System.Enum.TryParse(tabName, true, out TabType selectedTab))
-//         {
-//             UpdateUI(selectedTab);
-//         }
-//         else
-//         {
-//             Debug.LogWarning("พิมพ์ชื่อ Tab ไม่ถูกต้อง หรือไม่มีใน Enum: " + tabName);
-//         }
-//     }
-
-//     // ระบบประมวลผลการเปิด/ปิด UI
-//     private void UpdateUI(TabType selectedTab)
-//     {
-//         // เช็คว่ากดปุ่ม All หรือไม่
-//         bool isAll = (selectedTab == TabType.All);
-
-//         // วนลูปเช็คทุกกลุ่ม
-//         foreach (var group in categoryGroups)
-//         {
-//             // เงื่อนไข: ให้ Active ก็ต่อเมื่อ กดปุ่ม All หรือ TabType ตรงกับที่เลือก
-//             bool shouldBeActive = isAll || (group.tabType == selectedTab);
-
-//             // สั่ง เปิด/ปิด
-//             if (group.titleObj != null) group.titleObj.SetActive(shouldBeActive);
-//             if (group.listObj != null) group.listObj.SetActive(shouldBeActive);
-//             if (group.dividerObj != null) group.dividerObj.SetActive(shouldBeActive);
-//         }
-//     }
-// }
-
-
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq; // เพิ่มเพื่อใช้ค้นหา
+using TMPro;
 
 public class ShopTabController : MonoBehaviour
 {
@@ -125,6 +17,14 @@ public class ShopTabController : MonoBehaviour
         public GameObject dividerObj;
     }
 
+    [System.Serializable]
+    public class TabButton
+    {
+        public TabType tabType;
+        public Image buttonImage;
+        public TMP_Text buttonText;
+    }
+
     [Header("References")]
     [SerializeField] private SkillListManager skillListManager; // ลาก SkillListManager มาใส่
     [SerializeField] private GameObject sellBoxPrefab;
@@ -132,17 +32,93 @@ public class ShopTabController : MonoBehaviour
     [Header("Category Settings")]
     public List<CategoryGroup> categoryGroups;
 
+    [Header("Tab Visual Settings")]
+    public List<TabButton> tabButtons;
+    public Color activeImageColor = Color.white;
+    public Color inactiveImageColor = Color.gray;
+    public Color activeTextColor = Color.black;
+    public Color inactiveTextColor = Color.white;
+
+    [Header("UserData")]
+    [SerializeField] private UserData userData;
+
+    // ระบบ Refund ราย Session
+    private List<ShopTransaction> sessionTransactions = new List<ShopTransaction>();
+
     // เก็บรายการไอเทมทั้งหมดที่ถูกสร้างขึ้นในร้านค้า
     private List<SkillShopItem> spawnedItems = new List<SkillShopItem>();
 
     private void OnEnable()
     {
         GameInput.SetInputLock(true);
+        // เมื่อเปิดร้านค้า ให้เลือก Tab "All" เป็นค่าเริ่มต้นเสมอ
+        SelectTab("All");
     }
 
     private void OnDisable()
     {
         GameInput.SetInputLock(false);
+        // เมื่อปิดร้านค้า ให้เคลียร์รายการ Refund (Finalize transactions)
+        FinalizeTransactions();
+    }
+
+    private void FinalizeTransactions()
+    {
+        sessionTransactions.Clear();
+        RefreshAllItems();
+    }
+
+    public void RecordPurchase(Skill skill, int price, SkillShopItem uiItem)
+    {
+        sessionTransactions.Add(new ShopTransaction(skill, price, uiItem));
+    }
+
+    public bool IsSkillRefundable(Skill skill)
+    {
+        return sessionTransactions.Any(t => t.Skill == skill);
+    }
+
+    public void RefundSkill(Skill skill)
+    {
+        var transaction = sessionTransactions.FirstOrDefault(t => t.Skill == skill);
+        if (transaction != null)
+        {
+            // 1. คืนเงิน
+            if (userData != null)
+            {
+                userData.AddCoins(transaction.Price);
+                // 2. ลบสกิลออกจาก Inventory
+                userData.RemoveSkill(skill);
+            }
+
+            // 3. ลบ Transaction ออกจากลิสต์
+            sessionTransactions.Remove(transaction);
+
+            // 4. รีเฟรช UI
+            RefreshAllItems();
+            NotifyExternalManagers();
+        }
+    }
+
+    private void NotifyExternalManagers()
+    {
+        SkillListManager[] allManagers = Resources.FindObjectsOfTypeAll<SkillListManager>();
+        foreach (var manager in allManagers)
+        {
+            if (manager.gameObject.scene.name != null)
+            {
+                manager.RefreshAllData();
+            }
+        }
+
+        ElementCustomizer[] allCustomizers = Resources.FindObjectsOfTypeAll<ElementCustomizer>();
+        foreach (var customizer in allCustomizers)
+        {
+            if (customizer.gameObject.scene.name != null)
+            {
+                customizer.RefreshOptions();
+            }
+        }
     }
 
     private void Start()
@@ -205,21 +181,44 @@ public class ShopTabController : MonoBehaviour
 
     public void SelectTab(string tabName)
     {
+        Debug.Log($"[ShopTabController] SelectTab called with: {tabName}");
         if (System.Enum.TryParse(tabName, true, out TabType selectedTab))
         {
             UpdateTabVisibility(selectedTab);
+        }
+        else
+        {
+            Debug.LogError($"[ShopTabController] Invalid Tab Name: {tabName}. Make sure it matches the Enum names exactly.");
         }
     }
 
     private void UpdateTabVisibility(TabType selectedTab)
     {
         bool isAll = (selectedTab == TabType.All);
+        
+        // 1. จัดการการแสดงผลของรายการสกิลในแต่ละหมวดหมู่
         foreach (var group in categoryGroups)
         {
             bool shouldBeActive = isAll || (group.tabType == selectedTab);
             if (group.titleObj != null) group.titleObj.SetActive(shouldBeActive);
             if (group.listObj != null) group.listObj.SetActive(shouldBeActive);
             if (group.dividerObj != null) group.dividerObj.SetActive(shouldBeActive);
+        }
+
+        // 2. จัดการสีของปุ่ม Tab (Active / Inactive)
+        foreach (var button in tabButtons)
+        {
+            bool isActive = (button.tabType == selectedTab);
+            
+            if (button.buttonImage != null)
+            {
+                button.buttonImage.color = isActive ? activeImageColor : inactiveImageColor;
+            }
+
+            if (button.buttonText != null)
+            {
+                button.buttonText.color = isActive ? activeTextColor : inactiveTextColor;
+            }
         }
     }
 }

@@ -75,6 +75,35 @@ public class UserData : ScriptableObject
         }
     }
 
+    // ลบสกิลออกจากตัวผู้เล่น
+    public void RemoveSkill(Skill skill)
+    {
+        if (skill == null || skill == DefaultSkill) return;
+        
+        if (OwnedSkills.Contains(skill))
+        {
+            OwnedSkills.Remove(skill);
+
+            // เมื่อลบสกิล ต้องลบออกจาก Loadout ด้วยถ้าใส่อยู่
+            if (playerLoadoutsToReset != null)
+            {
+                foreach (var loadout in playerLoadoutsToReset)
+                {
+                    if (loadout != null && loadout.EquippedSkills != null)
+                    {
+                        loadout.EquippedSkills.RemoveAll(s => s == skill);
+#if UNITY_EDITOR
+                        UnityEditor.EditorUtility.SetDirty(loadout);
+#endif
+                    }
+                }
+            }
+#if UNITY_EDITOR
+            UnityEditor.EditorUtility.SetDirty(this);
+#endif
+        }
+    }
+
     public void AddTrialSkills(List<Skill> skills)
     {
         foreach (var skill in skills)
