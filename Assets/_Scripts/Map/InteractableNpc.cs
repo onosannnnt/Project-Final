@@ -48,6 +48,11 @@ public class InteractableNpc : MonoBehaviour
 
     private void Start()
     {
+        RefreshVisibility();
+    }
+
+    public void RefreshVisibility()
+    {
         // Check if this NPC should be hidden based on tutorial completion
         if (hideUntilTutorialComplete && userData != null)
         {
@@ -55,6 +60,11 @@ public class InteractableNpc : MonoBehaviour
             {
                 // Tutorial not yet finished, hide this NPC
                 gameObject.SetActive(false);
+            }
+            else
+            {
+                // Tutorial finished, ensure NPC is visible
+                gameObject.SetActive(true);
             }
         }
     }

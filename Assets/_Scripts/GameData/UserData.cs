@@ -46,6 +46,9 @@ public class UserData : ScriptableObject
     [Tooltip("True if the player has already chosen their starter build.")]
     public bool HasChosenStarterBuild;
 
+    [Tooltip("True if the player has finalized the tutorial and moved to the main game.")]
+    public bool IsTutorialFinalized;
+
     [Header("Player Skills")]
     [Tooltip("สกิลพื้นฐานที่ผู้เล่นต้องมีเสมอ (เช่น โจมตีปกติ)")]
     public Skill DefaultSkill;
@@ -145,6 +148,24 @@ public class UserData : ScriptableObject
 #endif
     }
 
+    // ล้างช่องสวมใส่สกิลทั้งหมด
+    public void ClearAllLoadouts()
+    {
+        if (playerLoadoutsToReset != null)
+        {
+            foreach (var loadout in playerLoadoutsToReset)
+            {
+                if (loadout != null && loadout.EquippedSkills != null)
+                {
+                    loadout.EquippedSkills.Clear();
+#if UNITY_EDITOR
+                    UnityEditor.EditorUtility.SetDirty(loadout);
+#endif
+                }
+            }
+        }
+    }
+
     // ฟังก์ชันสำหรับจ่ายเงิน
     public bool TrySpendCoins(int amount)
     {
@@ -167,6 +188,7 @@ public class UserData : ScriptableObject
         PendingQuestCoins = 0;
         PendingRewardQuestIndex = -1;
         HasChosenStarterBuild = false;
+        IsTutorialFinalized = false;
 
         // 1. ลบสกิลที่มี
         if (OwnedSkills != null)
@@ -279,6 +301,16 @@ public class UserData : ScriptableObject
         {
             return false;
         }
+
+        // --- REPLAYABLE TUTORIAL LOGIC ---
+        // If it's the tutorial, we do NOT mark it as completed or give rewards yet.
+        // The StarterPanelUI will handle the "Finalize" step.
+        if (questIndex == TutorialQuestIndex)
+        {
+            ClearSelectedQuest();
+            return true;
+        }
+        // ---------------------------------
 
         HighestCompletedQuestIndex = questIndex;
 
