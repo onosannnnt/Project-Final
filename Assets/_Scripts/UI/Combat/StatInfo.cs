@@ -23,113 +23,212 @@ public class StatInfoUI : MonoBehaviour
     [SerializeField] private bool hideCustomObject = false;
 
     private Entity Entity;
-    private List<ActiveBuff> Buffs;
-    private List<ActiveBuff> Debuffs;
-    private float maxWitdthHealthbar;
-    private float maxWitdthSkillPointBar;
+    private float maxWitdthHealthbar = -1f;
+    private float maxWitdthSkillPointBar = -1f;
+
+    private void Awake()
+    {
+        if (ExitButton != null) ExitButton.onClick.AddListener(OnExitClicked);
+    }
+
     private void Start()
     {
-        gameObject.SetActive(false);
-        ExitButton.onClick.AddListener(OnExitClicked);
-        if (HealthbarFG != null) maxWitdthHealthbar = HealthbarFG.rectTransform.sizeDelta.x;
-        if (SkillPointBarFG != null) maxWitdthSkillPointBar = SkillPointBarFG.rectTransform.sizeDelta.x;
+        // Initial capture attempt
+        CaptureInitialDimensions();
+        
+        // Default to hidden if not already managed by something else
+        // gameObject.SetActive(false); 
+        // Note: The user's original script had gameObject.SetActive(false) in Start.
+        // If this is causing issues with Start not running when expected, we should be careful.
     }
-    private void Update()
-    {
-        if (Entity == null) return;
-        if (TurnManager.Instance.GetTurnState() != TurnState.PlayerTurnState) gameObject.SetActive(false);
-        SetupBuffPanel();
-        SetupHealthBar();
-        SetupSkillPointBar();
-        SetStatusBuff();
-    }
+
     private void OnEnable()
     {
         if (hideCustomObject && customObjectToHide != null)
         {
             customObjectToHide.SetActive(false);
         }
+
+        CaptureInitialDimensions();
+        
+        if (Entity != null)
+        {
+            SubscribeEvents();
+            RefreshAll();
+        }
     }
+
     private void OnDisable()
     {
         if (hideCustomObject && customObjectToHide != null)
         {
             customObjectToHide.SetActive(true);
         }
+
+        UnsubscribeEvents();
     }
+
+    private void Update()
+    {
+        if (Entity == null) return;
+        
+        // Auto-close if it's not player turn anymore (as per original logic)
+        if (TurnManager.Instance != null && TurnManager.Instance.GetTurnState() != TurnState.PlayerTurnState)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+
+        // Real-time updates for bars if needed (though events should handle it)
+        // We keep these here just in case events are missed or for shared SP pool updates
+        SetupHealthBar();
+        SetupSkillPointBar();
+    }
+
     public void SetEntity(Entity entity)
     {
+        UnsubscribeEvents();
         Entity = entity;
+        
+        if (gameObject.activeInHierarchy)
+        {
+            SubscribeEvents();
+            RefreshAll();
+        }
+    }
+
+    private void SubscribeEvents()
+    {
+        if (Entity == null) return;
+        Entity.OnHealthChanged += HandleHealthChanged;
+        Entity.OnSPChanged += HandleSPChanged;
+        if (Entity.buffController != null)
+            Entity.buffController.OnBuffsChanged += HandleBuffsChanged;
+    }
+
+    private void UnsubscribeEvents()
+    {
+        if (Entity == null) return;
+        Entity.OnHealthChanged -= HandleHealthChanged;
+        Entity.OnSPChanged -= HandleSPChanged;
+        if (Entity.buffController != null)
+            Entity.buffController.OnBuffsChanged -= HandleBuffsChanged;
+    }
+
+    private void HandleHealthChanged(float current, float max) => SetupHealthBar();
+    private void HandleSPChanged(int current, int max) => SetupSkillPointBar();
+    private void HandleBuffsChanged() { SetupBuffPanel(); SetStatusBuff(); }
+
+    private void RefreshAll()
+    {
+        SetupHealthBar();
+        SetupSkillPointBar();
+        SetupBuffPanel();
+        SetStatusBuff();
+    }
+
+    private void CaptureInitialDimensions()
+    {
+        // Capture dimensions if not already captured. 
+        // We use the current sizeDelta.x if it's positive, assuming it represents the full width.
+        if (maxWitdthHealthbar <= 0 && HealthbarFG != null && HealthbarFG.rectTransform.rect.width > 0)
+        {
+            maxWitdthHealthbar = HealthbarFG.rectTransform.rect.width;
+        }
+        
+        if (maxWitdthSkillPointBar <= 0 && SkillPointBarFG != null && SkillPointBarFG.rectTransform.rect.width > 0)
+        {
+            maxWitdthSkillPointBar = SkillPointBarFG.rectTransform.rect.width;
+        }
     }
 
     private void SetupBuffPanel()
     {
-        if (BuffCardPrefab == null || BuffTransform == null || DebuffTransform == null) return;
-        Buffs = Entity.buffController.GetBuffs();
+        if (BuffCardPrefab == null || BuffTransform == null || DebuffTransform == null || Entity == null) return;
+        
+        var buffs = Entity.buffController.GetBuffs();
+        var debuffs = new List<ActiveBuff>();
+        debuffs.AddRange(Entity.buffController.GetDebuffs());
+        debuffs.AddRange(Entity.buffController.GetBuffsByType(BuffType.CrowdControl));
 
-        Debuffs = new List<ActiveBuff>();
-        Debuffs.AddRange(Entity.buffController.GetDebuffs());
-        Debuffs.AddRange(Entity.buffController.GetBuffsByType(BuffType.CrowdControl));
+        if (BuffHeaderText != null) BuffHeaderText.text = $"Buffs: {buffs.Count}";
+        if (DebuffHeaderText != null) DebuffHeaderText.text = $"Debuffs: {debuffs.Count}";
 
-        BuffHeaderText.text = $"Buffs: {Buffs.Count}";
-        DebuffHeaderText.text = $"Debuffs: {Debuffs.Count}";
+        ClearTransform(BuffTransform);
+        ClearTransform(DebuffTransform);
 
-        foreach (Transform child in BuffTransform)
+        foreach (var buff in buffs)
         {
-            Destroy(child.gameObject);
-        }
-        foreach (Transform child in DebuffTransform)
-        {
-            Destroy(child.gameObject);
-        }
-
-        if (Buffs.Count > 0)
-        {
-            foreach (var buff in Buffs)
-            {
-                GameObject buffGO = Instantiate(BuffCardPrefab, BuffTransform);
-                BuffItemUI ui = buffGO.GetComponent<BuffItemUI>();
-                // ui.Setup($"{buff.Data.BuffName}({buff.CurrentDuration})", buff.Data.Description, buff.Data.Icon, buff.CurrentStack);
-                ui.Setup($"{buff.Data.BuffName}", buff.Data.Description, buff.Data.Icon, buff.CurrentStack, buff.CurrentDuration, buff.Data.isPermanent);
-            }
+            InstantiateBuffUI(buff, BuffTransform);
         }
 
-        if (Debuffs.Count > 0)
+        foreach (var debuff in debuffs)
         {
-            foreach (var debuff in Debuffs)
-            {
-                GameObject debuffGO = Instantiate(BuffCardPrefab, DebuffTransform);
-                BuffItemUI ui = debuffGO.GetComponent<BuffItemUI>();
-                // ui.Setup($"{debuff.Data.BuffName}({debuff.CurrentDuration})", debuff.Data.Description, debuff.Data.Icon, debuff.CurrentStack);
-                ui.Setup($"{debuff.Data.BuffName}", debuff.Data.Description, debuff.Data.Icon, debuff.CurrentStack, debuff.CurrentDuration, debuff.Data.isPermanent);
-            }
+            InstantiateBuffUI(debuff, DebuffTransform);
+        }
+        
+        // Force layout rebuild to avoid "wrong size" issues with layout groups
+        LayoutRebuilder.ForceRebuildLayoutImmediate(BuffTransform as RectTransform);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(DebuffTransform as RectTransform);
+    }
+
+    private void InstantiateBuffUI(ActiveBuff buff, Transform parent)
+    {
+        GameObject buffGO = Instantiate(BuffCardPrefab, parent);
+        BuffItemUI ui = buffGO.GetComponent<BuffItemUI>();
+        if (ui != null)
+        {
+            ui.Setup(buff.Data.BuffName, buff.Data.Description, buff.Data.Icon, buff.CurrentStack, buff.CurrentDuration, buff.Data.isPermanent);
         }
     }
+
+    private void ClearTransform(Transform t)
+    {
+        foreach (Transform child in t)
+        {
+            // Set inactive immediately to remove from layout calculations before Destroy kicks in
+            child.gameObject.SetActive(false);
+            Destroy(child.gameObject);
+        }
+    }
+
     private void OnExitClicked()
     {
         gameObject.SetActive(false);
     }
+
     private void SetupHealthBar()
     {
-        if (HealthbarFG == null) return;
+        if (HealthbarFG == null || Entity == null) return;
+        
+        CaptureInitialDimensions();
+        if (maxWitdthHealthbar <= 0) return;
 
-        float healthRatio = (float)Entity.CurrentHealth / Entity.GetStat(StatType.MaxHealth);
+        float maxHealth = Entity.GetStat(StatType.MaxHealth);
+        float healthRatio = maxHealth > 0 ? (float)Entity.CurrentHealth / maxHealth : 0;
+        
         HealthbarFG.rectTransform.sizeDelta = new Vector2(maxWitdthHealthbar * healthRatio, HealthbarFG.rectTransform.sizeDelta.y);
-
-        HealthText.text = $"{(int)Entity.CurrentHealth} / {(int)Entity.GetStat(StatType.MaxHealth)}";
+        if (HealthText != null) HealthText.text = $"{(int)Entity.CurrentHealth} / {(int)maxHealth}";
     }
+
     private void SetupSkillPointBar()
     {
-        if (SkillPointBarFG == null) return;
+        if (SkillPointBarFG == null || Entity == null) return;
+        
+        CaptureInitialDimensions();
 
         // Hide SP bar for entities that aren't players (like enemies)
         if (Entity is not PlayerEntity)
         {
-            SkillPointBarFG.transform.parent.gameObject.SetActive(false);
+            if (SkillPointBarFG.transform.parent != null)
+                SkillPointBarFG.transform.parent.gameObject.SetActive(false);
             return;
         }
 
-        SkillPointBarFG.transform.parent.gameObject.SetActive(true);
+        if (SkillPointBarFG.transform.parent != null)
+            SkillPointBarFG.transform.parent.gameObject.SetActive(true);
+
+        if (maxWitdthSkillPointBar <= 0) return;
 
         int currentSP = Entity.CurrentSP;
         int maxSP = (int)Entity.GetStat(StatType.MaxSkillPoint);
@@ -144,37 +243,29 @@ public class StatInfoUI : MonoBehaviour
         float spRatio = maxSP > 0 ? (float)currentSP / maxSP : 0;
         SkillPointBarFG.rectTransform.sizeDelta = new Vector2(maxWitdthSkillPointBar * spRatio, SkillPointBarFG.rectTransform.sizeDelta.y);
 
-        SkillPointText.text = $"{currentSP} / {maxSP}";
+        if (SkillPointText != null) SkillPointText.text = $"{currentSP} / {maxSP}";
     }
+
     private void SetStatusBuff()
     {
-        if (StatusBuffParent == null) return;
-        foreach (Transform child in StatusBuffParent)
-        {
-            Destroy(child.gameObject);
-        }
-        if (Entity == null) return;
+        if (StatusBuffParent == null || Entity == null) return;
+        
+        ClearTransform(StatusBuffParent);
 
         List<ActiveBuff> statusBuffs = new List<ActiveBuff>();
         statusBuffs.AddRange(Entity.buffController.GetBuffsByType(BuffType.CrowdControl));
         statusBuffs.AddRange(Entity.buffController.GetBuffsByType(BuffType.Debuff));
 
-        if (statusBuffs.Count == 0) StatusBuffParent.gameObject.SetActive(false);
-        else StatusBuffParent.gameObject.SetActive(true);
+        StatusBuffParent.gameObject.SetActive(statusBuffs.Count > 0);
         if (statusBuffs.Count == 0) return;
+
         foreach (var buff in statusBuffs)
         {
-            GameObject buffObj = Instantiate(StatusBuffPrefab, StatusBuffParent.transform);
-            buffObj.GetComponent<Image>().sprite = buff.Data.Icon;
+            GameObject buffObj = Instantiate(StatusBuffPrefab, StatusBuffParent);
+            if (buffObj.GetComponent<Image>() != null)
+                buffObj.GetComponent<Image>().sprite = buff.Data.Icon;
         }
-    }
-    private string BuffStackColor(int stack)
-    {
-        if (stack >= 5)
-            return "<color=green>";
-        else if (stack >= 3)
-            return "<color=yellow>";
-        else
-            return "<color=red>";
+        
+        LayoutRebuilder.ForceRebuildLayoutImmediate(StatusBuffParent as RectTransform);
     }
 }

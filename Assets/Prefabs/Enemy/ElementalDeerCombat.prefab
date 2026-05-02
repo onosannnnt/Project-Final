@@ -777,6 +777,7 @@ MonoBehaviour:
   frostBuff: {fileID: 11400000, guid: 499bd6f3f5cdb4650b8e966b843a548a, type: 2}
   lightningBuff: {fileID: 11400000, guid: 426d21ba396584f5c9cd7992f2417265, type: 2}
   windBuff: {fileID: 11400000, guid: c38fbcfdb6ec942da9874f2ec075d685, type: 2}
+  mechanicBuff: {fileID: 11400000, guid: b9e3fe98e9cd3334abe8e81b3b59a2df, type: 2}
   bossSpriteRenderer: {fileID: 3869637223405476119}
   defaultSprite: {fileID: 21300000, guid: 3a639db116a2a47d3aa0552574427d14, type: 3}
   fireSprite: {fileID: 21300000, guid: 35d9da8be1b48435ab748b58cf99eb16, type: 3}

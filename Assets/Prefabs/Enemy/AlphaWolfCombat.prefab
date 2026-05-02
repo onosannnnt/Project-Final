@@ -796,6 +796,7 @@ MonoBehaviour:
   currentBreakState: 0
   currentBreakArmor: 0
   minionDeathBuff: {fileID: 11400000, guid: 0cac5ef3bf847428e839aaa8a5296213, type: 2}
+  mechanicBuff: {fileID: 11400000, guid: 56b96e1ee4a0dab48ab541a3f3c24510, type: 2}
 --- !u!1 &7181939115337276224
 GameObject:
   m_ObjectHideFlags: 0

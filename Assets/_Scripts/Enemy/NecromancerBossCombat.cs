@@ -6,10 +6,21 @@ public class NecromancerBossCombat : BossCombat
     [Header("Buff Mechanics")]
     [Tooltip("ใส่ข้อมูล Buff ที่ต้องการให้บอสได้รับเมื่อลูกน้องตาย 1 ตัว")]
     [SerializeField] private Buff minionDeathBuff;
+    [Tooltip("Buff อธิบายกลไกของบอส (ปรากฏตอนเริ่มเกม)")]
+    [SerializeField] private Buff mechanicBuff;
 
     // ใช้เช็คว่าเทิร์นที่แล้วมีลูกน้องกี่ตัว เพื่อดูว่ามีลูกน้องตายไหม
     private int previousMinionCount = 0;
     private int turnCounter = 0;
+
+    protected override void Start()
+    {
+        base.Start();
+        if (mechanicBuff != null && buffController != null)
+        {
+            buffController.AddBuff(mechanicBuff);
+        }
+    }
 
     public override Skill ChooseNextSkill()
     {

@@ -9,6 +9,8 @@ public class PuzzleBossCombat : BossCombat
     public Buff frostBuff;
     public Buff lightningBuff;
     public Buff windBuff;
+    [Tooltip("Buff อธิบายกลไกของบอส (ปรากฏตอนเริ่มเกม)")]
+    public Buff mechanicBuff;
 
     [Header("Boss Visuals")]
     [Tooltip("ลาก Component Sprite Renderer ของตัวบอสมาใส่ช่องนี้")]
@@ -39,6 +41,15 @@ public class PuzzleBossCombat : BossCombat
     private int stunTimer = 0;
     private bool needsToCastResetSkill = false;
     private int turnCounter = 0;
+
+    protected override void Start()
+    {
+        base.Start();
+        if (mechanicBuff != null && buffController != null)
+        {
+            buffController.AddBuff(mechanicBuff);
+        }
+    }
 
     protected override void Awake()
     {

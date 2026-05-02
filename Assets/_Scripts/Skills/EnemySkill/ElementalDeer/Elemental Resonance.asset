@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3255b5e03e46a432f85eb0aab966b4ae, type: 3}
+  m_Name: Elemental Resonance
+  m_EditorClassIdentifier: 
+  BuffName: Elemental Resonance
+  Description: 'The ElementalDeer synchronize the rotating Elemental Pillars (Fire,
+    Frost, Lightning, Wind) to break its defenses. Each match increases damage taken
+    by 5% and grants a buff (Fire: damage, Frost: regenerates HP, Lightning: increases
+    SP cost, Wind: evasion). Matching all four elements purges its buffs and Stuns
+    it for 3 turns; upon recovery, it temporarily gains all buffs.'
+  Icon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}
+  buffType: 0
+  isPermanent: 1
+  Duration: 3
+  isStackable: 0
+  MaxStack: 0
+  StackCalculationType: 0
+  Threshold: 0
+  DiminishingReturnDecayFactor: 0
+  targetType: 0
+  modifiers: []
+  preventLethalDamage: 0
+  preventHealing: 0
