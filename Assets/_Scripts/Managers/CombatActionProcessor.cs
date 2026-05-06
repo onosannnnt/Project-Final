@@ -93,7 +93,19 @@ public class CombatActionProcessor : MonoBehaviour
                 ApplyEnemySkillToPlayers(enemy, target, skill, log);
                 break;
             case TargetType.Ally:
-                enemy.skillManager.UseSkill(skill, enemy, log);
+                if (skill.TargetCount == TargetCount.All)
+                {
+                    List<EnemyCombat> targetList = turnManager.GetAliveEnemiesInBattleOrder();
+                    foreach (var ally in targetList)
+                    {
+                        if (ally != null && ally.CurrentHealth > 0)
+                            enemy.skillManager.UseSkill(skill, ally, log);
+                    }
+                }
+                else
+                {
+                    enemy.skillManager.UseSkill(skill, enemy, log);
+                }
                 break;
         }
     }

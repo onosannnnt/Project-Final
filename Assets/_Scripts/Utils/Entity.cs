@@ -20,6 +20,7 @@ public abstract class Entity : MonoBehaviour
     protected float currentHealth;
     protected float corruptedHealth;
     protected int currentSkillPoint;
+    protected bool isDead = false;
     public BuffManager buffController;
     public SkillManager skillManager;
     protected Skill selectedSkill;
@@ -147,6 +148,8 @@ public abstract class Entity : MonoBehaviour
 
     public virtual void TakeDamage(Damage damage)
     {
+        if (isDead) return;
+
         float appliedDamage = damage.Amount;
 
         bool hasLethalProtection = buffController != null &&
@@ -164,6 +167,7 @@ public abstract class Entity : MonoBehaviour
         ShowDamage((int)appliedDamage, Utils.GetDamageColor(damage.Element), damage.IsCriticalHit);
         if (currentHealth <= 0)
         {
+            isDead = true;
             // Mark as dead immediately so wave checks work
             MarkAsDead();
             // Defer destruction until after damage text animation

@@ -7,6 +7,11 @@ public class BuffEffect : SkillEffect
 {
     public List<Buff> buffs;
 
+    private void Awake()
+    {
+        Phase = SkillEffectPhase.PreDamage;
+    }
+
     public override bool Execute(Entity caster, Entity target, CombatActionLog log)
     {
         bool isBuff = true;
@@ -16,20 +21,27 @@ public class BuffEffect : SkillEffect
 // // Debug.Log(caster.gameObject.name + " used BuffEffect on " + target.gameObject.name);
         foreach (var buff in buffs)
         {
+            Entity actualTarget = null;
             if (buff.targetType == TargetType.Self)
             {
                 caster.buffController.AddBuff(buff);
+                actualTarget = caster;
             }
             else if (isBuff && !isResist)
             {
                 target.buffController.AddBuff(buff);
+                actualTarget = target;
             }
-            log.AddBuffEffectLog(new BuffEffectLog()
+
+            if (actualTarget != null)
             {
-                AppliedTargetID = isBuff && !isResist ? target.GetEntityID() : caster.GetEntityID(),
-                AppliedTarget = isBuff && !isResist ? target.gameObject.name : caster.gameObject.name,
-                Buff = new BuffEffectData(buff)
-            });
+                log.AddBuffEffectLog(new BuffEffectLog()
+                {
+                    AppliedTargetID = actualTarget.GetEntityID(),
+                    AppliedTarget = actualTarget.Stats.EntityName,
+                    Buff = new BuffEffectData(buff)
+                });
+            }
         }
         return true;
     }

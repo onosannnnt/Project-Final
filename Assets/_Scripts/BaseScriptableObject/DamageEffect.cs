@@ -24,12 +24,6 @@ public class DamageEffect : SkillEffect
         float variance = Random.Range(0.85f, 1.15f);
         float finalDamage = BaseDamage * variance;
 
-        // ใน DamageEffect.cs
-        if (target is PuzzleBossCombat puzzleBoss)
-        {
-            finalDamage *= puzzleBoss.GetVulnerabilityMultiplier();
-        }
-
         Damage damage = new Damage(finalDamage, Element, false, CriticalHitChance, 1.5f);
         DamageCtx ctx = new DamageCtx(caster, target, damage);
         DamageSystem.Process(ctx, log);

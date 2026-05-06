@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
+  m_Name: Desperate Prayer
+  m_EditorClassIdentifier: 
+  skillID: 12
+  skillName: Desperate Prayer
+  description: 'Heal 200 HP (increase to 600 if target HP is below 30%). [SP: 10]'
+  skillIcon: {fileID: 21300000, guid: ea61475f2ca0f4eeba50601040774701, type: 3}
+  skillType: 1
+  skillStyle: 1
+  Tier: 1
+  SkillPoint: 10
+  CorruptedHealthGain: 0
+  TargetType: 1
+  TargetCount: 0
+  reducesArmor: 0
+  SkillEffects:
+  - {fileID: 11400000, guid: f8003df9a884144628578fa061f64c3c, type: 2}

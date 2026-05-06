@@ -49,6 +49,9 @@ public class PuzzleBossCombat : BossCombat
         {
             buffController.AddBuff(mechanicBuff);
         }
+
+        // Register vulnerability modifier to handle damage scaling without hardcoding in DamageEffect
+        IncomingModifiers.Add(new PuzzleBossVulnerabilityModifier(this));
     }
 
     protected override void Awake()

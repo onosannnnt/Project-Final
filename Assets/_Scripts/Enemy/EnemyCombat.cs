@@ -31,7 +31,6 @@ public class EnemyCombat : Entity
     [SerializeField] private float lightningArmorRecoveryRatio = 0.7f;
 
     private float maxhealthBarForegroundWidth;
-    private bool isDead;
     private DamageElement currentBreakElementStatus = DamageElement.None;
     private int physicalBreakStacks = 0;
     private int incomingSkillContextDepth = 0;

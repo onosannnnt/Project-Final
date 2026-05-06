@@ -10,9 +10,10 @@ public enum SkillEffectPhase
     PostDamage   // On-hit, extra effect
 }
 
-[System.Serializable]
 public abstract class SkillEffect : ScriptableObject
 {
+    public SkillEffectPhase Phase = SkillEffectPhase.Damage;
+
     private const string ElementMemberName = "Element";
     private static readonly Dictionary<Type, FieldInfo> ElementFieldCache = new();
     private static readonly Dictionary<Type, PropertyInfo> ElementPropertyCache = new();

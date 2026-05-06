@@ -39,6 +39,21 @@ public class Skill : ScriptableObject
         }
     }
 
+    public Skill Clone()
+    {
+        Skill clone = Instantiate(this);
+        clone.SkillEffects = new List<SkillEffect>();
+        if (SkillEffects != null)
+        {
+            foreach (var effect in SkillEffects)
+            {
+                if (effect != null)
+                    clone.SkillEffects.Add(Instantiate(effect));
+            }
+        }
+        return clone;
+    }
+
     public DamageElement GetElement()
     {
         if (SkillEffects == null)
@@ -152,9 +167,15 @@ public class Skill : ScriptableObject
             return false;
         }
 
+        // Create a copy and sort by phase to ensure correct execution order
+        List<SkillEffect> sortedEffects = new List<SkillEffect>(SkillEffects);
+        sortedEffects.Sort((a, b) => a.Phase.CompareTo(b.Phase));
+
         bool hit = true;
-        foreach (var effect in SkillEffects)
+        foreach (var effect in sortedEffects)
         {
+            if (effect == null) continue;
+            
             // // Debug.Log(effect.name + " effect is executed from skill " + skillName);
             bool effectHit = effect.Execute(caster, target, log);
             if (!effectHit)

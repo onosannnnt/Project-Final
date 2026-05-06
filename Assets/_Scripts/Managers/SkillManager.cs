@@ -58,7 +58,17 @@ public class SkillManager
     }
     public void SetSkills(List<Skill> skills)
     {
-        this.skills = skills;
+        this.skills = new List<Skill>();
+        if (skills != null)
+        {
+            foreach (var skill in skills)
+            {
+                if (skill != null)
+                {
+                    this.skills.Add(skill.Clone());
+                }
+            }
+        }
     }
     public Skill RandomSkill()
     {

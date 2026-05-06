@@ -78,8 +78,8 @@ public class ComprehensiveCorruptedStrikeEffect : SkillEffect
         return true;
     }
 
-    private static int lastFrame = -1;
-    private static HashSet<int> processedCasters = new HashSet<int>();
+    private int lastFrame = -1;
+    private HashSet<int> processedCasters = new HashSet<int>();
 
     private void ApplySelfEffects(Entity caster, bool thresholdMet, CombatActionLog log)
     {

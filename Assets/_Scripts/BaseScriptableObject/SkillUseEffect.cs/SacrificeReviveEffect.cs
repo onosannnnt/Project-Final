@@ -3,9 +3,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "SacrificeReviveEffect", menuName = "ScriptableObjects/SkillEffect/SacrificeReviveEffect")]
 public class SacrificeReviveEffect : SkillEffect
 {
-    [Header("Sacrifice")]
-    [Tooltip("If true, kills a random ally (excluding caster and target).")]
-    public bool SacrificeRandomAlly = true;
+    [Header("Revive Settings")]
+    [Tooltip("Percentage of Max HP to restore to the target.")]
+    public float ReviveHpPercent = 1.0f;
 
     [Header("Target Buffs")]
     [Tooltip("Buff that increases damage taken on the revived target.")]
@@ -13,50 +13,86 @@ public class SacrificeReviveEffect : SkillEffect
 
     public override bool Execute(Entity caster, Entity target, CombatActionLog log)
     {
-        // Target must be dead to revive
-        // However, in this system, dead entities are often destroyed.
-        // We need to check the TurnManager or PlayerTeamManager for dead members.
-        
-        // This is a complex effect that might require specific TeamManager support.
-        // For now, let's implement the 'Sacrifice' part and a simple HP reset if target exists but is 'dead'.
-        
-        if (caster == null || target == null) return false;
+        if (caster == null) return false;
 
-        // Sacrifice
-        if (SacrificeRandomAlly && PlayerTeamManager.Instance != null)
+        Entity actualReviveTarget = null;
+
+        // If the skill is TargetType.Self, we automatically look for the first dead ally.
+        // If it's TargetType.Ally, we use the selected target.
+        if (target == caster)
         {
-            var alive = PlayerTeamManager.Instance.GetAliveMembers();
-            Entity victim = null;
-            foreach (var m in alive)
+            if (PlayerTeamManager.Instance != null)
             {
-                if (m != caster && m != target)
+                foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
                 {
-                    victim = m;
-                    break;
+                    if (member != null && member != caster && member.CurrentHealth <= 0)
+                    {
+                        actualReviveTarget = member;
+                        break;
+                    }
                 }
             }
-
-            if (victim != null)
-            {
-                // Kill victim
-                victim.TakeDamage(new Damage(99999f, DamageElement.None)); 
-            }
-            else
-            {
-                // No one to sacrifice? Skill fails or caster dies?
-                // Let's assume sacrifice is required.
-                return false;
-            }
+        }
+        else
+        {
+            actualReviveTarget = target;
         }
 
-        // Revive Logic (Simplified: Set HP to Max)
-        // Note: Real revive would need to Instantiate the prefab again or un-hide it.
-        target.Heal(target.GetStat(StatType.MaxHealth));
+        if (actualReviveTarget == null)
+        {
+            // Fallback: If no one is dead, reset Player 1 (the first member of the party)
+            if (PlayerTeamManager.Instance != null && PlayerTeamManager.Instance.ActiveTeamMembers.Count > 0)
+            {
+                Entity player1 = PlayerTeamManager.Instance.ActiveTeamMembers[0];
+                if (player1 != null)
+                {
+                    // 1. Clear Corrupted HP
+                    player1.SetCorruptedHealth(0);
+                    
+                    // 2. Refill HP to 100%
+                    player1.Heal(player1.GetStat(StatType.MaxHealth));
+                    
+                    // 3. Remove every buff and debuff
+                    var allBuffs = new System.Collections.Generic.List<ActiveBuff>(player1.buffController.GetAllBuffs());
+                    foreach (var buff in allBuffs)
+                    {
+                        player1.buffController.RemoveBuff(buff);
+                    }
+
+                    // 4. Apply the penalty debuff after the clear
+                    if (VulnerabilityBuffTemplate != null)
+                    {
+                        player1.buffController.AddBuff(VulnerabilityBuffTemplate);
+                    }
+                }
+            }
+            
+            // Caster is still sacrificed as per the "Exchange" theme
+            caster.TakeDamage(new Damage(999999f, DamageElement.None));
+            return true;
+        }
+
+        // 1. Revive the target (If someone was dead)
+        float maxHP = actualReviveTarget.GetStat(StatType.MaxHealth);
+        actualReviveTarget.Heal(maxHP * ReviveHpPercent);
         
+        // Ensure the revived target is active (if it was deactivated)
+        actualReviveTarget.gameObject.SetActive(true);
+
+        // 2. Apply the penalty debuff to the revived target
         if (VulnerabilityBuffTemplate != null)
         {
-            target.buffController.AddBuff(VulnerabilityBuffTemplate);
+            actualReviveTarget.buffController.AddBuff(VulnerabilityBuffTemplate);
+            log.AddBuffEffectLog(new BuffEffectLog()
+            {
+                AppliedTargetID = actualReviveTarget.GetEntityID(),
+                AppliedTarget = actualReviveTarget.Stats.EntityName,
+                Buff = new BuffEffectData(VulnerabilityBuffTemplate)
+            });
         }
+
+        // 3. Sacrifice the Caster
+        caster.TakeDamage(new Damage(999999f, DamageElement.None));
 
         return true;
     }
