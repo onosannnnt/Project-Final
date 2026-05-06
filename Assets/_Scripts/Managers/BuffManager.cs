@@ -29,6 +29,15 @@ public class BuffManager
 
     public void AddBuff(Buff buff)
     {
+        if (buff.buffType == BuffType.Debuff || buff.buffType == BuffType.CrowdControl)
+        {
+            if (activeBuffs.Exists(b => b.Data != null && b.Data.grantsDebuffImmunity))
+            {
+                // // Debug.Log($"{owner.gameObject.name} is immune to debuffs!");
+                return;
+            }
+        }
+
         ActiveBuff existingBuff = activeBuffs.Find(b => b.Data.BuffName == buff.BuffName);
 
         if (existingBuff != null)
@@ -44,7 +53,7 @@ public class BuffManager
                     existingBuff.CurrentStack = buff.MaxStack;
                 }
             }
-            buff.OnApply(owner, existingBuff);
+            // Fix: Only call OnRefresh for existing buffs, OnApply is for the first time
             buff.OnRefresh(owner, existingBuff);
         }
         else

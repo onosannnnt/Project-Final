@@ -5,11 +5,11 @@ using UnityEngine;
 public class StackScaledDamageBuff : Buff
 {
     [Header("Stack Source")]
-    [Tooltip("Optional source buff asset. If assigned, its BuffName is used to read stacks.")]
+    [Tooltip("The buff asset used to read current stack count for scaling.")]
     public Buff StackSourceBuff;
 
-    [Tooltip("Fallback source buff name when StackSourceBuff is not assigned.")]
-    public string StackSourceBuffName = "Frenzy";
+    [Tooltip("Optional fallback buff name if StackSourceBuff asset is not provided.")]
+    public string StackSourceBuffName = "";
 
     [Header("Damage Scaling")]
     [Tooltip("Every X stacks grants one bonus step.")]
@@ -25,11 +25,6 @@ public class StackScaledDamageBuff : Buff
         base.OnApply(owner, buffState);
 
         if (owner == null)
-        {
-            return;
-        }
-
-        if (buffState.CustomState.TryGetValue(ModifierStateKey, out object existingObj) && existingObj is StackScaledDamageModifier)
         {
             return;
         }

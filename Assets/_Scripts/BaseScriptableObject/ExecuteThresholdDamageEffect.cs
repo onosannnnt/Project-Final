@@ -27,13 +27,7 @@ public class ExecuteThresholdDamageEffect : SkillEffect
         float hpRatio = target.CurrentHealth / maxHealth;
         float finalDamage = hpRatio <= ExecuteHpThreshold ? ExecuteDamage : NormalDamage;
 
-        bool isCrit = Random.Range(0f, 100f) <= CriticalHitChance;
-        if (isCrit)
-        {
-            finalDamage *= CriticalDamageMultiplier;
-        }
-
-        Damage damage = new Damage(finalDamage, Element, isCrit);
+        Damage damage = new Damage(finalDamage, Element, false, CriticalHitChance, CriticalDamageMultiplier);
         DamageCtx ctx = new DamageCtx(caster, target, damage);
         DamageSystem.Process(ctx, log);
         return true;

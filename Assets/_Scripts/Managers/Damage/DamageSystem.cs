@@ -9,6 +9,16 @@ public static class DamageSystem
     {
         float healthBefore = ctx.Target.CurrentHealth;
 
+        // Perform Critical Roll if not already determined
+        if (!ctx.Damage.IsCriticalHit && ctx.Damage.CritChance > 0)
+        {
+            if (UnityEngine.Random.Range(0f, 100f) <= ctx.Damage.CritChance)
+            {
+                ctx.Damage.IsCriticalHit = true;
+                ctx.Damage.Amount *= ctx.Damage.CritMultiplier;
+            }
+        }
+
         foreach (var mod in ctx.Caster.OutgoingModifiers)
             mod.Modify(ctx);
 

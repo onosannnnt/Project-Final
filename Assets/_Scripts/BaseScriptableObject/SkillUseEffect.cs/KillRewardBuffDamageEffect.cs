@@ -31,17 +31,12 @@ public class KillRewardBuffDamageEffect : SkillEffect
             return false;
         }
 
-        // 2) Damage + crit
-        bool isCrit = Random.Range(0f, 100f) <= CriticalHitChance;
+        // 2) Damage
         float finalDamage = DamageAmount;
-        if (isCrit)
-        {
-            finalDamage *= CriticalDamageMultiplier;
-        }
 
         float healthBefore = target.CurrentHealth;
 
-        Damage damage = new Damage(finalDamage, Element, isCrit);
+        Damage damage = new Damage(finalDamage, Element, false, CriticalHitChance, CriticalDamageMultiplier);
         DamageCtx ctx = new DamageCtx(caster, target, damage);
         DamageSystem.Process(ctx, log);
 

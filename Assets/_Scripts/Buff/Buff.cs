@@ -62,6 +62,8 @@ public class Buff : ScriptableObject
     public bool preventLethalDamage = false;
     [Tooltip("If enabled, this buff blocks all healing received by the owner.")]
     public bool preventHealing = false;
+    [Tooltip("If enabled, this buff prevents any new debuffs or crowd control from being applied.")]
+    public bool grantsDebuffImmunity = false;
 
     public virtual void OnApply(Entity owner, ActiveBuff buffState) { }
     public virtual void OnTurnStart(Entity owner, CombatActionLog log, ActiveBuff buffState)

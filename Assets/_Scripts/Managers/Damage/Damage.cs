@@ -33,12 +33,16 @@ public class Damage
     public float Amount;
     public DamageElement Element;
     public bool IsCriticalHit;
+    public float CritChance;
+    public float CritMultiplier;
 
-    public Damage(float amount, DamageElement element = DamageElement.Physical, bool isCriticalHit = false)
+    public Damage(float amount, DamageElement element = DamageElement.Physical, bool isCriticalHit = false, float critChance = 0f, float critMultiplier = 1.5f)
     {
         Amount = amount;
         Element = element;
         IsCriticalHit = isCriticalHit;
+        CritChance = critChance;
+        CritMultiplier = critMultiplier;
     }
 }
 public static class Utils

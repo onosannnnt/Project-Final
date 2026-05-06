@@ -382,6 +382,13 @@ public class TurnManager : Singleton<TurnManager>
             // --- BUFF TURN START ---
             entity.buffController.OnTurnStart(entity, log);
 
+            // --- IMMEDIATE LOSE CHECK ---
+            if (!HasAlivePlayers())
+            {
+                SetState(TurnState.Lose);
+                yield break;
+            }
+
             // --- EXECUTE SKILL (DELEGATED) ---
             if (entity.CanAction())
             {

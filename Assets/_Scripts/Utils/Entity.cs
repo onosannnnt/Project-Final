@@ -18,6 +18,7 @@ public abstract class Entity : MonoBehaviour
     [SerializeField] private SkillLoadout skills;
     protected int ID;
     protected float currentHealth;
+    protected float corruptedHealth;
     protected int currentSkillPoint;
     public BuffManager buffController;
     public SkillManager skillManager;
@@ -26,6 +27,7 @@ public abstract class Entity : MonoBehaviour
     public List<IDamageModifier> IncomingModifiers = new();
 
     public event System.Action<float, float> OnHealthChanged;
+    public event System.Action<float, float, float> OnCorruptedHealthChanged;
     public event System.Action<int, int> OnSPChanged;
 
     public virtual bool CanTakeTurn() => true;
@@ -39,6 +41,7 @@ public abstract class Entity : MonoBehaviour
     protected virtual void Start()
     {
         currentHealth = GetStat(StatType.MaxHealth);
+        corruptedHealth = 0f;
         currentSkillPoint = (int)GetStat(StatType.MaxSkillPoint);
 
         if (skills != null)
@@ -51,11 +54,67 @@ public abstract class Entity : MonoBehaviour
         IncomingModifiers.Add(new EvasionModifier());
     }
 
-    public virtual float CurrentHealth => math.min(currentHealth, GetStat(StatType.MaxHealth));
+    public virtual float CurrentHealth => math.min(currentHealth, EffectiveMaxHealth);
+    public virtual float CorruptedHealth => corruptedHealth;
+    public virtual float EffectiveMaxHealth => Mathf.Max(0, GetStat(StatType.MaxHealth) - corruptedHealth);
     public virtual int CurrentSP => currentSkillPoint;
     public virtual EntitiesBaseStat Stats => stats;
     public virtual SkillLoadout SkillLoadout => skills;
     public virtual Skill GetSelectedSkill => selectedSkill;
+
+    public virtual void AddCorruptedHealth(float amount)
+    {
+        float maxHp = GetStat(StatType.MaxHealth);
+        corruptedHealth = Mathf.Clamp(corruptedHealth + amount, 0, maxHp);
+        
+        // Clamp current health to new effective max
+        float effectiveMax = EffectiveMaxHealth;
+        if (currentHealth > effectiveMax)
+        {
+            currentHealth = effectiveMax;
+        }
+        
+        TriggerHealthChanged();
+        OnCorruptedHealthChanged?.Invoke(currentHealth, corruptedHealth, maxHp);
+    }
+
+    public virtual void RemoveCorruptedHealth(float amount)
+    {
+        float maxHp = GetStat(StatType.MaxHealth);
+        corruptedHealth = Mathf.Clamp(corruptedHealth - amount, 0, maxHp);
+        
+        TriggerHealthChanged();
+        OnCorruptedHealthChanged?.Invoke(currentHealth, corruptedHealth, maxHp);
+    }
+
+    public virtual void SetCorruptedHealth(float amount)
+    {
+        float maxHp = GetStat(StatType.MaxHealth);
+        corruptedHealth = Mathf.Clamp(amount, 0, maxHp);
+        
+        // Clamp current health if needed
+        float effectiveMax = EffectiveMaxHealth;
+        if (currentHealth > effectiveMax)
+        {
+            currentHealth = effectiveMax;
+        }
+
+        TriggerHealthChanged();
+        OnCorruptedHealthChanged?.Invoke(currentHealth, corruptedHealth, maxHp);
+    }
+
+    public virtual void GainCorruptedHealth(float amount)
+    {
+        AddCorruptedHealth(amount);
+    }
+
+    public virtual bool TryConsumeCorruptedHealth(float amount)
+    {
+        if (corruptedHealth < amount) return false;
+
+        RemoveCorruptedHealth(amount);
+        return true;
+    }
 
     public virtual void SetSkillLoadout(SkillLoadout loadout, bool applyImmediately = true)
     {
@@ -132,7 +191,7 @@ public abstract class Entity : MonoBehaviour
             return;
         }
 
-        currentHealth = Mathf.Min(Mathf.Round(currentHealth + amount), GetStat(StatType.MaxHealth));
+        currentHealth = Mathf.Min(Mathf.Round(currentHealth + amount), EffectiveMaxHealth);
         TriggerHealthChanged();
         ShowDamage((int)amount, Color.green);
     }
@@ -188,11 +247,11 @@ public abstract class Entity : MonoBehaviour
                     case ModifierType.Percent:
                         if (buff.Data.isStackable)
                         {
-                            float totalPercent = 0f;
+                            float buffPercent = 0f;
                             switch (buff.Data.StackCalculationType)
                             {
                                 case StackMultiplierType.Linear:
-                                    totalPercent = modifier.Value * buff.CurrentStack;
+                                    buffPercent = modifier.Value * buff.CurrentStack;
                                     break;
                                 case StackMultiplierType.DiminishingReturn:
                                     {
@@ -201,22 +260,22 @@ public abstract class Entity : MonoBehaviour
                                         {
                                             if (i < linearStacks)
                                             {
-                                                totalPercent += modifier.Value;
+                                                buffPercent += modifier.Value;
                                             }
                                             else
                                             {
                                                 int drIndex = i - linearStacks + 2;
-                                                totalPercent += modifier.Value / drIndex;
+                                                buffPercent += modifier.Value / drIndex;
                                             }
                                         }
                                         break;
                                     }
                             }
-                            MultiplierStat *= 1 + totalPercent;
+                            MultiplierStat += buffPercent;
                         }
                         else
                         {
-                            MultiplierStat *= 1 + modifier.Value;
+                            MultiplierStat += modifier.Value;
                         }
                         break;
                 }

@@ -30,15 +30,27 @@ public class CombatActionProcessor : MonoBehaviour
     private void ExecutePlayerAction(Entity entity, Entity target, Skill skill, CombatActionLog log)
     {
         int actualCost = turnManager.GetSkillCost(skill);
-        bool canUseSkill = turnManager.UseSharedPlayerSkillPointPool
-            ? turnManager.ResourceManager.TryConsumeSharedPlayerSkillPoints(actualCost)
+        bool canAfford = turnManager.UseSharedPlayerSkillPointPool
+            ? turnManager.ResourceManager.GetSharedPlayerCurrentSkillPoints() >= actualCost
             : entity.CurrentSP >= actualCost;
 
-        if (!canUseSkill) return;
+        if (!canAfford) return;
 
-        if (!turnManager.UseSharedPlayerSkillPointPool)
-        {
+        // Verify we have at least one valid target before spending resources
+        if (!HasAnyValidTarget(entity, target, skill)) return;
+
+        // Consume Resources
+        if (turnManager.UseSharedPlayerSkillPointPool)
+            turnManager.ResourceManager.TryConsumeSharedPlayerSkillPoints(actualCost);
+        else
             entity.SetSP(-actualCost);
+
+        // Log Recovery
+        log.ActionPointRecovery = 0;
+
+        if (skill.CorruptedHealthGain > 0)
+        {
+            entity.GainCorruptedHealth(skill.CorruptedHealthGain);
         }
 
         switch (skill.TargetType)
@@ -64,7 +76,13 @@ public class CombatActionProcessor : MonoBehaviour
             return;
         }
 
+        // Verify target
+        if (!HasAnyValidTarget(enemy, target, skill)) return;
+
         enemy.SetSP(-actualCost);
+        log.ActionPointRecovery = 0;
+
+        if (skill.CorruptedHealthGain > 0) enemy.GainCorruptedHealth(skill.CorruptedHealthGain);
 
         switch (skill.TargetType)
         {
@@ -80,6 +98,34 @@ public class CombatActionProcessor : MonoBehaviour
         }
     }
 
+    private bool HasAnyValidTarget(Entity caster, Entity primaryTarget, Skill skill)
+    {
+        if (skill.TargetType == TargetType.Self) return true;
+
+        if (skill.TargetCount == TargetCount.Single)
+        {
+            return primaryTarget != null && primaryTarget.CurrentHealth > 0;
+        }
+        else if (skill.TargetCount == TargetCount.All)
+        {
+            if (skill.TargetType == TargetType.Enemy)
+            {
+                if (caster is PlayerEntity)
+                    return turnManager.GetAliveEnemiesInBattleOrder().Count > 0;
+                else
+                    return PlayerTeamManager.Instance != null && PlayerTeamManager.Instance.GetAliveMembers().Count > 0;
+            }
+            else if (skill.TargetType == TargetType.Ally)
+            {
+                if (caster is PlayerEntity)
+                    return PlayerTeamManager.Instance != null && PlayerTeamManager.Instance.GetAliveMembers().Count > 0;
+                else
+                    return turnManager.GetAliveEnemiesInBattleOrder().Count > 0;
+            }
+        }
+        return false;
+    }
+
     private void ApplySkillToEnemies(Entity caster, Entity target, Skill skill, CombatActionLog log)
     {
         if (skill.TargetCount == TargetCount.Single)
@@ -91,12 +137,15 @@ public class CombatActionProcessor : MonoBehaviour
         }
         else if (skill.TargetCount == TargetCount.All)
         {
-            bool hasValidTarget = false;
+            // Fix 5: Cache targets to stabilize AOE loop
+            List<EnemyCombat> targetList = turnManager.GetAliveEnemiesInBattleOrder();
             EnemyCombat primaryTarget = target as EnemyCombat;
             bool primaryAssignedFromFallback = false;
 
-            foreach (var enemyObj in turnManager.GetAliveEnemiesInBattleOrder())
+            foreach (var enemyObj in targetList)
             {
+                if (enemyObj == null || enemyObj.CurrentHealth <= 0) continue;
+
                 bool allowWindSpread = false;
                 if (primaryTarget != null)
                 {
@@ -109,7 +158,6 @@ public class CombatActionProcessor : MonoBehaviour
                 }
 
                 caster.skillManager.UseSkill(skill, enemyObj, log, allowWindSpread);
-                hasValidTarget = true;
             }
         }
     }
@@ -120,12 +168,14 @@ public class CombatActionProcessor : MonoBehaviour
         {
             if (PlayerTeamManager.Instance != null)
             {
-                var aliveMembers = PlayerTeamManager.Instance.GetAliveMembers();
-                if (aliveMembers.Count > 0)
+                // Fix 5: Cache targets
+                List<Entity> targetList = PlayerTeamManager.Instance.GetAliveMembers().ConvertAll(p => (Entity)p);
+                if (targetList.Count > 0)
                 {
-                    foreach (var ally in aliveMembers)
+                    foreach (var ally in targetList)
                     {
-                        caster.skillManager.UseSkill(skill, ally, log);
+                        if (ally != null && ally.CurrentHealth > 0)
+                            caster.skillManager.UseSkill(skill, ally, log);
                     }
                 }
                 else
@@ -165,9 +215,12 @@ public class CombatActionProcessor : MonoBehaviour
         {
             if (PlayerTeamManager.Instance != null)
             {
-                foreach (var player in PlayerTeamManager.Instance.GetAliveMembers())
+                // Fix 5: Cache targets
+                List<Entity> targetList = PlayerTeamManager.Instance.GetAliveMembers().ConvertAll(p => (Entity)p);
+                foreach (var player in targetList)
                 {
-                    enemy.skillManager.UseSkill(skill, player, log);
+                    if (player != null && player.CurrentHealth > 0)
+                        enemy.skillManager.UseSkill(skill, player, log);
                 }
             }
         }

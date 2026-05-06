@@ -66,17 +66,9 @@ public class ConsumeBuffDamageEffect : DamageEffect
         float variance = Random.Range(0.85f, 1.15f);
         float finalDamage = totalDamage * variance;
 
-        // 3. Critical Hit Check
-        bool isCrit = Random.Range(0f, 100f) <= CriticalHitChance;
-        if (isCrit)
-        {
-            finalDamage *= 1.5f;
-// // Debug.Log($"Critical Hit!");
-        }
-
 // // Debug.Log($"Base Damage: {totalDamage}, Variance: {variance}, Final Damage: {finalDamage}");
 
-        Damage damage = new Damage(finalDamage, Element, isCrit);
+        Damage damage = new Damage(finalDamage, Element, false, CriticalHitChance, 1.5f);
         DamageCtx ctx = new DamageCtx(caster, target, damage);
         DamageSystem.Process(ctx, log);
         return true;

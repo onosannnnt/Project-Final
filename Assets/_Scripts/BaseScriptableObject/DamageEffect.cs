@@ -24,20 +24,13 @@ public class DamageEffect : SkillEffect
         float variance = Random.Range(0.85f, 1.15f);
         float finalDamage = BaseDamage * variance;
 
-        // 3. Critical Hit Check
-        bool isCrit = Random.Range(0f, 100f) <= CriticalHitChance;
-        if (isCrit)
-        {
-            finalDamage *= 1.5f;
-        }
-
         // ใน DamageEffect.cs
         if (target is PuzzleBossCombat puzzleBoss)
         {
             finalDamage *= puzzleBoss.GetVulnerabilityMultiplier();
         }
 
-        Damage damage = new Damage(finalDamage, Element, isCrit);
+        Damage damage = new Damage(finalDamage, Element, false, CriticalHitChance, 1.5f);
         DamageCtx ctx = new DamageCtx(caster, target, damage);
         DamageSystem.Process(ctx, log);
         return true;

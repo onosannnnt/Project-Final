@@ -56,16 +56,11 @@ public class RepeatOnKillDamageEffect : SkillEffect
             return false;
         }
 
-        bool isCrit = Random.Range(0f, 100f) <= CriticalHitChance;
         float finalDamage = DamageAmount;
-        if (isCrit)
-        {
-            finalDamage *= CriticalDamageMultiplier;
-        }
 
         float healthBefore = target.CurrentHealth;
 
-        Damage damage = new Damage(finalDamage, Element, isCrit);
+        Damage damage = new Damage(finalDamage, Element, false, CriticalHitChance, CriticalDamageMultiplier);
         DamageCtx ctx = new DamageCtx(caster, target, damage);
         DamageSystem.Process(ctx, log);
 

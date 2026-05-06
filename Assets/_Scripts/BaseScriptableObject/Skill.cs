@@ -15,6 +15,7 @@ public class Skill : ScriptableObject
     public int Tier;
     [Header("Cost")]
     public int SkillPoint;
+    public float CorruptedHealthGain;
     [Header("Attribute")]
     public TargetType TargetType;
     public TargetCount TargetCount;
@@ -85,6 +86,11 @@ public class Skill : ScriptableObject
         Color elementColor = Utils.GetDamageColor(element);
         string elementHex = ColorUtility.ToHtmlStringRGB(elementColor);
         string elementLine = $"<b>Element:</b> <color=#{elementHex}>{GetElementDisplayName()}</color>";
+
+        if (CorruptedHealthGain > 0)
+        {
+            elementLine += $"\n<b>Corrupt:</b> <color=red>+{CorruptedHealthGain}</color>";
+        }
 
         if (string.IsNullOrWhiteSpace(description))
         {

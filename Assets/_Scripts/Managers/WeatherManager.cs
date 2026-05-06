@@ -12,6 +12,7 @@ public class WeatherManager : Singleton<WeatherManager>
     public WeatherType CurrentWeather { get; private set; }
     public WeatherType NextWeather { get; private set; }
     public int WeatherStreak { get; private set; } = 1;
+    private int lockDuration = 0;
 
     public System.Action<WeatherType, WeatherType, int> OnWeatherChanged;
 
@@ -27,8 +28,27 @@ public class WeatherManager : Singleton<WeatherManager>
         NextWeather = GetRandomWeather();
     }
 
+    public void SetNextWeather(WeatherType next)
+    {
+        NextWeather = next;
+        OnWeatherChanged?.Invoke(CurrentWeather, NextWeather, WeatherStreak);
+    }
+
+    public void LockWeather(int duration)
+    {
+        lockDuration = duration;
+    }
+
     public void AdvanceWeather()
     {
+        if (lockDuration > 0)
+        {
+            lockDuration--;
+            // Weather doesn't change, but we might want to signal it's still the same
+            OnWeatherChanged?.Invoke(CurrentWeather, NextWeather, WeatherStreak);
+            return;
+        }
+
         if (CurrentWeather == NextWeather)
         {
             WeatherStreak++;

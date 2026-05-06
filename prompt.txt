@@ -1,0 +1,35 @@
+Grant {stack_amount} Frenzy Stacks to a target.
+
+Heal {base_heal} HP +{heal_per_stack} per Frenzy Stack.
+
+Heal the party for {base_heal} HP +{heal_per_stack} per Frenzy Stack.
+
+Grant a buff that gives {stack_gain_per_turn} Frenzy Stack at the end of each turn for {duration} turns.
+
+Heal {base_heal} HP +{heal_per_stack} per Frenzy Stack (if HP < {hp_threshold_percent}%, increase healing by {low_hp_bonus_percent}%).
+
+Heal the party for {base_heal} HP +{heal_per_stack} per Frenzy Stack consumed (up to {max_stack_consume} Stacks).
+
+If an enemy is killed within {duration} turns, heal the party for {trigger_heal} and gain {stack_gain} Frenzy Stacks.
+
+Increase party damage by {damage_bonus_per_stack} per Frenzy Stack for {duration} turns.
+
+Cleanse all debuffs from self and gain {stack_per_cleanse} Frenzy Stacks per debuff removed (if none, gain {fallback_stack}).
+
+Deal {base_damage} damage +{damage_per_stack} per Frenzy Stack.
+
+Deal {base_damage} damage +{damage_per_stack} per Frenzy Stack and consume all Frenzy Stacks.
+
+Deal {base_aoe_damage} AoE damage +{damage_per_stack} per Frenzy Stack.
+
+Deal {base_damage} damage +{damage_per_stack} per Frenzy Stack and consume all Frenzy Stacks.
+
+Deal {base_damage} damage +{damage_per_stack} per Frenzy Stack, reduce target Speed by {speed_reduction_percent}%, and consume all Frenzy Stacks.
+
+Deal {base_aoe_damage} AoE damage (if Frenzy Stacks ≥ {stack_threshold}, consume {stack_consume} to repeat the attack once).
+
+Deal {base_damage} damage +{damage_per_stack} per Frenzy Stack and consume all Frenzy Stacks.
+
+Deal {base_aoe_damage} AoE damage +{damage_per_stack} per Frenzy Stack and consume all Frenzy Stacks.
+
+Deal {base_aoe_damage} AoE damage +{damage_per_stack} per Frenzy Stack and heal the party for {lifesteal_percent}% of damage dealt.
