@@ -10,6 +10,7 @@ public class HealthbarUI : MonoBehaviour
     [SerializeField] private StatInfoUI statInfoUI;
     [SerializeField] private Button HealthbarButton;
     [SerializeField] private Image HealthForeground;
+    [SerializeField] private Image CorruptedHealthForeground;
     [SerializeField] private Image SPForeground;
     [SerializeField] private TextMeshProUGUI HealthInfo;
     [SerializeField] private Transform BuffParent;
@@ -36,7 +37,7 @@ public class HealthbarUI : MonoBehaviour
         }
 
         ForegroundInitialWidth = HealthForeground.rectTransform.sizeDelta.x;
-        
+
         if (SPForeground != null)
         {
             SPForegroundInitialWidth = SPForeground.rectTransform.sizeDelta.x;
@@ -98,6 +99,7 @@ public class HealthbarUI : MonoBehaviour
         if (targetPlayer != null)
         {
             targetPlayer.OnHealthChanged -= UpdateHealthBar;
+            targetPlayer.OnCorruptedHealthChanged -= UpdateCorruptedHealthBar;
             if (SPForeground != null)
             {
                 targetPlayer.OnSPChanged -= UpdateSPBar;
@@ -115,6 +117,7 @@ public class HealthbarUI : MonoBehaviour
         if (targetPlayer != null)
         {
             targetPlayer.OnHealthChanged -= UpdateHealthBar;
+            targetPlayer.OnCorruptedHealthChanged -= UpdateCorruptedHealthBar;
             if (SPForeground != null) targetPlayer.OnSPChanged -= UpdateSPBar;
             if (targetPlayer.buffController != null) targetPlayer.buffController.OnBuffsChanged -= UpdateBuffs;
         }
@@ -125,10 +128,12 @@ public class HealthbarUI : MonoBehaviour
         if (targetPlayer != null)
         {
             targetPlayer.OnHealthChanged += UpdateHealthBar;
+            targetPlayer.OnCorruptedHealthChanged += UpdateCorruptedHealthBar;
             if (SPForeground != null) targetPlayer.OnSPChanged += UpdateSPBar;
             if (targetPlayer.buffController != null) targetPlayer.buffController.OnBuffsChanged += UpdateBuffs;
 
             UpdateHealthBar(targetPlayer.CurrentHealth, targetPlayer.GetStat(StatType.MaxHealth));
+            UpdateCorruptedHealthBar(targetPlayer.CurrentHealth, targetPlayer.CorruptedHealth, targetPlayer.GetStat(StatType.MaxHealth));
             if (SPForeground != null)
             {
                 UpdateSPBar(targetPlayer.CurrentSP, (int)targetPlayer.GetStat(StatType.MaxSkillPoint));
@@ -142,7 +147,28 @@ public class HealthbarUI : MonoBehaviour
     {
         float healthPercent = maxHealth > 0 ? (float)currentHealth / maxHealth : 0;
         HealthForeground.rectTransform.sizeDelta = new Vector2(ForegroundInitialWidth * healthPercent, HealthForeground.rectTransform.sizeDelta.y);
+
+        // Also update corrupted bar size if needed
+        if (targetPlayer != null)
+        {
+            UpdateCorruptedHealthBar(targetPlayer.CurrentHealth, targetPlayer.CorruptedHealth, targetPlayer.GetStat(StatType.MaxHealth));
+        }
+
         UpdateInfoText();
+    }
+
+    private void UpdateCorruptedHealthBar(float currentHealth, float corruptedHealth, float maxHealth)
+    {
+        if (CorruptedHealthForeground == null) return;
+
+        float corruptedPercent = maxHealth > 0 ? corruptedHealth / maxHealth : 0;
+
+        // 1. Visibility: Only show the grey bar if there is corrupted health
+        CorruptedHealthForeground.gameObject.SetActive(corruptedPercent > 0);
+        if (corruptedPercent <= 0) return;
+
+        // 2. Size: Set width to match the corrupted percentage of total width
+        CorruptedHealthForeground.rectTransform.sizeDelta = new Vector2(ForegroundInitialWidth * corruptedPercent, CorruptedHealthForeground.rectTransform.sizeDelta.y);
     }
 
     private void UpdateSPBar(int currentSP, int maxSP)
@@ -156,7 +182,7 @@ public class HealthbarUI : MonoBehaviour
     private void UpdateInfoText()
     {
         if (targetPlayer == null || HealthInfo == null) return;
-        
+
         if (SPForeground != null)
         {
             HealthInfo.text = $"HP {Math.Max(0, targetPlayer.CurrentHealth):F0} | SP {Math.Max(0, targetPlayer.CurrentSP):F0}";
@@ -190,7 +216,7 @@ public class HealthbarUI : MonoBehaviour
         {
             GameObject buffObj = Instantiate(BuffPrefab, BuffParent.transform);
             buffObj.GetComponent<Image>().sprite = buff.Data.Icon;
-            
+
             var durationTransform = buffObj.transform.Find("Duration");
             if (durationTransform != null)
             {
@@ -208,7 +234,7 @@ public class HealthbarUI : MonoBehaviour
             }
         }
     }
-    
+
     public void SetStatusBuff()
     {
         foreach (Transform child in StatusBuffParent.transform)
@@ -218,8 +244,8 @@ public class HealthbarUI : MonoBehaviour
         if (targetPlayer == null || targetPlayer.buffController == null) return;
         List<ActiveBuff> statusBuffs = new List<ActiveBuff>();
         statusBuffs.AddRange(targetPlayer.buffController.GetBuffsByType(BuffType.CrowdControl));
-        
-        
+
+
         StatusBuffParent.gameObject.SetActive(statusBuffs.Count > 0);
         foreach (var buff in statusBuffs)
         {
@@ -237,7 +263,7 @@ public class HealthbarUI : MonoBehaviour
         else
             return "<color=red>";
     }
-    
+
     private void OnHealthbarClicked()
     {
         if (statInfoUI != null)

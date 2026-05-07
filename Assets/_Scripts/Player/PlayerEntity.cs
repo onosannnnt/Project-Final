@@ -4,6 +4,7 @@ public abstract class PlayerEntity : Entity
 {
     protected PlayerActionState playerState;
     protected EnemyCombat enemyTarget;
+    protected PlayerEntity allyTarget;
 
     protected override void Start()
     {
@@ -33,6 +34,16 @@ public abstract class PlayerEntity : Entity
         return enemyTarget;
     }
 
+    public virtual void SetAllyTarget(PlayerEntity ally)
+    {
+        allyTarget = ally;
+    }
+
+    public PlayerEntity GetAllyTarget()
+    {
+        return allyTarget;
+    }
+
     public override void SetSP(int amount)
     {
         if (TurnManager.Instance != null && TurnManager.Instance.UseSharedPlayerSkillPointPool)
@@ -59,6 +70,43 @@ public abstract class PlayerEntity : Entity
         {
             bool isHighlighted = color != Color.white;
             targetIndicator.SetActive(isHighlighted);
+        }
+    }
+
+    protected virtual void Update()
+    {
+        PlayerEntity activePlayer = TurnManager.Instance.CurrentActivePlayer;
+        if (activePlayer == null || activePlayer.GetPlayerState != PlayerActionState.Targeting || activePlayer.GetSelectedSkill == null)
+        {
+            Highlight(Color.white);
+            return;
+        }
+
+        Skill activeSkill = activePlayer.GetSelectedSkill;
+
+        // Visual logic for the player indicator
+        if (activeSkill.TargetType == TargetType.Self)
+        {
+            if (activePlayer == this) Highlight(Color.yellow);
+            else Highlight(Color.white);
+        }
+        else if (activeSkill.TargetType == TargetType.Ally)
+        {
+            if (activeSkill.TargetCount == TargetCount.All)
+            {
+                Highlight(Color.yellow);
+            }
+            else if (activeSkill.TargetCount == TargetCount.Single)
+            {
+                if (activePlayer.GetAllyTarget() == this)
+                    Highlight(Color.yellow);
+                else
+                    Highlight(Color.white);
+            }
+        }
+        else
+        {
+            Highlight(Color.white);
         }
     }
 
@@ -145,19 +193,22 @@ public abstract class PlayerEntity : Entity
 
     protected virtual void OnMouseEnter()
     {
-        if (playerState != PlayerActionState.Targeting || selectedSkill == null) return;
+        PlayerEntity activePlayer = TurnManager.Instance.CurrentActivePlayer;
+        if (activePlayer == null || activePlayer.GetPlayerState != PlayerActionState.Targeting || activePlayer.GetSelectedSkill == null) return;
+
+        Skill activeSkill = activePlayer.GetSelectedSkill;
         
-        if (selectedSkill.TargetType == TargetType.Self)
+        if (activeSkill.TargetType == TargetType.Self)
         {
-            if (TurnManager.Instance.CurrentActivePlayer == this) Highlight(Color.green);
+            if (activePlayer == this) Highlight(Color.green);
         }
-        else if (selectedSkill.TargetType == TargetType.Ally)
+        else if (activeSkill.TargetType == TargetType.Ally)
         {
-            if (selectedSkill.TargetCount == TargetCount.Single)
+            if (activeSkill.TargetCount == TargetCount.Single)
             {
                 Highlight(Color.green);
             }
-            else if (selectedSkill.TargetCount == TargetCount.All)
+            else if (activeSkill.TargetCount == TargetCount.All)
             {
                 if (PlayerTeamManager.Instance != null)
                 {
@@ -172,19 +223,22 @@ public abstract class PlayerEntity : Entity
 
     protected virtual void OnMouseExit()
     {
-        if (playerState != PlayerActionState.Targeting || selectedSkill == null) return;
+        PlayerEntity activePlayer = TurnManager.Instance.CurrentActivePlayer;
+        if (activePlayer == null || activePlayer.GetPlayerState != PlayerActionState.Targeting || activePlayer.GetSelectedSkill == null) return;
 
-        if (selectedSkill.TargetType == TargetType.Self)
+        Skill activeSkill = activePlayer.GetSelectedSkill;
+
+        if (activeSkill.TargetType == TargetType.Self)
         {
-            if (TurnManager.Instance.CurrentActivePlayer == this) Highlight(Color.yellow);
+            if (activePlayer == this) Highlight(Color.yellow);
         }
-        else if (selectedSkill.TargetType == TargetType.Ally)
+        else if (activeSkill.TargetType == TargetType.Ally)
         {
-            if (selectedSkill.TargetCount == TargetCount.Single)
+            if (activeSkill.TargetCount == TargetCount.Single)
             {
                 Highlight(Color.yellow);
             }
-            else if (selectedSkill.TargetCount == TargetCount.All)
+            else if (activeSkill.TargetCount == TargetCount.All)
             {
                 if (PlayerTeamManager.Instance != null)
                 {
@@ -199,45 +253,40 @@ public abstract class PlayerEntity : Entity
 
     protected virtual void OnMouseDown()
     {
-        if (playerState != PlayerActionState.Targeting || selectedSkill == null) return;
+        PlayerEntity activePlayer = TurnManager.Instance.CurrentActivePlayer;
+        if (activePlayer == null || activePlayer.GetPlayerState != PlayerActionState.Targeting || activePlayer.GetSelectedSkill == null) return;
 
-        if (selectedSkill.TargetType == TargetType.Self)
+        Skill activeSkill = activePlayer.GetSelectedSkill;
+
+        if (activeSkill.TargetType == TargetType.Self)
         {
-            Entity currentActive = TurnManager.Instance.CurrentActivePlayer ?? this;
-            if (currentActive == this)
+            if (activePlayer == this)
             {
                 Highlight(Color.white);
-                TurnManager.Instance.SubmitPlayerAction(this, this, selectedSkill);
+                TurnManager.Instance.SubmitPlayerAction(this, this, activeSkill);
             }
         }
-        else if (selectedSkill.TargetType == TargetType.Ally)
+        else if (activeSkill.TargetType == TargetType.Ally)
         {
-            PlayerEntity activePlayer = TurnManager.Instance.CurrentActivePlayer;
-            if (activePlayer == null) return;
-
-            if (selectedSkill.TargetCount == TargetCount.Single)
+            if (activeSkill.TargetCount == TargetCount.Single)
             {
-                // Clear all player highlights
-                if (PlayerTeamManager.Instance != null)
+                if (activePlayer.GetAllyTarget() == this)
                 {
-                    foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
-                    {
-                        member.Highlight(Color.white);
-                    }
+                    // Second click: Submit
+                    Highlight(Color.white);
+                    TurnManager.Instance.SubmitPlayerAction(activePlayer, this, activeSkill);
                 }
-                TurnManager.Instance.SubmitPlayerAction(activePlayer, this, selectedSkill);
+                else
+                {
+                    // First click: Select
+                    activePlayer.SetAllyTarget(this);
+                }
             }
-            else if (selectedSkill.TargetCount == TargetCount.All)
+            else if (activeSkill.TargetCount == TargetCount.All)
             {
                 // For 'All' skills, clicking any valid target triggers it for the whole group
-                if (PlayerTeamManager.Instance != null)
-                {
-                    foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
-                    {
-                        member.Highlight(Color.white);
-                    }
-                }
-                TurnManager.Instance.SubmitPlayerAction(activePlayer, this, selectedSkill);
+                Highlight(Color.white);
+                TurnManager.Instance.SubmitPlayerAction(activePlayer, this, activeSkill);
             }
         }
     }

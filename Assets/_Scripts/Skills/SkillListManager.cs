@@ -132,7 +132,17 @@ public class SkillListManager : MonoBehaviour
             {
                 foreach (var s in userData.OwnedSkills)
                 {
-                    if (s != null && !skillsToDisplay.Contains(s)) skillsToDisplay.Add(s);
+                    if (s != null && !skillsToDisplay.Contains(s))
+                    {
+                        if (activeLoadoutIndex == 0) // Player 1
+                        {
+                            if (s.skillType == SkillType.Attack) skillsToDisplay.Add(s);
+                        }
+                        else // Player 2
+                        {
+                            if (s.skillType != SkillType.Attack) skillsToDisplay.Add(s);
+                        }
+                    }
                 }
             }
 
@@ -142,14 +152,37 @@ public class SkillListManager : MonoBehaviour
                 Debug.Log($"[SkillListManager] Loading {userData.TrialSkills.Count} trial skills.");
                 foreach (var s in userData.TrialSkills)
                 {
-                    if (s != null && !skillsToDisplay.Contains(s)) skillsToDisplay.Add(s);
+                    if (s != null && !skillsToDisplay.Contains(s))
+                    {
+                        if (activeLoadoutIndex == 0) // Player 1
+                        {
+                            if (s.skillType == SkillType.Attack) skillsToDisplay.Add(s);
+                        }
+                        else // Player 2
+                        {
+                            if (s.skillType != SkillType.Attack) skillsToDisplay.Add(s);
+                        }
+                    }
                 }
             }
         }
         else
         {
             Debug.LogWarning("[SkillListManager] UserData is missing! Falling back to allSkills database.");
-            skillsToDisplay = allSkills;
+            foreach (var s in allSkills)
+            {
+                if (s != null)
+                {
+                    if (activeLoadoutIndex == 0) // Player 1
+                    {
+                        if (s.skillType == SkillType.Attack) skillsToDisplay.Add(s);
+                    }
+                    else // Player 2
+                    {
+                        if (s.skillType != SkillType.Attack) skillsToDisplay.Add(s);
+                    }
+                }
+            }
         }
 
         foreach (Skill data in skillsToDisplay)
@@ -254,8 +287,9 @@ public class SkillListManager : MonoBehaviour
         }
 
         activeLoadoutIndex = Mathf.Clamp(index, 0, playerLoadouts.Length - 1);
-        LoadActiveLoadoutIntoSlots();
-        UpdateLoadoutTabVisuals();
+        
+        // Rebuild the inventory list and reload slots for the new active player
+        RefreshAllData();
     }
 
     public void SelectPlayer1Loadout()

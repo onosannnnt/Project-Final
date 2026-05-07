@@ -15,4 +15,4 @@ MonoBehaviour:
   Phase: 0
   flatAmount: 0
   percentOfMaxHP: 20
-  targetCaster: 1
+  targetCaster: 0

@@ -47150,46 +47150,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   allSkills:
   - {fileID: 11400000, guid: 25ff8610d4d945d4fa36703e5a504cff, type: 2}
-  - {fileID: 11400000, guid: 960ab9b50c23d4b80aa308ff09c2cc5e, type: 2}
-  - {fileID: 11400000, guid: 2bbf253faab41468f974deef9e5586d7, type: 2}
-  - {fileID: 11400000, guid: 722595add0b174647aea6ea04c50e891, type: 2}
-  - {fileID: 11400000, guid: c43a1b36c8f53214b9061f5eaff79007, type: 2}
-  - {fileID: 11400000, guid: 03340a7ec62f14fb59a235742685b8d3, type: 2}
-  - {fileID: 11400000, guid: bc23fe254f317f241837f96f768c273d, type: 2}
-  - {fileID: 11400000, guid: 0d575b8c335695f48a878803c4c49058, type: 2}
-  - {fileID: 11400000, guid: 7126a5820e8b44344b52a692c6af4db2, type: 2}
-  - {fileID: 11400000, guid: fceb4fb54f61a478698176011ff19113, type: 2}
-  - {fileID: 11400000, guid: d1c58fe4a20e84293a08627f33ed6fce, type: 2}
-  - {fileID: 11400000, guid: 7369144d56efa4387b6d4a97dd32d6cc, type: 2}
   - {fileID: 11400000, guid: f51740f81383e4075ac5a089f6690096, type: 2}
+  - {fileID: 11400000, guid: 960ab9b50c23d4b80aa308ff09c2cc5e, type: 2}
+  - {fileID: 11400000, guid: 004ebf67e578c49ed803b52b78348275, type: 2}
+  - {fileID: 11400000, guid: 44b5e9c1c40694dda9b06e9de18c1e1f, type: 2}
   - {fileID: 11400000, guid: da49b81583e914780a3f07a7f2fd34fb, type: 2}
-  - {fileID: 11400000, guid: 163f5813a1fba47c2a9bcdd8acaf0ad2, type: 2}
-  - {fileID: 11400000, guid: 9cac841f54f174882b05be86850e558a, type: 2}
-  - {fileID: 11400000, guid: 0fb41b4159f914b80a0da9ee212de991, type: 2}
-  - {fileID: 11400000, guid: f748f3178cecc437585b5b647a7ced1e, type: 2}
-  - {fileID: 11400000, guid: 9eca5ea79f7aeb34ab6fd03622aaca6b, type: 2}
-  - {fileID: 11400000, guid: 2559a20445d0fe04cab93f70e40dce8f, type: 2}
-  - {fileID: 11400000, guid: 2f581630d5867c34493805bd58d6c9ab, type: 2}
-  - {fileID: 11400000, guid: 72dad913083696346a4d0162ac658e33, type: 2}
-  - {fileID: 11400000, guid: fe81da15a8be9e54e96095be4de4559c, type: 2}
-  - {fileID: 11400000, guid: 6855f80c48dc44e4caccc6462737dc08, type: 2}
-  - {fileID: 11400000, guid: c74416de63b145640b73e635b94bf819, type: 2}
-  - {fileID: 11400000, guid: 20bca6cd3c433a6459a0ea52202cb2f1, type: 2}
-  - {fileID: 11400000, guid: 1564eafc56443d24c9eea343d7f9c5f1, type: 2}
-  - {fileID: 11400000, guid: 3a3a209419221ac41bbe77fdb0683594, type: 2}
-  - {fileID: 11400000, guid: 86b6d2d6369ea9640be32041f5d08a49, type: 2}
-  - {fileID: 11400000, guid: 9a095a2df88ef5e488635ea727746ba0, type: 2}
-  - {fileID: 11400000, guid: 4e97e858d89a4604d9e586ff7865a25b, type: 2}
-  - {fileID: 11400000, guid: 24e966157d81242478732986625f97ee, type: 2}
-  - {fileID: 11400000, guid: 5794249fbb2433c49b6c3d957908c9e0, type: 2}
-  - {fileID: 11400000, guid: f1440cbb648cb53418eab125a689cbb7, type: 2}
-  - {fileID: 11400000, guid: 739c33bfeeacc69419b1d8cd6f4af2d5, type: 2}
-  - {fileID: 11400000, guid: 8fde752b5e751cb429dd19591e6b1cc6, type: 2}
   - {fileID: 11400000, guid: 9d0349421b5f2467abeeca75ad8e08ec, type: 2}
-  - {fileID: 11400000, guid: 001d2acad22ce4a3082b885e10222bdd, type: 2}
   - {fileID: 11400000, guid: 08027bd3b7f7e487ba0daf71e9888369, type: 2}
-  - {fileID: 11400000, guid: a8c4ef1be40ae493898372072af757a5, type: 2}
-  - {fileID: 11400000, guid: a6d985162719a48a4b22a22bb9e0fed4, type: 2}
+  - {fileID: 11400000, guid: 8f63d46acd2b54418850729bcf803566, type: 2}
+  - {fileID: 11400000, guid: 2bbf253faab41468f974deef9e5586d7, type: 2}
+  - {fileID: 11400000, guid: be07c4cb5ae8c401cb642a68a4a45d38, type: 2}
+  - {fileID: 11400000, guid: 25954162e312a49cc882da17461cd465, type: 2}
+  - {fileID: 11400000, guid: 2571b48f58c754b5eacb5c8427ee3e86, type: 2}
+  - {fileID: 11400000, guid: 2b925b21c564145f9b418681efa819e9, type: 2}
+  - {fileID: 11400000, guid: cffa3d16caa6e4b6dab9bcf04b2b15c8, type: 2}
+  - {fileID: 11400000, guid: 1afd50ff6ce64434693c2f6efc9f01fc, type: 2}
+  - {fileID: 11400000, guid: e87ee075edcf24c85970864774ec4c44, type: 2}
+  - {fileID: 11400000, guid: b87360abd8d52457eac45fe5f375b8af, type: 2}
   userData: {fileID: 11400000, guid: bd7868a778b044575959e5160d52fa42, type: 2}
   skillSlotPrefab: {fileID: 125270501465738059, guid: 1a5ac496baf806d439436b3eaa85a0d5,
     type: 3}

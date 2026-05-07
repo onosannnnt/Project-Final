@@ -13,12 +13,11 @@ MonoBehaviour:
   m_Name: RVBuild
   m_EditorClassIdentifier: 
   buildName: 
-  buildIcon: {fileID: 0}
   buildDescription: 
   starterSkills:
   - {fileID: 11400000, guid: 25ff8610d4d945d4fa36703e5a504cff, type: 2}
   - {fileID: 11400000, guid: 960ab9b50c23d4b80aa308ff09c2cc5e, type: 2}
+  - {fileID: 11400000, guid: f51740f81383e4075ac5a089f6690096, type: 2}
   - {fileID: 11400000, guid: 2bbf253faab41468f974deef9e5586d7, type: 2}
-  - {fileID: 11400000, guid: 86b6d2d6369ea9640be32041f5d08a49, type: 2}
-  - {fileID: 11400000, guid: 722595add0b174647aea6ea04c50e891, type: 2}
-  - {fileID: 11400000, guid: 4e97e858d89a4604d9e586ff7865a25b, type: 2}
+  - {fileID: 11400000, guid: be07c4cb5ae8c401cb642a68a4a45d38, type: 2}
+  - {fileID: 11400000, guid: 25954162e312a49cc882da17461cd465, type: 2}
