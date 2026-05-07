@@ -78,20 +78,12 @@ public class ComprehensiveCorruptedStrikeEffect : SkillEffect
         return true;
     }
 
-    private int lastFrame = -1;
-    private HashSet<int> processedCasters = new HashSet<int>();
+    [System.NonSerialized] private CombatActionLog lastProcessedLog = null;
 
     private void ApplySelfEffects(Entity caster, bool thresholdMet, CombatActionLog log)
     {
-        if (Time.frameCount != lastFrame)
-        {
-            lastFrame = Time.frameCount;
-            processedCasters.Clear();
-        }
-
-        int id = caster.GetEntityID();
-        if (processedCasters.Contains(id)) return;
-        processedCasters.Add(id);
+        if (log == null || log == lastProcessedLog) return;
+        lastProcessedLog = log;
 
         float maxHP = caster.GetStat(StatType.MaxHealth);
 
@@ -99,7 +91,8 @@ public class ComprehensiveCorruptedStrikeEffect : SkillEffect
         if (CurrentHpCostPercent > 0)
         {
             float cost = caster.CurrentHealth * CurrentHpCostPercent;
-            caster.TakeDamage(new Damage(cost, DamageElement.None));
+            // PreventDeath = true to ensure player doesn't suicide
+            caster.TakeDamage(new Damage(cost, DamageElement.None, false, 0, 1.5f, true));
         }
 
         if (ForceHpToMaxPercent >= 0)
@@ -108,7 +101,8 @@ public class ComprehensiveCorruptedStrikeEffect : SkillEffect
             float currentHP = caster.CurrentHealth;
             if (currentHP > targetHP)
             {
-                caster.TakeDamage(new Damage(currentHP - targetHP, DamageElement.None));
+                // PreventDeath = true to ensure player doesn't suicide
+                caster.TakeDamage(new Damage(currentHP - targetHP, DamageElement.None, false, 0, 1.5f, true));
             }
         }
 

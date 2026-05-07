@@ -57,8 +57,10 @@ public class ReflectMitigationBuff : Buff
             if (data.ReflectPercent > 0 && ctx.Caster != null && ctx.Caster != owner)
             {
                 float reflectedAmount = originalAmount * data.ReflectPercent;
-                Damage reflectDmg = new Damage(reflectedAmount, DamageElement.None); // Neutral reflect
-                ctx.Caster.TakeDamage(reflectDmg);
+                // Use non-lethal for player reflection too? The user said "every skill... that can make them die by themselves".
+                // Reflection is usually on an attacker.
+                Damage reflectDmg = new Damage(reflectedAmount, DamageElement.None, false, 0, 1.5f, true); 
+                DamageSystem.ProcessReflect(owner, ctx.Caster, reflectDmg, ctx.Log);
             }
         }
     }

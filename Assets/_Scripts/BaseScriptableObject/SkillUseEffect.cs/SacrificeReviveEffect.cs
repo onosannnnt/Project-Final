@@ -68,7 +68,8 @@ public class SacrificeReviveEffect : SkillEffect
             }
             
             // Caster is still sacrificed as per the "Exchange" theme
-            caster.TakeDamage(new Damage(999999f, DamageElement.None));
+            // BUT Suicide Prevention is active: preventDeath = true
+            caster.TakeDamage(new Damage(999999f, DamageElement.None, false, 0, 1.5f, true));
             return true;
         }
 
@@ -92,7 +93,8 @@ public class SacrificeReviveEffect : SkillEffect
         }
 
         // 3. Sacrifice the Caster
-        caster.TakeDamage(new Damage(999999f, DamageElement.None));
+        // BUT Suicide Prevention is active: preventDeath = true
+        caster.TakeDamage(new Damage(999999f, DamageElement.None, false, 0, 1.5f, true));
 
         return true;
     }

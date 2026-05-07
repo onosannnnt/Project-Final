@@ -12,15 +12,10 @@ public class BloodRageEffect : SkillEffect
         // 1. Lose 20% of Max HP
         int hpCost = Mathf.RoundToInt(caster.GetStat(StatType.MaxHealth) * maxHpCostPercentage);
         
-        // Prevent lethal self-damage (leave 1 HP)
-        if (caster.CurrentHealth <= hpCost)
-        {
-            hpCost = Mathf.Max(0, Mathf.FloorToInt(caster.CurrentHealth - 1f));
-        }
-
         if (hpCost > 0) 
         {
-            Damage selfDamage = new Damage((float)hpCost, DamageElement.Physical);
+            // Use PreventDeath = true to ensure player doesn't suicide
+            Damage selfDamage = new Damage((float)hpCost, DamageElement.Physical, false, 0, 1.5f, true);
             caster.TakeDamage(selfDamage); 
         }
 

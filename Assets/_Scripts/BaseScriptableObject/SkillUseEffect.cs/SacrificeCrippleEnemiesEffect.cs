@@ -23,7 +23,7 @@ public class SacrificeCrippleEnemiesEffect : SkillEffect
     [Tooltip("Debuff duration in turns.")]
     public int DurationTurns = 2;
 
-    [System.NonSerialized] private int _lastSacrificeActionId = -1;
+    [System.NonSerialized] private CombatActionLog _lastProcessedLog = null;
 
     public override bool Execute(Entity caster, Entity target, CombatActionLog log)
     {
@@ -59,33 +59,18 @@ public class SacrificeCrippleEnemiesEffect : SkillEffect
 
     private void ApplySelfSacrificeOncePerAction(Entity caster, CombatActionLog log)
     {
-        bool shouldSacrifice = true;
-        if (log != null)
-        {
-            if (log.ActionID == _lastSacrificeActionId)
-            {
-                shouldSacrifice = false;
-            }
-            else
-            {
-                _lastSacrificeActionId = log.ActionID;
-            }
-        }
-
-        if (!shouldSacrifice)
+        if (log == null || log == _lastProcessedLog)
         {
             return;
         }
+        _lastProcessedLog = log;
 
         int hpCost = Mathf.RoundToInt(caster.GetStat(StatType.MaxHealth) * Mathf.Clamp01(HpSacrificePercent));
-        if (caster.CurrentHealth <= hpCost)
-        {
-            hpCost = Mathf.Max(0, Mathf.FloorToInt(caster.CurrentHealth - 1f));
-        }
-
+        
         if (hpCost > 0)
         {
-            caster.TakeDamage(new Damage(hpCost, DamageElement.Physical));
+            // Use PreventDeath = true to ensure player doesn't suicide
+            caster.TakeDamage(new Damage(hpCost, DamageElement.Physical, false, 0, 1.5f, true));
         }
     }
 

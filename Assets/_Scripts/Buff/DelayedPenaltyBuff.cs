@@ -39,7 +39,8 @@ public class DelayedPenaltyBuff : Buff
         float penalty = owner.CurrentHealth * CurrentHpPenaltyPercent;
         if (penalty > 0)
         {
-            owner.TakeDamage(new Damage(penalty, DamageElement.None));
+            // Use PreventDeath = true to ensure player doesn't suicide
+            owner.TakeDamage(new Damage(penalty, DamageElement.None, false, 0, 1.5f, true));
         }
     }
 

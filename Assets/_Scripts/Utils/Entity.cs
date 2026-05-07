@@ -66,7 +66,8 @@ public abstract class Entity : MonoBehaviour
     public virtual void AddCorruptedHealth(float amount)
     {
         float maxHp = GetStat(StatType.MaxHealth);
-        corruptedHealth = Mathf.Clamp(corruptedHealth + amount, 0, maxHp);
+        float cap = maxHp * 0.9f; // Cap at 90%
+        corruptedHealth = Mathf.Clamp(corruptedHealth + amount, 0, cap);
         
         // Clamp current health to new effective max
         float effectiveMax = EffectiveMaxHealth;
@@ -91,7 +92,8 @@ public abstract class Entity : MonoBehaviour
     public virtual void SetCorruptedHealth(float amount)
     {
         float maxHp = GetStat(StatType.MaxHealth);
-        corruptedHealth = Mathf.Clamp(amount, 0, maxHp);
+        float cap = maxHp * 0.9f; // Cap at 90%
+        corruptedHealth = Mathf.Clamp(amount, 0, cap);
         
         // Clamp current health if needed
         float effectiveMax = EffectiveMaxHealth;
@@ -153,12 +155,18 @@ public abstract class Entity : MonoBehaviour
         float appliedDamage = damage.Amount;
 
         bool hasLethalProtection = buffController != null &&
-                                   buffController.GetAllBuffs().Exists(b => b.Data != null && b.Data.preventLethalDamage);
+                                    buffController.GetAllBuffs().Exists(b => b.Data != null && b.Data.preventLethalDamage);
 
         if (hasLethalProtection && currentHealth > 1)
         {
             // Clamp lethal damage so owner stays at 1 HP.
             appliedDamage = Mathf.Min(appliedDamage, currentHealth - 1f);
+        }
+
+        // --- NEW: Suicide Prevention logic ---
+        if (damage.PreventDeath && appliedDamage >= currentHealth)
+        {
+            appliedDamage = Mathf.Max(0, currentHealth - 1f);
         }
 
         currentHealth = Mathf.Max(Mathf.Round(currentHealth - appliedDamage), 0);

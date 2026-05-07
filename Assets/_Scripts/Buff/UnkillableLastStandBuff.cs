@@ -18,8 +18,8 @@ public class UnkillableLastStandBuff : Buff
         // Force HP to 1 by dealing damage equal to current - 1
         float hpToLose = owner.CurrentHealth - 1f;
         if (hpToLose > 0) {
-            // Use None element to bypass resistances
-            owner.TakeDamage(new Damage(hpToLose, DamageElement.None));
+            // Use None element to bypass resistances, PreventDeath = true
+            owner.TakeDamage(new Damage(hpToLose, DamageElement.None, false, 0, 1.5f, true));
         }
 
         float maxHP = owner.GetStat(StatType.MaxHealth);

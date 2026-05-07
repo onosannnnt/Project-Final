@@ -2,14 +2,16 @@
 
 ## Project Overview
 
-This project is a Unity-based RPG featuring a robust turn-based combat system. It utilizes a modular architecture with a heavy reliance on the Singleton pattern for manager classes and ScriptableObjects for data-driven design (skills, player stats, etc.).
+This project is a Unity-based RPG featuring a modular turn-based combat system. It emphasizes a data-driven design using ScriptableObjects for skills, entity stats, and game configurations. The architecture relies on Singleton patterns for core managers and a state-machine approach for combat flow.
 
 ### Main Technologies
 
 - **Unity Engine:** Version 2022.3.62f2
 - **Language:** C#
-- **Input System:** Unity's New Input System
-- **Networking:** `NetworkManager` for remote data logging and combat tracking.
+- **Input System:** Unity's New Input System (`com.unity.inputsystem`)
+- **Rendering:** Universal Render Pipeline (URP)
+- **UI:** TextMeshPro and standard Unity UI (uGUI)
+- **Networking:** `NetworkManager` using `HttpClient` for asynchronous data logging and combat tracking.
 
 ---
 
@@ -17,58 +19,66 @@ This project is a Unity-based RPG featuring a robust turn-based combat system. I
 
 ### Managers (`Assets/_Scripts/Managers`)
 
-- **TurnManager:** The central orchestrator for combat. Manages turn states (`PlayerTurnState`, `EnemyTurnState`, etc.), waves, and action queues.
-- **PlayerTeamManager:** Handles spawning and tracking of the player's party members.
-- **CombatActionProcessor:** Processes the actions queued by players and enemies during a turn.
-- **CombatResourceManager:** Manages resources like health, skill points, and phase-specific stats.
-- **NetworkManager:** Handles asynchronous communication with a backend for saving logs and combat IDs.
+- **TurnManager:** The central orchestrator of the combat loop. It uses a state machine (`TurnState`) to transition between player turns, enemy turns, action execution, and combat resolution (Win/Lose).
+- **CombatActionProcessor:** Processes actions queued by entities. It handles resource validation (SP), target verification, and invokes skill effects.
+- **CombatResourceManager:** Manages combat-specific resources, including health, skill points (shared or individual), and phase-based stat modifiers.
+- **NetworkManager:** A persistent singleton that handles communication with a backend API for saving player data, combat logs, and skill loadouts.
+- **BuffManager:** Manages active status effects on entities, processing their logic each turn.
 
-### Entities
+### Entity System (`Assets/_Scripts/Utils/Entity.cs`, `Assets/_Scripts/Player/`, `Assets/_Scripts/Enemy/`)
 
-- **PlayerEntity (`Assets/_Scripts/Player`):** Base class for player characters, containing health, stats, and references to their `SkillManager`.
-- **EnemyCombat (`Assets/_Scripts/Enemy`):** Base class for enemy behavior in combat. Specialized classes like `NecromancerBossCombat` or `PuzzleBossCombat` extend this for unique encounters.
+- **Entity:** The base class for all combatants. Handles stats, health (including "Corrupted Health" mechanics), SP, buffs, and damage processing.
+- **PlayerEntity:** Abstract extension of `Entity` for player-controlled characters. Handles input, targeting states, and visual highlighting.
+- **EnemyCombat:** Base class for enemy entities, implementing AI logic for action selection.
 
-### Skill System (`Assets/_Scripts/Skills`)
+### Skill & Effect System (`Assets/_Scripts/BaseScriptableObject/`)
 
-- Skills are defined as ScriptableObjects, allowing for easy creation and balancing.
-- **SkillListManager:** Manages the available skills and their execution logic.
+- **Skill:** A ScriptableObject defining a skill's properties (cost, target type, target count).
+- **SkillUseEffect:** Modular, pluggable effects (e.g., `DamageEffect`, `HealEffect`, `BuffEffect`) that are assigned to skills. This allows for complex skill behaviors without hardcoding logic for every variation.
 
 ---
 
 ## Development Conventions
 
-### Coding Style
+### Coding Style & Patterns
 
-- **Singletons:** Major systems use `Singleton<T>` for global access.
-- **Async/Await:** Used for network operations and some game state transitions.
-- **Events:** Unity events and C# delegates are used for decoupling UI and game logic.
+- **Singletons:** Core systems use `Singleton<T>` or `SingletonPersistent<T>` for global access. Implementation is found in `Assets/_Scripts/Utils/Singletron.cs`.
+- **Data-Driven Design:** Stats, skills, and quests are defined as ScriptableObjects. Always use `Clone()` when modifying ScriptableObject data at runtime to avoid mutating project assets.
+- **Async/Await:** Used for non-blocking network operations and certain game state transitions.
+- **Events:** C# delegates and events (e.g., `OnHealthChanged`) are used to decouple core logic from UI and secondary systems.
+
+### Combat Flow
+
+1. **PlayerTurnState:** Players select skills and targets for each party member.
+2. **SpeedCompareState:** Actions are sorted based on entity speed.
+3. **ActionState:** Actions are executed sequentially via `CombatActionProcessor`.
+4. **Resolution:** Check for win/loss conditions or proceed to the next wave.
 
 ### Data Management
 
-- Use ScriptableObjects for static data like skill definitions, player inventory, and quest configurations.
-- `UserData.asset` stores persistent player progress and state.
-
----
-
-## Building and Running
-
-- **Editor Version:** 2022.3.62f2.
-- **Build Settings:** Primarily targeted at Standalone platforms. Ensure `Burst` compilation is configured correctly as per `ProjectSettings`.
-- **Scenes:**
-  - `MainMenu`: Entry point.
-  - `Overworld`: Exploration and NPC interaction.
-  - `Combat`: The main battle scene.
-  - `Loading`: Transition scene between major areas.
+- `UserData.asset`: Stores persistent player state and progress.
+- `LoadEnv.apiKey`: Environment variable used by `NetworkManager` for the backend URL.
 
 ---
 
 ## Key Files
 
-- `Assets/_Scripts/Managers/TurnManager.cs`: Core combat loop logic.
-- `Assets/_Scripts/Player/PlayerTeamManager.cs`: Party management and spawning.
-- `Assets/_Scripts/Enemy/EnemyCombatGenerator.cs`: Dynamic enemy encounter generation.
-- `Assets/_Scripts/Managers/NetworkManager.cs`: External API integrations.
-- `ProjectSettings/ProjectSettings.asset`: Global Unity project configuration.
+- `Assets/_Scripts/Managers/TurnManager.cs`: Core combat state machine.
+- `Assets/_Scripts/Managers/CombatActionProcessor.cs`: Action execution logic.
+- `Assets/_Scripts/Utils/Entity.cs`: Base combatant logic and stat management.
+- `Assets/_Scripts/BaseScriptableObject/Skill.cs`: Definition of the skill system.
+- `Assets/_Scripts/Managers/NetworkManager.cs`: External API integration.
+
+### Mandatory Validation
+
+- **Compilation Check:** Before finishing any task, verify that the project compiles.
+- **Symbol Integrity:** If a method or property is removed/renamed, perform a workspace-wide search to ensure all references are updated.
+
+## Building and Running
+
+- **Unity Version:** Ensure 2022.3.62f2 is used to avoid serialization or package issues.
+- **Input:** Uses the New Input System. Input actions are defined in `Assets/_Scripts/Player/PlayerInputActions.inputactions`.
+- **Environment:** A `.env` file or `LoadEnv` setup is required for backend connectivity.
 
 # AI Operating Rules
 

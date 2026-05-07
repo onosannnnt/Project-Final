@@ -7,6 +7,7 @@ public static class DamageSystem
 
     public static void Process(DamageCtx ctx, CombatActionLog log)
     {
+        ctx.Log = log; // Ensure modifiers can access the log
         float healthBefore = ctx.Target.CurrentHealth;
 
         // Perform Critical Roll if not already determined
@@ -45,5 +46,32 @@ public static class DamageSystem
             AppliedTargetID = ctx.Target.GetEntityID(),
             Damage = new DamageEffectData(ctx.Damage)
         });
+    }
+
+    /// <summary>
+    /// Specialized process for reflected damage to ensure it is logged correctly.
+    /// </summary>
+    public static void ProcessReflect(Entity caster, Entity target, Damage damage, CombatActionLog log)
+    {
+        if (target == null || target.CurrentHealth <= 0) return;
+
+        float healthBefore = target.CurrentHealth;
+        target.TakeDamage(damage);
+
+        bool didKillTarget = healthBefore > 0f && target.CurrentHealth <= 0f;
+        if (didKillTarget)
+        {
+            OnEntityKilled?.Invoke(caster, target, log);
+        }
+
+        if (log != null)
+        {
+            log.AddDamageEffectLog(new DamageEffectLog()
+            {
+                AppliedTarget = target.Stats.EntityName,
+                AppliedTargetID = target.GetEntityID(),
+                Damage = new DamageEffectData(damage)
+            });
+        }
     }
 }

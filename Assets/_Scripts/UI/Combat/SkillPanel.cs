@@ -141,6 +141,17 @@ public class SkillPanelUI : Singleton<SkillPanelUI>
         if (count == 0) return;
         foreach (var skill in activePlayer.skillManager.GetSkills())
         {
+            // --- NEW: Skill Filtering logic ---
+            int playerIndex = PlayerTeamManager.Instance != null ? PlayerTeamManager.Instance.IndexOfMember(activePlayer) : -1;
+            if (playerIndex == 0) // Player 1
+            {
+                if (skill.skillType != SkillType.Attack) continue; // Only Attack
+            }
+            else if (playerIndex == 1) // Player 2
+            {
+                if (skill.skillType == SkillType.Attack) continue; // Only Support (Not Attack)
+            }
+
             GameObject skillButton = Instantiate(SkillButtonPrefab, SkillPanel.transform);
             skillButton.GetComponentInChildren<TextMeshProUGUI>().text = skill.skillName;
 

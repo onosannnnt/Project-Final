@@ -92,6 +92,8 @@ public class ActionBarUI : Singleton<ActionBarUI>
         PlayerEntity activePlayer = TurnManager.Instance != null ? TurnManager.Instance.CurrentActivePlayer : null;
         if (activePlayer == null || basicAttackSkill == null || BasicAttackButton == null) return;
 
+        BasicAttackButton.gameObject.SetActive(true);
+
         int cost = TurnManager.Instance.GetSkillCost(basicAttackSkill);
         int availableSP = TurnManager.Instance.GetProjectedAvailableSP(activePlayer);
         BasicAttackButton.interactable = (availableSP >= cost);
@@ -172,10 +174,10 @@ public class ActionBarUI : Singleton<ActionBarUI>
                             TargetingPanel.instance.SetActivePanel(false);
                         }
                         // Reset highlights
-                        activePlayer.Highlight(Color.white);
+                        activePlayer.SetTargetIndicator(false);
                         foreach (var enemy in FindObjectsOfType<EnemyCombat>())
                         {
-                            enemy.Highlight(Color.white);
+                            enemy.SetTargetIndicator(false);
                         }
                     }
                 }

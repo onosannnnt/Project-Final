@@ -11,7 +11,8 @@ public class ChanceSelfDamageEffect : SkillEffect
         // 20% chance to trigger
         if (Random.value < chance)
         {
-            Damage selfDamage = new Damage((float)selfDamageAmount, DamageElement.Physical);
+            // Use PreventDeath = true to ensure player doesn't suicide
+            Damage selfDamage = new Damage((float)selfDamageAmount, DamageElement.Physical, false, 0, 1.5f, true);
             caster.TakeDamage(selfDamage); 
         }
         

@@ -110,24 +110,32 @@ public class EnemyCombat : Entity
             }
         }
     }
+    public virtual void SetTargetIndicator(bool active)
+    {
+        if (targetIndicator != null)
+        {
+            targetIndicator.SetActive(active);
+        }
+    }
+
     private void Update()
     {
         PlayerEntity activePlayer = GetActivePlayer();
         if (activePlayer == null)
         {
-            Highlight(Color.white);
+            SetTargetIndicator(false);
             return;
         }
 
         if (activePlayer.GetPlayerState != PlayerActionState.Targeting || activePlayer.GetSelectedSkill == null)
         {
-            Highlight(Color.white);
+            SetTargetIndicator(false);
             return;
         }
 
         if (activePlayer.GetSelectedSkill.TargetType == TargetType.Self)
         {
-            Highlight(Color.white);
+            SetTargetIndicator(false);
             return;
         }
 
@@ -136,15 +144,12 @@ public class EnemyCombat : Entity
         {
             if (activePlayer.GetSelectedSkill.TargetCount == TargetCount.All)
             {
-                Highlight(Color.red);
+                SetTargetIndicator(true);
             }
             // If the selected skill targets a single enemy
             else if (activePlayer.GetSelectedSkill.TargetCount == TargetCount.Single)
             {
-                if (activePlayer.GetEnemyTarget() == this)
-                    Highlight(Color.red);
-                else
-                    Highlight(Color.white); // Don't show yellow for non-targets
+                SetTargetIndicator(activePlayer.GetEnemyTarget() == this);
             }
         }
     }
@@ -397,6 +402,7 @@ public class EnemyCombat : Entity
         {
             // Submit the action on behalf of whichever player is currently active in TurnManager
             Entity currentActive = TurnManager.Instance.CurrentActivePlayer ?? activePlayer;
+            SetTargetIndicator(false);
             TurnManager.Instance.SubmitPlayerAction(currentActive, this, activePlayer.GetSelectedSkill);
             return;
         }
@@ -408,21 +414,5 @@ public class EnemyCombat : Entity
     public bool IsDead()
     {
         return isDead;
-    }
-    public void Highlight(Color color)
-    {
-        // Stop tinting the character sprite
-        Transform visualTransform = transform.Find("EnemyVisual");
-        if (visualTransform != null)
-        {
-            SpriteRenderer sr = visualTransform.GetComponent<SpriteRenderer>();
-            if (sr != null) sr.color = Color.white;
-        }
-
-        if (targetIndicator != null)
-        {
-            bool isHighlighted = color != Color.white;
-            targetIndicator.SetActive(isHighlighted);
-        }
     }
 }

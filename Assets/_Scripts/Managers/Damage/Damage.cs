@@ -35,14 +35,16 @@ public class Damage
     public bool IsCriticalHit;
     public float CritChance;
     public float CritMultiplier;
+    public bool PreventDeath; // If true, damage cannot reduce HP below 1
 
-    public Damage(float amount, DamageElement element = DamageElement.Physical, bool isCriticalHit = false, float critChance = 0f, float critMultiplier = 1.5f)
+    public Damage(float amount, DamageElement element = DamageElement.Physical, bool isCriticalHit = false, float critChance = 0f, float critMultiplier = 1.5f, bool preventDeath = false)
     {
         Amount = amount;
         Element = element;
         IsCriticalHit = isCriticalHit;
         CritChance = critChance;
         CritMultiplier = critMultiplier;
+        PreventDeath = preventDeath;
     }
 }
 public static class Utils

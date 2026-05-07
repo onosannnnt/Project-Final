@@ -119,7 +119,7 @@ public class TurnManager : Singleton<TurnManager>
                 foreach (GameObject enemy in enemies)
                 {
                     EnemyCombat enemyCombat = enemy.GetComponent<EnemyCombat>();
-                    enemyCombat.Highlight(Color.white);
+                    enemyCombat.SetTargetIndicator(false);
                 }
                 HandleSpeedComparison();
                 break;
@@ -155,14 +155,14 @@ public class TurnManager : Singleton<TurnManager>
 
         foreach (var enemy in FindObjectsOfType<EnemyCombat>())
         {
-            enemy.Highlight(Color.white);
+            enemy.SetTargetIndicator(false);
         }
 
         if (PlayerTeamManager.Instance != null)
         {
             foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
             {
-                if (member != null) member.Highlight(Color.white);
+                if (member != null) member.SetTargetIndicator(false);
             }
         }
 
@@ -196,6 +196,22 @@ public class TurnManager : Singleton<TurnManager>
         // // Debug.Log($"[TurnManager] Waiting for {activePlayer.Stats.EntityName} to choose an action.");
 
         activePlayer.SetEnemyTarget(GetFirstEnemy());
+        
+        // Default ally target to someone else if possible
+        PlayerEntity defaultAlly = activePlayer;
+        if (PlayerTeamManager.Instance != null && PlayerTeamManager.Instance.ActiveTeamMembers.Count > 1)
+        {
+            foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
+            {
+                if (member != null && member != activePlayer && member.CurrentHealth > 0)
+                {
+                    defaultAlly = member;
+                    break;
+                }
+            }
+        }
+        activePlayer.SetAllyTarget(defaultAlly);
+
         TargetingPanel.instance.SetEnemyTargetPanel(activePlayer.GetEnemyTarget());
         ActionBarUI.Instance.gameObject.SetActive(true);
 
