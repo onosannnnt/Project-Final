@@ -16,9 +16,9 @@ MonoBehaviour:
   Username: dsfe
   GamePhase: 1
   SelectedQuestIndex: 0
-  HighestCompletedQuestIndex: -1
+  HighestCompletedQuestIndex: 0
   IsGameFinished: 0
-  TotalCoins: 0
+  TotalCoins: 100
   PendingQuestCoins: 0
   PendingRewardQuestIndex: -1
   tutorialCoinReward: 100
@@ -29,13 +29,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5a526a6ae7db0422c9d63b916530c938, type: 2}
   - {fileID: 11400000, guid: 3009cfca1047fa744ab37803320dd422, type: 2}
   HasChosenStarterBuild: 1
-  IsTutorialFinalized: 0
+  IsTutorialFinalized: 1
   DefaultSkill: {fileID: 11400000, guid: 1388574c03e724a8f834dae785cc7325, type: 2}
   OwnedSkills: []
-  TrialSkills:
-  - {fileID: 11400000, guid: 25ff8610d4d945d4fa36703e5a504cff, type: 2}
-  - {fileID: 11400000, guid: 960ab9b50c23d4b80aa308ff09c2cc5e, type: 2}
-  - {fileID: 11400000, guid: f51740f81383e4075ac5a089f6690096, type: 2}
-  - {fileID: 11400000, guid: 2bbf253faab41468f974deef9e5586d7, type: 2}
-  - {fileID: 11400000, guid: be07c4cb5ae8c401cb642a68a4a45d38, type: 2}
-  - {fileID: 11400000, guid: 25954162e312a49cc882da17461cd465, type: 2}
+  TrialSkills: []
