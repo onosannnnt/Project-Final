@@ -33,13 +33,7 @@ public class StatInfoUI : MonoBehaviour
 
     private void Start()
     {
-        // Initial capture attempt
         CaptureInitialDimensions();
-        
-        // Default to hidden if not already managed by something else
-        // gameObject.SetActive(false); 
-        // Note: The user's original script had gameObject.SetActive(false) in Start.
-        // If this is causing issues with Start not running when expected, we should be careful.
     }
 
     private void OnEnable()
@@ -79,8 +73,6 @@ public class StatInfoUI : MonoBehaviour
             return;
         }
 
-        // Real-time updates for bars if needed (though events should handle it)
-        // We keep these here just in case events are missed or for shared SP pool updates
         SetupHealthBar();
         SetupSkillPointBar();
     }
