@@ -5,7 +5,8 @@ using System.Collections.Generic;
 public class ConvertDebuffToStackEffect : SkillEffect
 {
     [SerializeField] private Buff stackToGrant;
-    [SerializeField] private int stacksPerDebuff = 1;
+    [SerializeField] private int stacksPerDebuff = 2;
+    [SerializeField] private int fallbackStacks = 1; // Gain this if no debuffs were removed
     [SerializeField] private bool targetCaster = true;
 
     public override bool Execute(Entity caster, Entity target, CombatActionLog log)
@@ -14,9 +15,8 @@ public class ConvertDebuffToStackEffect : SkillEffect
         if (applyTarget == null || applyTarget.buffController == null || stackToGrant == null) return false;
 
         List<ActiveBuff> debuffs = applyTarget.buffController.GetDebuffs();
-        if (debuffs.Count == 0) return true;
-
-        int totalStacksToGrant = debuffs.Count * stacksPerDebuff;
+        
+        int totalStacksToGrant = debuffs.Count > 0 ? (debuffs.Count * stacksPerDebuff) : fallbackStacks;
 
         // Cleanse debuffs
         foreach (var debuff in debuffs)

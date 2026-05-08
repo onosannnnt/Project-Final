@@ -95,11 +95,12 @@ public class BuffManager
             buff.Data.OnTurnStart(owner, log, buff);
         }
     }
-    public virtual void OnTurnEnd(Entity owner)
+    public virtual void OnTurnEnd(Entity owner, CombatActionLog log)
     {
         List<ActiveBuff> toRemove = new();
         foreach (var buff in activeBuffs)
         {
+            buff.Data.OnTurnEndAction(owner, log, buff);
             buff.Data.OnTurnEnd(owner, buff);
             if (!buff.Data.isPermanent && buff.CurrentDuration <= 0)
             {

@@ -412,7 +412,7 @@ public class TurnManager : Singleton<TurnManager>
             }
 
             // --- BUFF TURN END ---
-            entity.buffController.OnTurnEnd(entity);
+            entity.buffController.OnTurnEnd(entity, log);
 
             // --- UPDATE UI AND REMOVE FROM QUEUE ---
             if (entity is PlayerEntity) PlayerActionQueueUI?.SetActionQueue(currentAction);

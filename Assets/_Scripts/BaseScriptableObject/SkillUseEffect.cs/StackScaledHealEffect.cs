@@ -8,6 +8,7 @@ public class StackScaledHealEffect : SkillEffect
     [SerializeField] private Buff stackSourceBuff;
     [SerializeField] private float baseHeal = 100f;
     [SerializeField] private float healPerStack = 50f;
+    [SerializeField, Tooltip("0 means no limit")] private int maxScalingStacks = 0;
     
     [Header("Targeting")]
     [SerializeField] private bool healParty = false;
@@ -28,7 +29,8 @@ public class StackScaledHealEffect : SkillEffect
         ActiveBuff activeStacks = caster.buffController.GetBuffByName(stackSourceBuff.BuffName);
         int stackCount = activeStacks != null ? activeStacks.CurrentStack : 0;
 
-        float calculatedHeal = baseHeal + (stackCount * healPerStack);
+        int scalingStacks = maxScalingStacks > 0 ? Mathf.Min(stackCount, maxScalingStacks) : stackCount;
+        float calculatedHeal = baseHeal + (scalingStacks * healPerStack);
 
         if (healParty)
         {

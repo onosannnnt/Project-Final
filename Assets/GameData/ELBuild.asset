@@ -13,12 +13,11 @@ MonoBehaviour:
   m_Name: ELBuild
   m_EditorClassIdentifier: 
   buildName: 
-  buildIcon: {fileID: 0}
   buildDescription: 
   starterSkills:
   - {fileID: 11400000, guid: c43a1b36c8f53214b9061f5eaff79007, type: 2}
+  - {fileID: 11400000, guid: 8228c8739e9424415b0ac6be3787e3a3, type: 2}
   - {fileID: 11400000, guid: 03340a7ec62f14fb59a235742685b8d3, type: 2}
-  - {fileID: 11400000, guid: bc23fe254f317f241837f96f768c273d, type: 2}
-  - {fileID: 11400000, guid: 2559a20445d0fe04cab93f70e40dce8f, type: 2}
-  - {fileID: 11400000, guid: 0d575b8c335695f48a878803c4c49058, type: 2}
-  - {fileID: 11400000, guid: fe81da15a8be9e54e96095be4de4559c, type: 2}
+  - {fileID: 11400000, guid: 0a2d4a86e599746a7aad8f9f3a4d9b03, type: 2}
+  - {fileID: 11400000, guid: b8c9fe8b379ef41f897fc9aa0e28e066, type: 2}
+  - {fileID: 11400000, guid: 2e93ae26964a6469380c23c95bcfb84b, type: 2}

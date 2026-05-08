@@ -70,6 +70,12 @@ public class Buff : ScriptableObject
     {
         buffState.wasReappliedThisTurn = false;
     }
+
+    /// <summary>
+    /// Called at turn end for effects that trigger then.
+    /// </summary>
+    public virtual void OnTurnEndAction(Entity owner, CombatActionLog log, ActiveBuff buffState) { }
+
     public virtual void OnTurnEnd(Entity owner, ActiveBuff buffState)
     {
         if (isPermanent) return;
