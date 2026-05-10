@@ -5,6 +5,11 @@ public class SetWeatherEffect : SkillEffect
 {
     [SerializeField] private WeatherType nextWeather;
 
+    private void Awake()
+    {
+        ExecuteOnce = true;
+    }
+
     public override bool Execute(Entity caster, Entity target, CombatActionLog log)
     {
         if (WeatherManager.Instance != null)

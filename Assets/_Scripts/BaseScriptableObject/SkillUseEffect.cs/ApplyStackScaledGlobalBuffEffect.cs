@@ -7,6 +7,11 @@ public class ApplyStackScaledGlobalBuffEffect : SkillEffect
     [SerializeField] private StackScaledGlobalDamageBuff globalBuffTemplate;
     [SerializeField] private int duration = 3;
 
+    private void Awake()
+    {
+        ExecuteOnce = true;
+    }
+
     public override bool Execute(Entity caster, Entity target, CombatActionLog log)
     {
         if (caster == null || globalBuffTemplate == null) return false;

@@ -3,6 +3,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "SummonPillarsEffect", menuName = "ScriptableObjects/SkillEffect/SummonPillarsEffect")]
 public class SummonPillarsEffect : SkillEffect
 {
+    private void Awake()
+    {
+        ExecuteOnce = true;
+    }
+
     public override bool Execute(Entity caster, Entity target, CombatActionLog log)
     {
         if (caster is PuzzleBossCombat boss)

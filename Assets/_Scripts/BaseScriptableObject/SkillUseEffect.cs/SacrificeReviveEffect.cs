@@ -7,6 +7,11 @@ public class SacrificeReviveEffect : SkillEffect
     [Tooltip("Percentage of Max HP to restore to the target.")]
     public float ReviveHpPercent = 1.0f;
 
+    private void Awake()
+    {
+        ExecuteOnce = true;
+    }
+
     [Header("Target Buffs")]
     [Tooltip("Buff that increases damage taken on the revived target.")]
     public Buff VulnerabilityBuffTemplate;

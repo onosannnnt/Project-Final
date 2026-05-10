@@ -10,47 +10,55 @@ public class SkillManager
         this.owner = owner;
     }
 
-    public void UseSkill(Skill skill, Entity target, CombatActionLog log, bool allowWindSpread = true)
+    public void UseSkill(Skill skill, List<Entity> targets, CombatActionLog log, bool allowWindSpread = true)
     {
-        // // Debug.Log(owner.gameObject.name + " is using skill: " + skill.skillName + " on " + target.gameObject.name);
-        if (skill == null || target == null) return;
+        if (skill == null || targets == null || targets.Count == 0) return;
 
-        EnemyCombat enemyContext = target as EnemyCombat;
-        if (enemyContext != null)
+        // --- Prepare Damage Context for all targets ---
+        List<EnemyCombat> enemyTargets = new List<EnemyCombat>();
+        foreach (var t in targets)
         {
-            enemyContext.BeginIncomingSkillDamageContext(allowWindSpread);
+            if (t is EnemyCombat enemy)
+            {
+                enemyTargets.Add(enemy);
+                enemy.BeginIncomingSkillDamageContext(allowWindSpread);
+            }
         }
 
         try
         {
-            bool skillHit = skill.Execute(owner, target, log);
+            bool skillHit = skill.Execute(owner, targets, log);
             DamageElement breakElement = skill.GetElement();
 
             // --- Break Mechanic ---
-            if (skillHit && owner is PlayerEntity && target is EnemyCombat enemyTarget && skill.reducesArmor)
+            if (skillHit && owner is PlayerEntity)
             {
-                if (skill.TargetType == TargetType.Enemy)
+                foreach (var target in targets)
                 {
-                    if (skill.TargetCount == TargetCount.Single)
+                    if (target is EnemyCombat enemyTarget && skill.reducesArmor)
                     {
-                        enemyTarget.ReduceArmor(2, breakElement);
-                    }
-                    else if (skill.TargetCount == TargetCount.All)
-                    {
-                        enemyTarget.ReduceArmor(1, breakElement);
+                        if (skill.TargetType == TargetType.Enemy)
+                        {
+                            if (skill.TargetCount == TargetCount.Single)
+                            {
+                                enemyTarget.ReduceArmor(2, breakElement);
+                            }
+                            else if (skill.TargetCount == TargetCount.All)
+                            {
+                                enemyTarget.ReduceArmor(1, breakElement);
+                            }
+                        }
                     }
                 }
             }
         }
         finally
         {
-            if (enemyContext != null)
+            foreach (var enemy in enemyTargets)
             {
-                enemyContext.EndIncomingSkillDamageContext();
+                enemy.EndIncomingSkillDamageContext();
             }
         }
-
-        // // Debug.Log(owner.gameObject.name + " has " + owner.CurrentHealth + " HP and " + owner.CurrentSP + " SP after using skill: " + skill.skillName);
     }
     public List<Skill> GetSkills()
     {

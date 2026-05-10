@@ -160,30 +160,47 @@ public class Skill : ScriptableObject
         return false;
     }
 
-    public bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public bool Execute(Entity caster, List<Entity> targets, CombatActionLog log)
     {
-        if (SkillEffects == null || SkillEffects.Count == 0)
+        if (SkillEffects == null || SkillEffects.Count == 0 || targets == null || targets.Count == 0)
         {
             return false;
         }
 
-        // Create a copy and sort by phase to ensure correct execution order
+        // 1. Prepare: Sort and Initialize
         List<SkillEffect> sortedEffects = new List<SkillEffect>(SkillEffects);
         sortedEffects.Sort((a, b) => a.Phase.CompareTo(b.Phase));
 
-        bool hit = true;
         foreach (var effect in sortedEffects)
         {
-            if (effect == null) continue;
-            
-            // // Debug.Log(effect.name + " effect is executed from skill " + skillName);
-            bool effectHit = effect.Execute(caster, target, log);
-            if (!effectHit)
+            if (effect != null) effect.OnSkillStarted(caster, targets, log);
+        }
+
+        bool overallHit = true;
+
+        // 2. Execute target loop
+        for (int i = 0; i < targets.Count; i++)
+        {
+            Entity currentTarget = targets[i];
+            if (currentTarget == null) continue;
+
+            foreach (var effect in sortedEffects)
             {
-                hit = false;
-                break; // Stop executing further effects if one misses
+                if (effect == null) continue;
+
+                // If ExecuteOnce is set, only run this effect for the very first target in the list
+                if (effect.ExecuteOnce && i > 0) continue;
+
+                bool effectHit = effect.Execute(caster, currentTarget, log);
+                if (!effectHit)
+                {
+                    overallHit = false;
+                    // Note: We continue to other targets even if one misses, 
+                    // but you could change this to 'break' if a miss stops the whole AOE.
+                }
             }
         }
-        return hit;
+
+        return overallHit;
     }
 }

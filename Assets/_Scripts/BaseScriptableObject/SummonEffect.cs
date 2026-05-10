@@ -6,6 +6,11 @@ public class SummonEffect : SkillEffect
     [Tooltip("List of enemies to summon and their spawn positions")]
     public EnemySpawnConfig[] enemiesToSummon;
 
+    private void Awake()
+    {
+        ExecuteOnce = true;
+    }
+
     public override bool Execute(Entity caster, Entity target, CombatActionLog log)
     {
         if (enemiesToSummon == null || enemiesToSummon.Length == 0)

@@ -3,6 +3,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ResetPillarsEffect", menuName = "ScriptableObjects/SkillEffect/ResetPillarsEffect")]
 public class ResetPillarsEffect : SkillEffect
 {
+    private void Awake()
+    {
+        ExecuteOnce = true;
+    }
+
     public override bool Execute(Entity caster, Entity target, CombatActionLog log)
     {
         // เช็คว่าคนที่ใช้สกิลนี้คือ PuzzleBossCombat หรือไม่

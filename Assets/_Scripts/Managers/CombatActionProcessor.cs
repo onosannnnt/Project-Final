@@ -37,7 +37,8 @@ public class CombatActionProcessor : MonoBehaviour
         if (!canAfford) return;
 
         // Verify we have at least one valid target before spending resources
-        if (!HasAnyValidTarget(entity, target, skill)) return;
+        List<Entity> targets = GetTargets(entity, target, skill);
+        if (targets.Count == 0) return;
 
         // Consume Resources
         if (turnManager.UseSharedPlayerSkillPointPool)
@@ -53,18 +54,7 @@ public class CombatActionProcessor : MonoBehaviour
             entity.GainCorruptedHealth(skill.CorruptedHealthGain);
         }
 
-        switch (skill.TargetType)
-        {
-            case TargetType.Self:
-                entity.skillManager.UseSkill(skill, entity, log);
-                break;
-            case TargetType.Enemy:
-                ApplySkillToEnemies(entity, target, skill, log);
-                break;
-            case TargetType.Ally:
-                ApplySkillToAllies(entity, target, skill, log);
-                break;
-        }
+        entity.skillManager.UseSkill(skill, targets, log);
     }
 
     private void ExecuteEnemyAction(EnemyCombat enemy, Entity target, Skill skill, CombatActionLog log)
@@ -77,164 +67,67 @@ public class CombatActionProcessor : MonoBehaviour
         }
 
         // Verify target
-        if (!HasAnyValidTarget(enemy, target, skill)) return;
+        List<Entity> targets = GetTargets(enemy, target, skill);
+        if (targets.Count == 0) return;
 
         enemy.SetSP(-actualCost);
         log.ActionPointRecovery = 0;
 
         if (skill.CorruptedHealthGain > 0) enemy.GainCorruptedHealth(skill.CorruptedHealthGain);
 
+        enemy.skillManager.UseSkill(skill, targets, log);
+    }
+
+    private List<Entity> GetTargets(Entity caster, Entity primaryTarget, Skill skill)
+    {
+        List<Entity> targets = new List<Entity>();
+
         switch (skill.TargetType)
         {
             case TargetType.Self:
-                enemy.skillManager.UseSkill(skill, enemy, log);
+                targets.Add(caster);
                 break;
+
             case TargetType.Enemy:
-                ApplyEnemySkillToPlayers(enemy, target, skill, log);
-                break;
-            case TargetType.Ally:
-                if (skill.TargetCount == TargetCount.All)
+                if (skill.TargetCount == TargetCount.Single)
                 {
-                    List<EnemyCombat> targetList = turnManager.GetAliveEnemiesInBattleOrder();
-                    foreach (var ally in targetList)
+                    Entity actualTarget = primaryTarget;
+                    if (caster is EnemyCombat enemy && (actualTarget == null || actualTarget.CurrentHealth <= 0))
                     {
-                        if (ally != null && ally.CurrentHealth > 0)
-                            enemy.skillManager.UseSkill(skill, ally, log);
+                        actualTarget = turnManager.GetActualTargetForEnemy(enemy);
                     }
+                    if (actualTarget != null && actualTarget.CurrentHealth > 0) targets.Add(actualTarget);
                 }
                 else
                 {
-                    enemy.skillManager.UseSkill(skill, enemy, log);
+                    if (caster is PlayerEntity)
+                        targets.AddRange(turnManager.GetAliveEnemiesInBattleOrder());
+                    else
+                        targets.AddRange(PlayerTeamManager.Instance != null ? PlayerTeamManager.Instance.GetAliveMembers().ConvertAll(p => (Entity)p) : new List<Entity>());
+                }
+                break;
+
+            case TargetType.Ally:
+                if (skill.TargetCount == TargetCount.Single)
+                {
+                    Entity actualTarget = primaryTarget != null && primaryTarget.CurrentHealth > 0 ? primaryTarget : caster;
+                    targets.Add(actualTarget);
+                }
+                else
+                {
+                    if (caster is PlayerEntity)
+                        targets.AddRange(PlayerTeamManager.Instance != null ? PlayerTeamManager.Instance.GetAliveMembers().ConvertAll(p => (Entity)p) : new List<Entity>());
+                    else
+                        targets.AddRange(turnManager.GetAliveEnemiesInBattleOrder());
                 }
                 break;
         }
+
+        return targets;
     }
 
     private bool HasAnyValidTarget(Entity caster, Entity primaryTarget, Skill skill)
     {
-        if (skill.TargetType == TargetType.Self) return true;
-
-        if (skill.TargetCount == TargetCount.Single)
-        {
-            return primaryTarget != null && primaryTarget.CurrentHealth > 0;
-        }
-        else if (skill.TargetCount == TargetCount.All)
-        {
-            if (skill.TargetType == TargetType.Enemy)
-            {
-                if (caster is PlayerEntity)
-                    return turnManager.GetAliveEnemiesInBattleOrder().Count > 0;
-                else
-                    return PlayerTeamManager.Instance != null && PlayerTeamManager.Instance.GetAliveMembers().Count > 0;
-            }
-            else if (skill.TargetType == TargetType.Ally)
-            {
-                if (caster is PlayerEntity)
-                    return PlayerTeamManager.Instance != null && PlayerTeamManager.Instance.GetAliveMembers().Count > 0;
-                else
-                    return turnManager.GetAliveEnemiesInBattleOrder().Count > 0;
-            }
-        }
-        return false;
-    }
-
-    private void ApplySkillToEnemies(Entity caster, Entity target, Skill skill, CombatActionLog log)
-    {
-        if (skill.TargetCount == TargetCount.Single)
-        {
-            if (target != null && target.CurrentHealth > 0)
-            {
-                caster.skillManager.UseSkill(skill, target, log);
-            }
-        }
-        else if (skill.TargetCount == TargetCount.All)
-        {
-            // Fix 5: Cache targets to stabilize AOE loop
-            List<EnemyCombat> targetList = turnManager.GetAliveEnemiesInBattleOrder();
-            EnemyCombat primaryTarget = target as EnemyCombat;
-            bool primaryAssignedFromFallback = false;
-
-            foreach (var enemyObj in targetList)
-            {
-                if (enemyObj == null || enemyObj.CurrentHealth <= 0) continue;
-
-                bool allowWindSpread = false;
-                if (primaryTarget != null)
-                {
-                    allowWindSpread = enemyObj == primaryTarget;
-                }
-                else if (!primaryAssignedFromFallback)
-                {
-                    allowWindSpread = true;
-                    primaryAssignedFromFallback = true;
-                }
-
-                caster.skillManager.UseSkill(skill, enemyObj, log, allowWindSpread);
-            }
-        }
-    }
-
-    private void ApplySkillToAllies(Entity caster, Entity target, Skill skill, CombatActionLog log)
-    {
-        if (skill.TargetCount == TargetCount.All)
-        {
-            if (PlayerTeamManager.Instance != null)
-            {
-                // Fix 5: Cache targets
-                List<Entity> targetList = PlayerTeamManager.Instance.GetAliveMembers().ConvertAll(p => (Entity)p);
-                if (targetList.Count > 0)
-                {
-                    foreach (var ally in targetList)
-                    {
-                        if (ally != null && ally.CurrentHealth > 0)
-                            caster.skillManager.UseSkill(skill, ally, log);
-                    }
-                }
-                else
-                {
-                    caster.skillManager.UseSkill(skill, caster, log);
-                }
-            }
-        }
-        else
-        {
-            if (target != null && target.CurrentHealth > 0)
-            {
-                caster.skillManager.UseSkill(skill, target, log);
-            }
-            else
-            {
-                caster.skillManager.UseSkill(skill, caster, log);
-            }
-        }
-    }
-
-    private void ApplyEnemySkillToPlayers(EnemyCombat enemy, Entity target, Skill skill, CombatActionLog log)
-    {
-        Entity actualTarget = target;
-        if (actualTarget == null || actualTarget.CurrentHealth <= 0)
-        {
-            actualTarget = turnManager.GetActualTargetForEnemy(enemy);
-        }
-
-        if (actualTarget == null || actualTarget.CurrentHealth <= 0) return;
-
-        if (skill.TargetCount == TargetCount.Single)
-        {
-            enemy.skillManager.UseSkill(skill, actualTarget, log);
-        }
-        else if (skill.TargetCount == TargetCount.All)
-        {
-            if (PlayerTeamManager.Instance != null)
-            {
-                // Fix 5: Cache targets
-                List<Entity> targetList = PlayerTeamManager.Instance.GetAliveMembers().ConvertAll(p => (Entity)p);
-                foreach (var player in targetList)
-                {
-                    if (player != null && player.CurrentHealth > 0)
-                        enemy.skillManager.UseSkill(skill, player, log);
-                }
-            }
-        }
+        return GetTargets(caster, primaryTarget, skill).Count > 0;
     }
 }

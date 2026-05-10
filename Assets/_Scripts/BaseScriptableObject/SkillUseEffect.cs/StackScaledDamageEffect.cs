@@ -24,53 +24,49 @@ public class StackScaledDamageEffect : SkillEffect
     [SerializeField] private int repeatStackThreshold = 5;
     [SerializeField] private int repeatStackCost = 2;
 
-    private static int lastFrame = -1;
-    private static Dictionary<int, int> cachedStacks = new();
+    private float _finalBaseDamage;
+    private int _repeatCount;
 
     public override bool IsElementalAttackEffect => true;
 
-    private int GetStacks(Entity caster)
+    public override void OnSkillStarted(Entity caster, List<Entity> targets, CombatActionLog log)
     {
-        if (stackSourceBuff == null) return 0;
+        if (caster == null || stackSourceBuff == null) return;
+
+        ActiveBuff activeStacks = caster.buffController.GetBuffByName(stackSourceBuff.BuffName);
+        int stackCount = activeStacks != null ? activeStacks.CurrentStack : 0;
+
+        _finalBaseDamage = baseDamage + (stackCount * damagePerStack);
         
-        if (Time.frameCount != lastFrame)
+        _repeatCount = 0;
+        if (repeatIfEnoughStacks && stackCount >= repeatStackThreshold)
         {
-            lastFrame = Time.frameCount;
-            cachedStacks.Clear();
+            int remaining = stackCount;
+            while (remaining >= repeatStackThreshold + repeatStackCost)
+            {
+                _repeatCount++;
+                remaining -= repeatStackCost;
+            }
         }
 
-        int id = caster.GetEntityID();
-        if (!cachedStacks.TryGetValue(id, out int count))
+        if (consumeStacks && activeStacks != null)
         {
-            ActiveBuff b = caster.buffController.GetBuffByName(stackSourceBuff.BuffName);
-            count = b != null ? b.CurrentStack : 0;
-            cachedStacks[id] = count;
+            int toConsume = consumeAll ? activeStacks.CurrentStack : stacksToConsume;
+            caster.buffController.ConsumeBuffStack(activeStacks, toConsume);
         }
-        return count;
     }
 
     public override bool Execute(Entity caster, Entity target, CombatActionLog log)
     {
         if (caster == null || target == null) return false;
 
-        int currentStacks = GetStacks(caster);
-        float finalDamage = baseDamage + (currentStacks * damagePerStack);
-
         // 1. Initial Attack
-        DealDamage(caster, target, finalDamage, log);
+        DealDamage(caster, target, _finalBaseDamage, log);
 
-        // 2. Repeat Attack logic (simple version: deal extra instances of damage)
-        if (repeatIfEnoughStacks && currentStacks >= repeatStackThreshold)
+        // 2. Repeat Attacks
+        for (int i = 0; i < _repeatCount; i++)
         {
-            int remainingStacks = currentStacks;
-            while (remainingStacks >= repeatStackThreshold + repeatStackCost)
-            {
-                DealDamage(caster, target, finalDamage, log);
-                remainingStacks -= repeatStackCost;
-                
-                // We don't actually update the real buff stacks here yet 
-                // to avoid confusing the AOE loop if there is one.
-            }
+            DealDamage(caster, target, _finalBaseDamage, log);
         }
 
         // 3. Apply Debuffs
@@ -85,25 +81,6 @@ public class StackScaledDamageEffect : SkillEffect
                     AppliedTarget = target.Stats.EntityName,
                     Buff = new BuffEffectData(debuff)
                 });
-            }
-        }
-
-        // 4. Consumption (Only trigger once per frame/caster to handle AOE correctly)
-        // Note: This relies on the fact that Skill.Execute loops over targets sequentially in one frame.
-        // To be safe, consumption should ideally happen after the whole skill is done, 
-        // but since we are per-target, we use a trick.
-        if (consumeStacks)
-        {
-            // We only actually consume from the real buff once.
-            // But how do we know it's the LAST target? We don't.
-            // Alternative: The caster's real stacks are reduced, and cached value stays same for frame.
-            ActiveBuff realBuff = caster.buffController.GetBuffByName(stackSourceBuff.BuffName);
-            if (realBuff != null)
-            {
-                int toConsume = consumeAll ? realBuff.CurrentStack : stacksToConsume;
-                // This will reduce stacks for subsequent Execute calls, 
-                // but our GetStacks uses cached value! Perfect.
-                caster.buffController.ConsumeBuffStack(realBuff, toConsume);
             }
         }
 
@@ -126,9 +103,7 @@ public class StackScaledDamageEffect : SkillEffect
         if (damageToPartyHealPercent > 0 && actualDamage > 0)
         {
             float healAmount = actualDamage * damageToPartyHealPercent;
-            List<Entity> allies = caster is PlayerEntity ? 
-                (PlayerTeamManager.Instance != null ? PlayerTeamManager.Instance.GetAliveMembers().ConvertAll(p => (Entity)p) : new List<Entity>{caster}) : 
-                new List<Entity>{caster};
+            List<Entity> allies = GetAliveAllies(caster);
             
             foreach(var ally in allies)
             {
@@ -141,5 +116,14 @@ public class StackScaledDamageEffect : SkillEffect
                 });
             }
         }
+    }
+
+    private List<Entity> GetAliveAllies(Entity caster)
+    {
+        if (caster is PlayerEntity)
+        {
+            return PlayerTeamManager.Instance != null ? PlayerTeamManager.Instance.GetAliveMembers().ConvertAll(p => (Entity)p) : new List<Entity> { caster };
+        }
+        return new List<Entity> { caster };
     }
 }

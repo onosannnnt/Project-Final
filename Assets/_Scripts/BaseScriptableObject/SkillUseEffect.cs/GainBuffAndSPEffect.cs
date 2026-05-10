@@ -7,6 +7,11 @@ public class GainBuffAndSPEffect : SkillEffect
     [Tooltip("Amount of SP / MP to restore.")]
     public int SPRestoreAmount = 20;
 
+    private void Awake()
+    {
+        ExecuteOnce = true;
+    }
+
     [Header("Buff Details")]
     public Buff BuffToApply;
     [Tooltip("Number of stacks to gain per execution.")]

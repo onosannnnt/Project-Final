@@ -35,6 +35,16 @@ public abstract class SkillEffect : ScriptableObject
         return TrySetElementByConvention(element);
     }
 
+    [Header("Refactor Settings")]
+    [Tooltip("If true, this effect runs only once per skill cast (useful for Caster buffs or one-time calculations). If false, it runs for every target in the skill.")]
+    public bool ExecuteOnce = false;
+
+    /// <summary>
+    /// Called ONCE before the targeting loop begins. Use this for resource consumption, 
+    /// complex scaling calculations, or setting up state that should be consistent across all targets.
+    /// </summary>
+    public virtual void OnSkillStarted(Entity caster, List<Entity> targets, CombatActionLog log) { }
+
     protected bool TryGetElementByConvention(out DamageElement element)
     {
         Type type = GetType();
