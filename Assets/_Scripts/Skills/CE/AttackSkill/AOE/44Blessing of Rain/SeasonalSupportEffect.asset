@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da73ea69da81f41c9a317ee3cda7902e, type: 3}
+  m_Name: SeasonalSupportEffect
+  m_EditorClassIdentifier: 
+  Phase: 1
+  ExecuteOnce: 1
+  BaseDamage: 350
+  Element: 0
+  RequiredWeather: 1
+  HealPartyAmount: 400
+  ReviveHpPercent: 0.2
+  ForecastWeather: 1
+  ForecastBonusHeal: 200

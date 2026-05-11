@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcb5802026cb6d7449c4e30f88448e33, type: 3}
+  m_Name: SeasonalDamageEffect
+  m_EditorClassIdentifier: 
+  Phase: 1
+  ExecuteOnce: 1
+  BaseDamage: 200
+  Element: 0
+  Accuracy: 100
+  RequiredWeather: 1
+  EnableMatchingBonus: 1
+  WeatherBonusDamage: 100
+  WeatherBonusPercent: 0
+  UseForecast: 1
+  ForecastWeather: 1
+  ForecastBonusDamage: 0
+  RepeatOnForecast: 1
+  UseMomentum: 1
+  MomentumBuffName: Momentum
+  MomentumBonusDamage: 0
+  MomentumBonusPercent: 0
+  HealCasterAmount: 0
+  StealBuffs: 0
+  MaxHPReductionPercent: 0
+  MomentumMaxHPReductionPercent: 0
+  MaxHPDeBuffTemplate: {fileID: 0}
+  SleepChance: 0
+  SleepBuffTemplate: {fileID: 0}
+  RepeatAttackDamage: 0

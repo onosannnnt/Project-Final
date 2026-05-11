@@ -24,6 +24,7 @@ public abstract class Entity : MonoBehaviour
     public BuffManager buffController;
     public SkillManager skillManager;
     protected Skill selectedSkill;
+    public int SeasonMatchStreak = 0;
     public List<IDamageModifier> OutgoingModifiers = new();
     public List<IDamageModifier> IncomingModifiers = new();
 

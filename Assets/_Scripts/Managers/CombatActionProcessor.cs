@@ -5,6 +5,7 @@ using UnityEngine;
 public class CombatActionProcessor : MonoBehaviour
 {
     private TurnManager turnManager;
+    [SerializeField] private Buff momentumBuffTemplate;
 
     public void Initialize(TurnManager manager)
     {
@@ -16,6 +17,46 @@ public class CombatActionProcessor : MonoBehaviour
         Entity entity = action.Caster;
         Skill skill = action.Skill;
         Entity target = action.Target;
+
+        // --- Season Matching & Momentum Logic ---
+        if (WeatherManager.Instance != null)
+        {
+            WeatherType current = WeatherManager.Instance.CurrentWeather;
+            bool matches = false;
+
+            // Check if any effect in the skill matches the current weather
+            foreach (var effect in skill.SkillEffects)
+            {
+                if (effect is SeasonalDamageEffect sde && sde.RequiredWeather == current)
+                {
+                    matches = true;
+                    break;
+                }
+            }
+
+            if (matches)
+            {
+                entity.SeasonMatchStreak++;
+                if (entity.SeasonMatchStreak >= 3)
+                {
+                    if (momentumBuffTemplate != null)
+                    {
+                        entity.buffController.AddBuff(momentumBuffTemplate);
+                        log.AddBuffEffectLog(new BuffEffectLog()
+                        {
+                            AppliedTargetID = entity.GetEntityID(),
+                            AppliedTarget = entity.Stats.EntityName,
+                            Buff = new BuffEffectData(momentumBuffTemplate)
+                        });
+                    }
+                    entity.SeasonMatchStreak = 0; // Reset after granting
+                }
+            }
+            else
+            {
+                entity.SeasonMatchStreak = 0;
+            }
+        }
 
         if (entity is PlayerEntity)
         {

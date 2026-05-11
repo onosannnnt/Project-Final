@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83ff9293ddaae46f986cab0c7dd9b5d7, type: 3}
+  m_Name: ForecastUtilityEffect
+  m_EditorClassIdentifier: 
+  Phase: 1
+  ExecuteOnce: 1
+  healAmount: 0
+  healParty: 0
+  buffsToApply:
+  - {fileID: 11400000, guid: ecab910770f8649f6b1dd352c2a538ac, type: 2}
+  applyBuffsToParty: 1
+  cleanseDebuffs: 0
+  lockWeatherDuration: 0
+  setNextSeasonOnUse: 1
+  nextSeasonToSet: 2
