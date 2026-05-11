@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad13b01bc7e3b41ca835afbf9b6f8f06, type: 3}
+  m_Name: RV_T2_DeathSaveBuff 3
+  m_EditorClassIdentifier: 
+  BuffName: Undying Will
+  Description: There is a 20% chance to avoid death.
+  Icon: {fileID: 0}
+  buffType: 0
+  isPermanent: 1
+  Duration: 3
+  isStackable: 0
+  MaxStack: 0
+  StackCalculationType: 0
+  Threshold: 0
+  DiminishingReturnDecayFactor: 0
+  targetType: 0
+  modifiers: []
+  preventLethalDamage: 0
+  preventHealing: 0
+  AvoidDeathChance: 20
+  AvoidDeathChancePerStack: 0
+  ConsumeStackOnTrigger: 0
+  GrantEnemyImmunityForRestOfTurn: 1

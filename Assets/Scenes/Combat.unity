@@ -229,7 +229,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -4.5965576, y: 6.7366943}
+  m_AnchoredPosition: {x: -4.5964355, y: 6.7366943}
   m_SizeDelta: {x: 63.6919, y: 74.8933}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &30945912
@@ -2668,6 +2668,7 @@ Transform:
   - {fileID: 1470899739}
   - {fileID: 918057048}
   - {fileID: 450146068}
+  - {fileID: 1519766718}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &402104900
@@ -14291,6 +14292,97 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1 &1519766717
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1519766718}
+  - component: {fileID: 1519766719}
+  m_Layer: 0
+  m_Name: AFMManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1519766718
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519766717}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 401934046}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1519766719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519766717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad8548cf9f1844dd29021e3f2ebe8050, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  applyOnStart: 1
+  onlyAliveMembers: 1
+  verboseLog: 1
+  applyOnlyOnce: 1
+  skipIfBuffAlreadyExists: 1
+  applyToAllControlledPlayers: 1
+  mockResponse:
+    player_id: 0
+    type: 1
+    tier: 4
+  buffRules:
+  - type: 0
+    tier: 1
+    buff: {fileID: 11400000, guid: 463911a29486a426f9e32976f18c0169, type: 2}
+  - type: 0
+    tier: 2
+    buff: {fileID: 11400000, guid: 67c1d94b9a58d4799b71c809c638b671, type: 2}
+  - type: 0
+    tier: 3
+    buff: {fileID: 11400000, guid: 1e55b21fdc3084c079174dbc599b6f48, type: 2}
+  - type: 1
+    tier: 1
+    buff: {fileID: 11400000, guid: 82a2fe73661ff479d8f5ea1aceed20bc, type: 2}
+  - type: 1
+    tier: 2
+    buff: {fileID: 11400000, guid: cc9aca03bda6a43c9a0ec1281d9cfd4d, type: 2}
+  - type: 1
+    tier: 3
+    buff: {fileID: 11400000, guid: 39439d6037fe84ca09d140340ce293f7, type: 2}
+  - type: 2
+    tier: 1
+    buff: {fileID: 11400000, guid: a675ff4922afb42c5a4d72a552677fe1, type: 2}
+  - type: 2
+    tier: 2
+    buff: {fileID: 11400000, guid: 002a0415be9604d9084a3604b6d6b68a, type: 2}
+  - type: 2
+    tier: 3
+    buff: {fileID: 11400000, guid: 04bed68dc64274c64be3530d19f956d7, type: 2}
+  - type: 0
+    tier: 4
+    buff: {fileID: 11400000, guid: 27046ebf1e27f43ccaf819c75aa0ec79, type: 2}
+  - type: 1
+    tier: 4
+    buff: {fileID: 11400000, guid: f9f9f4a463deb4d7ead0345e2e056b21, type: 2}
+  - type: 2
+    tier: 4
+    buff: {fileID: 11400000, guid: 27046ebf1e27f43ccaf819c75aa0ec79, type: 2}
 --- !u!1 &1521759262
 GameObject:
   m_ObjectHideFlags: 0
