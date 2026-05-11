@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c67874e852b44966a11afd924b94618, type: 3}
+  m_Name: EL_T1_StackPreserveBuff
+  m_EditorClassIdentifier: 
+  BuffName: Wisdombound Blessing
+  Description: There is a 10% chance to not consume a Frenzy stack.
+  Icon: {fileID: 0}
+  buffType: 0
+  isPermanent: 1
+  Duration: 3
+  isStackable: 0
+  MaxStack: 3
+  StackCalculationType: 0
+  Threshold: 0
+  DiminishingReturnDecayFactor: 0
+  targetType: 0
+  modifiers: []
+  preventLethalDamage: 0
+  preventHealing: 0
+  AppliesToAnyBuff: 1
+  TargetBuffs:
+  - {fileID: 11400000, guid: 3d5cae4c40374de4885c1e1a820a5eeb, type: 2}
+  TargetBuffNames:
+  - Frenzy
+  PreserveChance: 10
+  PreserveChancePerStack: 0

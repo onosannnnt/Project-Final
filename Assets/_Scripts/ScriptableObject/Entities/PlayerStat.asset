@@ -18,3 +18,4 @@ MonoBehaviour:
   MaxSkillPoint: 100
   MaxBreakArmor: 9999
   ActionSpeed: 50
+  AdditionalStats: []

@@ -17,26 +17,39 @@ public class CombatActionProcessor : MonoBehaviour
         Skill skill = action.Skill;
         Entity target = action.Target;
 
+        bool executed = false;
+
         if (entity is PlayerEntity)
         {
-            ExecutePlayerAction(entity, target, skill, log);
+            executed = ExecutePlayerAction(entity, target, skill, log, consumeCost: true);
         }
         else if (entity is EnemyCombat enemy)
         {
-            ExecuteEnemyAction(enemy, target, skill, log);
+            executed = ExecuteEnemyAction(enemy, target, skill, log, consumeCost: true);
+        }
+
+        if (executed)
+        {
+            TryRepeatActionFromBuff(entity, target, skill, log);
         }
     }
 
-    private void ExecutePlayerAction(Entity entity, Entity target, Skill skill, CombatActionLog log)
+    private bool ExecutePlayerAction(Entity entity, Entity target, Skill skill, CombatActionLog log, bool consumeCost)
     {
+        if (entity == null || skill == null)
+        {
+            return false;
+        }
+
         int actualCost = turnManager.GetSkillCost(skill);
-        bool canUseSkill = turnManager.UseSharedPlayerSkillPointPool
-            ? turnManager.ResourceManager.TryConsumeSharedPlayerSkillPoints(actualCost)
-            : entity.CurrentSP >= actualCost;
+        bool canUseSkill = !consumeCost ||
+            (turnManager.UseSharedPlayerSkillPointPool
+                ? turnManager.ResourceManager.TryConsumeSharedPlayerSkillPoints(actualCost)
+                : entity.CurrentSP >= actualCost);
 
-        if (!canUseSkill) return;
+        if (!canUseSkill) return false;
 
-        if (!turnManager.UseSharedPlayerSkillPointPool)
+        if (consumeCost && !turnManager.UseSharedPlayerSkillPointPool)
         {
             entity.SetSP(-actualCost);
         }
@@ -53,18 +66,28 @@ public class CombatActionProcessor : MonoBehaviour
                 ApplySkillToAllies(entity, target, skill, log);
                 break;
         }
+
+        return true;
     }
 
-    private void ExecuteEnemyAction(EnemyCombat enemy, Entity target, Skill skill, CombatActionLog log)
+    private bool ExecuteEnemyAction(EnemyCombat enemy, Entity target, Skill skill, CombatActionLog log, bool consumeCost)
     {
-        int actualCost = turnManager.GetSkillCost(skill);
-        if (enemy.CurrentSP < actualCost)
+        if (enemy == null || skill == null)
         {
-            Debug.Log($"{enemy.gameObject.name} not enough SP for {skill.skillName}");
-            return;
+            return false;
         }
 
-        enemy.SetSP(-actualCost);
+        int actualCost = turnManager.GetSkillCost(skill);
+        if (consumeCost && enemy.CurrentSP < actualCost)
+        {
+            Debug.Log($"{enemy.gameObject.name} not enough SP for {skill.skillName}");
+            return false;
+        }
+
+        if (consumeCost)
+        {
+            enemy.SetSP(-actualCost);
+        }
 
         switch (skill.TargetType)
         {
@@ -77,6 +100,54 @@ public class CombatActionProcessor : MonoBehaviour
             case TargetType.Ally:
                 enemy.skillManager.UseSkill(skill, enemy, log);
                 break;
+        }
+
+        return true;
+    }
+
+    private void TryRepeatActionFromBuff(Entity caster, Entity target, Skill skill, CombatActionLog log)
+    {
+        if (caster == null || skill == null || caster.buffController == null)
+        {
+            return;
+        }
+
+        List<ActiveBuff> buffs = caster.buffController.GetAllBuffs();
+        if (buffs == null || buffs.Count == 0)
+        {
+            return;
+        }
+
+        for (int i = 0; i < buffs.Count; i++)
+        {
+            ActiveBuff activeBuff = buffs[i];
+            if (activeBuff?.Data is not RepeatActionSkillBuff repeatBuff)
+            {
+                continue;
+            }
+
+            if (!repeatBuff.CanRepeatSkill(skill))
+            {
+                continue;
+            }
+
+            if (!repeatBuff.ShouldRepeat(activeBuff))
+            {
+                continue;
+            }
+
+            repeatBuff.OnRepeatTriggered(caster, activeBuff);
+
+            if (caster is PlayerEntity)
+            {
+                ExecutePlayerAction(caster, target, skill, log, consumeCost: false);
+            }
+            else if (caster is EnemyCombat enemy)
+            {
+                ExecuteEnemyAction(enemy, target, skill, log, consumeCost: false);
+            }
+
+            break;
         }
     }
 
