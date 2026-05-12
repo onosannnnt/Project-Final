@@ -48080,6 +48080,24 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0303a0136c52f4be7a8aa2d2809826b3, type: 2}
   - {fileID: 11400000, guid: 9307e4762e2cf4f9abf2b6215b2792e1, type: 2}
   - {fileID: 11400000, guid: 330cefd638e1e4e888ba46d5c5ccc4ae, type: 2}
+  - {fileID: 11400000, guid: 7f66555dc3df946328830aea983cd3d9, type: 2}
+  - {fileID: 11400000, guid: 902be44bffc1f427cae7ff8d18100580, type: 2}
+  - {fileID: 11400000, guid: f7eed15a7ab0a430ca8c3beca04240ba, type: 2}
+  - {fileID: 11400000, guid: 313b913161f04449384befae664cab37, type: 2}
+  - {fileID: 11400000, guid: 28eb0a6018a814356886b073d7f9471e, type: 2}
+  - {fileID: 11400000, guid: 5feafc158be5e4de691c18193f38ccde, type: 2}
+  - {fileID: 11400000, guid: 0679a27f1e3f64ba585b2af4c584bcb6, type: 2}
+  - {fileID: 11400000, guid: d4560444e8b3d43ca8ea0249008e3f1f, type: 2}
+  - {fileID: 11400000, guid: ded5efef7f66a4a4eb67dcdef73d7515, type: 2}
+  - {fileID: 11400000, guid: 981e16273364f4b19867e5caab1dae6e, type: 2}
+  - {fileID: 11400000, guid: 431bb4b77d1f0418f985347fb8a99ffb, type: 2}
+  - {fileID: 11400000, guid: 813d6045c0d404d32bd45a3874a788aa, type: 2}
+  - {fileID: 11400000, guid: d7c4a384caa3d4d879c493fd91cc2dd2, type: 2}
+  - {fileID: 11400000, guid: 9f1807c3595f943b99c5841681ff6b70, type: 2}
+  - {fileID: 11400000, guid: dd6540ec45444446caf02b92a2cd1542, type: 2}
+  - {fileID: 11400000, guid: 1ca036345579842d68627b076cebf97f, type: 2}
+  - {fileID: 11400000, guid: 80bde806d8ed74c93af5ec6f38ebb989, type: 2}
+  - {fileID: 11400000, guid: ddfad2ab97ccf43309ad4361b520c246, type: 2}
   userData: {fileID: 11400000, guid: bd7868a778b044575959e5160d52fa42, type: 2}
   skillSlotPrefab: {fileID: 125270501465738059, guid: 1a5ac496baf806d439436b3eaa85a0d5,
     type: 3}

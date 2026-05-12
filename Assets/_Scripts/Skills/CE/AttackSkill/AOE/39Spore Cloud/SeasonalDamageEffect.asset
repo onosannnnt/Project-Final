@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: SeasonalDamageEffect
   m_EditorClassIdentifier: 
   Phase: 1
-  ExecuteOnce: 1
+  ExecuteOnce: 0
   BaseDamage: 80
   Element: 0
   Accuracy: 100
-  RequiredWeather: 0
+  RequiredWeather: 2
   EnableMatchingBonus: 1
   WeatherBonusDamage: 0
   WeatherBonusPercent: 0

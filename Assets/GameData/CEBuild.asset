@@ -15,9 +15,9 @@ MonoBehaviour:
   buildName: 
   buildDescription: 
   starterSkills:
-  - {fileID: 11400000, guid: 7126a5820e8b44344b52a692c6af4db2, type: 2}
-  - {fileID: 11400000, guid: fceb4fb54f61a478698176011ff19113, type: 2}
-  - {fileID: 11400000, guid: d1c58fe4a20e84293a08627f33ed6fce, type: 2}
-  - {fileID: 11400000, guid: a8c4ef1be40ae493898372072af757a5, type: 2}
-  - {fileID: 11400000, guid: 7369144d56efa4387b6d4a97dd32d6cc, type: 2}
-  - {fileID: 11400000, guid: a6d985162719a48a4b22a22bb9e0fed4, type: 2}
+  - {fileID: 11400000, guid: 7f66555dc3df946328830aea983cd3d9, type: 2}
+  - {fileID: 11400000, guid: 902be44bffc1f427cae7ff8d18100580, type: 2}
+  - {fileID: 11400000, guid: f7eed15a7ab0a430ca8c3beca04240ba, type: 2}
+  - {fileID: 11400000, guid: 981e16273364f4b19867e5caab1dae6e, type: 2}
+  - {fileID: 11400000, guid: 431bb4b77d1f0418f985347fb8a99ffb, type: 2}
+  - {fileID: 11400000, guid: 813d6045c0d404d32bd45a3874a788aa, type: 2}
