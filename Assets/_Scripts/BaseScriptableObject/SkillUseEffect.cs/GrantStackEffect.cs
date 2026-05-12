@@ -7,7 +7,7 @@ public class GrantStackEffect : SkillEffect
     [SerializeField, Min(1)] private int stacksToGrant = 1;
     [SerializeField] private bool targetCaster = false;
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         Entity applyTarget = targetCaster ? caster : target;
         if (applyTarget == null || applyTarget.buffController == null || buffToGrant == null) return false;

@@ -9,7 +9,7 @@ public class ConvertDebuffToStackEffect : SkillEffect
     [SerializeField] private int fallbackStacks = 1; // Gain this if no debuffs were removed
     [SerializeField] private bool targetCaster = true;
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         Entity applyTarget = targetCaster ? caster : target;
         if (applyTarget == null || applyTarget.buffController == null || stackToGrant == null) return false;

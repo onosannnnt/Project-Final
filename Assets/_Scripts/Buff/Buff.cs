@@ -58,6 +58,8 @@ public class Buff : ScriptableObject
     public List<StatModifier> modifiers = new List<StatModifier>();
 
     [Header("Special Flags")]
+    [Tooltip("If disabled, this buff cannot be stolen by 'Buff Steal' effects.")]
+    public bool isStealable = true;
     [Tooltip("If enabled, this buff prevents the owner from dropping below 1 HP from damage.")]
     public bool preventLethalDamage = false;
     [Tooltip("If enabled, this buff blocks all healing received by the owner.")]

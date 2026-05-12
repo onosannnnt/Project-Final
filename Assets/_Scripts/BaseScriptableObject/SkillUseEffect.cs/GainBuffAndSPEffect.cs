@@ -18,7 +18,7 @@ public class GainBuffAndSPEffect : SkillEffect
     public int StacksToGain = 2;
     public TargetType ApplyTo = TargetType.Self;
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         Entity applyTarget = ApplyTo == TargetType.Self ? caster : target;
         

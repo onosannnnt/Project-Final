@@ -9,13 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 429ac4d4225884fb185a149deb1a72af, type: 3}
-  m_Name: GenericStatModifierBuff
+  m_Script: {fileID: 11500000, guid: 3255b5e03e46a432f85eb0aab966b4ae, type: 3}
+  m_Name: Buff
   m_EditorClassIdentifier: 
-  BuffName: Tangleweed
-  Description: Reduce Speed by 30%
-  Icon: {fileID: 21300000, guid: ea3b8a61f4add494c84dfcffa4d9cc32, type: 3}
-  buffType: 1
+  BuffName: 
+  Description: 
+  Icon: {fileID: 0}
+  buffType: 0
   isPermanent: 0
   Duration: 3
   isStackable: 0
@@ -23,15 +23,8 @@ MonoBehaviour:
   StackCalculationType: 0
   Threshold: 0
   DiminishingReturnDecayFactor: 0
-  targetType: 2
-  modifiers:
-  - Stat: 4
-    Type: 1
-    Value: -0.3
+  targetType: 0
+  modifiers: []
   preventLethalDamage: 0
   preventHealing: 0
   grantsDebuffImmunity: 0
-  BonusDamageFlat: 0
-  BonusDamagePercent: 0
-  BonusCritChance: 0
-  BonusCritMultiplier: 0

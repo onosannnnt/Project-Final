@@ -11,7 +11,7 @@ public class DamageEffect : SkillEffect
 
     public override bool IsElementalAttackEffect => true;
     public override bool IsDotElementSource => false;
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         // 1. Accuracy Check
         if (Random.Range(0f, 100f) > Accuracy)

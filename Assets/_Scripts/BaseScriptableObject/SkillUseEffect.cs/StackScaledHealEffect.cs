@@ -38,7 +38,7 @@ public class StackScaledHealEffect : SkillEffect
         }
     }
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         if (target == null) return false;
 

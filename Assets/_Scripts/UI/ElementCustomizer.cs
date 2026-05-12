@@ -173,7 +173,7 @@ public class ElementCustomizer : MonoBehaviour
             {
                 foreach (Skill skill in userData.OwnedSkills)
                 {
-                    if (skill != null && !availableSkills.Contains(skill))
+                    if (skill != null && skill.skillType == SkillType.Attack && !availableSkills.Contains(skill))
                     {
                         availableSkills.Add(skill);
                     }
@@ -185,7 +185,7 @@ public class ElementCustomizer : MonoBehaviour
             {
                 foreach (Skill skill in userData.TrialSkills)
                 {
-                    if (skill != null && !availableSkills.Contains(skill))
+                    if (skill != null && skill.skillType == SkillType.Attack && !availableSkills.Contains(skill))
                     {
                         availableSkills.Add(skill);
                     }
@@ -197,7 +197,7 @@ public class ElementCustomizer : MonoBehaviour
         for (int i = 0; i < fallbackSkills.Count; i++)
         {
             Skill skill = fallbackSkills[i];
-            if (skill != null && !availableSkills.Contains(skill))
+            if (skill != null && skill.skillType == SkillType.Attack && !availableSkills.Contains(skill))
             {
                 availableSkills.Add(skill);
             }

@@ -7,7 +7,7 @@ public class CorruptedChunkHealEffect : SkillEffect
     [SerializeField] private float baseHeal = 200f;
     [SerializeField] private float healPer10PercentCorruptedReduced = 100f;
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         if (caster == null || target == null) return false;
 

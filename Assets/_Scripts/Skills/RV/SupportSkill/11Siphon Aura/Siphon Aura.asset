@@ -20,7 +20,7 @@ MonoBehaviour:
   skillType: 2
   skillStyle: 1
   Tier: 1
-  SkillPoint: 10
+  SkillPoint: 20
   CorruptedHealthGain: 0
   TargetType: 1
   TargetCount: 0

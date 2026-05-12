@@ -6,7 +6,7 @@ public class ChanceSelfDamageEffect : SkillEffect
     public float chance = 0.20f; // 20% chance
     public int selfDamageAmount = 50;
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         // 20% chance to trigger
         if (Random.value < chance)

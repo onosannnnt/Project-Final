@@ -14,7 +14,7 @@ public class CorruptedBloodBurstEffect : SkillEffect
     [Tooltip("Optional penalty buff (e.g. DelayedPenaltyBuff).")]
     public Buff PenaltyBuffTemplate;
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         if (caster == null) return false;
 

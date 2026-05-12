@@ -8,7 +8,7 @@ public class CleanseAndGainStackEffect : SkillEffect
     [SerializeField] private int stacksPerDebuff = 2;
     [SerializeField] private int fallbackStacks = 1;
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         if (target == null || stackToGrant == null) return false;
 

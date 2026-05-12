@@ -48,7 +48,7 @@ public class SeasonalDamageEffect : SkillEffect
         // we'll do the logic in Execute for now.
     }
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         if (WeatherManager.Instance == null || target == null) return false;
 
@@ -64,7 +64,7 @@ public class SeasonalDamageEffect : SkillEffect
 
         // 2. Calculate Damage
         float totalDamage = BaseDamage;
-        bool hasMomentum = caster.buffController.GetBuffByName(MomentumBuffName) != null;
+        bool hasMomentum = caster.buffController.GetBuffByName(MomentumBuffName) != null && style == SkillStyle.CE;
 
         // Matching Season Bonus (+20%)
         if (EnableMatchingBonus && current == RequiredWeather)
@@ -88,6 +88,8 @@ public class SeasonalDamageEffect : SkillEffect
         // Momentum Damage Bonus
         if (UseMomentum && hasMomentum)
         {
+            // Note: The global +40% is already handled by MomentumBuff's IDamageModifier.
+            // This section handles skill-specific bonuses (like flat damage additions).
             totalDamage += MomentumBonusDamage;
             if (MomentumBonusPercent > 0) totalDamage *= (1f + (MomentumBonusPercent / 100f));
         }
@@ -97,7 +99,7 @@ public class SeasonalDamageEffect : SkillEffect
         float finalDamage = totalDamage * variance;
 
         // Apply Damage
-        DealDamage(caster, target, finalDamage, false, log);
+        DealDamage(caster, target, finalDamage, false, log, style);
 
         // 3. Side Effects (Only if Current Season matches)
         if (current == RequiredWeather)
@@ -105,7 +107,7 @@ public class SeasonalDamageEffect : SkillEffect
             // Repeat Attack (Sun)
             if (RepeatAttackDamage > 0)
             {
-                DealDamage(caster, target, RepeatAttackDamage * variance, false, log);
+                DealDamage(caster, target, RepeatAttackDamage * variance, false, log, style);
             }
 
             // Heal Caster (Rain)
@@ -141,7 +143,8 @@ public class SeasonalDamageEffect : SkillEffect
                 List<ActiveBuff> targetBuffs = new List<ActiveBuff>(target.buffController.GetBuffs());
                 foreach (var b in targetBuffs)
                 {
-                    if (b.Data.buffType == BuffType.Buff)
+                    // Protection: Only steal buffs that are explicitly marked as stealable
+                    if (b.Data.buffType == BuffType.Buff && b.Data.isStealable)
                     {
                         caster.buffController.AddBuff(b.Data);
                         target.buffController.RemoveBuff(b);
@@ -170,16 +173,16 @@ public class SeasonalDamageEffect : SkillEffect
         // Repeat on Forecast
         if (UseForecast && next == ForecastWeather && RepeatOnForecast)
         {
-            DealDamage(caster, target, finalDamage, false, log);
+            DealDamage(caster, target, finalDamage, false, log, style);
         }
 
         return true;
     }
 
-    private void DealDamage(Entity caster, Entity target, float amount, bool isCrit, CombatActionLog log)
+    private void DealDamage(Entity caster, Entity target, float amount, bool isCrit, CombatActionLog log, SkillStyle style)
     {
         Damage damage = new Damage(amount, Element, isCrit, 5f, 1.5f);
-        DamageCtx ctx = new DamageCtx(caster, target, damage);
+        DamageCtx ctx = new DamageCtx(caster, target, damage, style, log);
         DamageSystem.Process(ctx, log);
     }
 }

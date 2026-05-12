@@ -19,7 +19,7 @@ public class GainBuffStackAtTurnStartEffect : SkillEffect
     [Tooltip("How many turns this effect lasts.")]
     [Min(1)] public int DurationTurns = 3;
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         Entity applyTarget = ApplyTo == TargetType.Self ? caster : target;
         if (applyTarget == null || applyTarget.buffController == null || TurnStartBuffTemplate == null)

@@ -5,7 +5,7 @@ public class LockWeatherEffect : SkillEffect
 {
     [SerializeField] private int duration = 2;
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         if (WeatherManager.Instance != null)
         {

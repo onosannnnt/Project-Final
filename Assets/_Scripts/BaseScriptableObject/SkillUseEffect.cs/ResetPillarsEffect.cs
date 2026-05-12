@@ -8,7 +8,7 @@ public class ResetPillarsEffect : SkillEffect
         ExecuteOnce = true;
     }
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         // เช็คว่าคนที่ใช้สกิลนี้คือ PuzzleBossCombat หรือไม่
         if (caster is PuzzleBossCombat boss)

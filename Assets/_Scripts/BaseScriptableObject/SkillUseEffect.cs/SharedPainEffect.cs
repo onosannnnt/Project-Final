@@ -10,7 +10,7 @@ public class SharedPainEffect : SkillEffect
     [Tooltip("Template debuff that stores duration, icon, and UI metadata.")]
     public SharedPainDebuff sharedPainDebuffTemplate;
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         if (caster == null || target == null || sharedPainDebuffTemplate == null)
         {

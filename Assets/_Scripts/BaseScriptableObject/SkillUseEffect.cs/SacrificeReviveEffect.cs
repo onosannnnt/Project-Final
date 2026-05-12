@@ -16,7 +16,7 @@ public class SacrificeReviveEffect : SkillEffect
     [Tooltip("Buff that increases damage taken on the revived target.")]
     public Buff VulnerabilityBuffTemplate;
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         if (caster == null) return false;
 

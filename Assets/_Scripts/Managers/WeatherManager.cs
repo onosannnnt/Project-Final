@@ -41,14 +41,23 @@ public class WeatherManager : Singleton<WeatherManager>
 
     public void AdvanceWeather()
     {
+        // 1. Always transition to the previously forecasted weather
+        CurrentWeather = NextWeather;
+
+        // 2. Determine the next forecast
         if (lockDuration > 0)
         {
             lockDuration--;
-            // Weather doesn't change, but we might want to signal it's still the same
-            OnWeatherChanged?.Invoke(CurrentWeather, NextWeather, WeatherStreak);
-            return;
+            // If locked, the next forecast is forced to stay the same as current
+            NextWeather = CurrentWeather;
+        }
+        else
+        {
+            // Otherwise randomize normally
+            NextWeather = GetRandomWeather();
         }
 
+        // 3. Update streaks
         if (CurrentWeather == NextWeather)
         {
             WeatherStreak++;
@@ -57,12 +66,8 @@ public class WeatherManager : Singleton<WeatherManager>
         {
             WeatherStreak = 1;
         }
-
-        CurrentWeather = NextWeather;
-        NextWeather = GetRandomWeather();
         
         OnWeatherChanged?.Invoke(CurrentWeather, NextWeather, WeatherStreak);
-// // Debug.Log($"[WeatherManager] Weather changed to {CurrentWeather} (Streak x{WeatherStreak}). Next turn weather will be {NextWeather}.");
     }
 
     private WeatherType GetRandomWeather()

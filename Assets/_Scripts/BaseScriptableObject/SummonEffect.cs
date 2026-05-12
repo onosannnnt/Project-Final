@@ -11,7 +11,7 @@ public class SummonEffect : SkillEffect
         ExecuteOnce = true;
     }
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         if (enemiesToSummon == null || enemiesToSummon.Length == 0)
         {

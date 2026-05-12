@@ -7,7 +7,7 @@ public class CorruptHealthEffect : SkillEffect
     [SerializeField] private float percentOfMaxHP;
     [SerializeField] private bool targetCaster = true;
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         Entity effectTarget = targetCaster ? caster : target;
         if (effectTarget == null) return false;

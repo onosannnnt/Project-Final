@@ -20,7 +20,7 @@ public class KillRewardBuffDamageEffect : SkillEffect
     [Tooltip("How many stacks to gain when the hit kills")]
     public int StacksOnKill = 1;
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         if (caster == null || target == null) return false;
 

@@ -7,7 +7,7 @@ public class CorruptedBloodRageEffect : SkillEffect
     [SerializeField] private float corruptedHealthToGain = 500f;
     [SerializeField] private List<Buff> buffsToApply;
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         if (caster == null) return false;
 

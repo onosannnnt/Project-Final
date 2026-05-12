@@ -25,7 +25,6 @@ public class Skill : ScriptableObject
     //Price by Tier (can be set to 0 for non-purchasable skills)
     public int GetSkillPrice()
     {
-        //Tier 1: 100, Tier 2: 200, Tier 3: 300 (example pricing, can be adjusted as needed)
         switch (Tier)
         {
             case 1:
@@ -101,6 +100,7 @@ public class Skill : ScriptableObject
         Color elementColor = Utils.GetDamageColor(element);
         string elementHex = ColorUtility.ToHtmlStringRGB(elementColor);
         string elementLine = $"<b>Element:</b> <color=#{elementHex}>{GetElementDisplayName()}</color>";
+        string skillpointLine = $"<b>SP Cost:</b> <color=#A78BFA>{SkillPoint}</color>";
 
         if (CorruptedHealthGain > 0)
         {
@@ -112,7 +112,7 @@ public class Skill : ScriptableObject
             return elementLine;
         }
 
-        return $"{elementLine}\n{description}";
+        return $"{elementLine}\n{skillpointLine}\n{description}";
     }
 
     public bool TrySetElementForTesting(DamageElement newElement, out string reason)
@@ -191,7 +191,7 @@ public class Skill : ScriptableObject
                 // If ExecuteOnce is set, only run this effect for the very first target in the list
                 if (effect.ExecuteOnce && i > 0) continue;
 
-                bool effectHit = effect.Execute(caster, currentTarget, log);
+                bool effectHit = effect.Execute(caster, currentTarget, log, skillStyle);
                 if (!effectHit)
                 {
                     overallHit = false;

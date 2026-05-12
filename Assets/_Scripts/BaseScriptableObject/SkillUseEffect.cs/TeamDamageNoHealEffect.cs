@@ -15,7 +15,7 @@ public class TeamDamageNoHealEffect : SkillEffect
     [Tooltip("Team cannot be healed for Y turns.")]
     [Min(1)] public int DurationTurns = 3;
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         if (caster == null || BuffTemplate == null)
         {

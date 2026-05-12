@@ -11,7 +11,7 @@ public class ConsumeBuffDamageEffect : DamageEffect
     [System.NonSerialized] private int _lastActionID = -1;
     [System.NonSerialized] private int _cachedStacksConsumed = 0;
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
 // // Debug.Log(caster.gameObject.name + " dealt damage on " + target.gameObject.name);
 

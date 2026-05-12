@@ -9,7 +9,7 @@ public class TauntEffect : SkillEffect
     
     public TauntBuff tauntBuffTemplate;
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         // Apply Taunt Buff with Vulnerability (+100 extra dmg while active)
         if (tauntBuffTemplate != null)

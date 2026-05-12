@@ -287,7 +287,7 @@ public class SkillListManager : MonoBehaviour
         }
 
         activeLoadoutIndex = Mathf.Clamp(index, 0, playerLoadouts.Length - 1);
-        
+
         // Rebuild the inventory list and reload slots for the new active player
         RefreshAllData();
     }
@@ -431,6 +431,6 @@ public class SkillListManager : MonoBehaviour
             }
         }
 
-        // // Debug.Log(loadout);
+        Debug.Log(loadout);
     }
 }

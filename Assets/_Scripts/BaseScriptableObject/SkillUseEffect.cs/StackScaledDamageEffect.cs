@@ -8,7 +8,7 @@ public class StackScaledDamageEffect : SkillEffect
     [SerializeField] private Buff stackSourceBuff;
     [SerializeField] private float baseDamage = 200f;
     [SerializeField] private float damagePerStack = 50f;
-    [SerializeField] private DamageElement element = DamageElement.Physical;
+    [SerializeField] private DamageElement Element = DamageElement.Physical;
 
     [Header("Consumption")]
     [SerializeField] private bool consumeStacks = false;
@@ -56,17 +56,17 @@ public class StackScaledDamageEffect : SkillEffect
         }
     }
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         if (caster == null || target == null) return false;
 
         // 1. Initial Attack
-        DealDamage(caster, target, _finalBaseDamage, log);
+        DealDamage(caster, target, _finalBaseDamage, log, style);
 
         // 2. Repeat Attacks
         for (int i = 0; i < _repeatCount; i++)
         {
-            DealDamage(caster, target, _finalBaseDamage, log);
+            DealDamage(caster, target, _finalBaseDamage, log, style);
         }
 
         // 3. Apply Debuffs
@@ -87,15 +87,15 @@ public class StackScaledDamageEffect : SkillEffect
         return true;
     }
 
-    private void DealDamage(Entity caster, Entity target, float amount, CombatActionLog log)
+    private void DealDamage(Entity caster, Entity target, float amount, CombatActionLog log, SkillStyle style)
     {
         float variance = Random.Range(0.85f, 1.15f);
         float damageValue = amount * variance;
         
         float healthBefore = target.CurrentHealth;
 
-        Damage dmg = new Damage(damageValue, element, false, 5f, 1.5f);
-        DamageCtx ctx = new DamageCtx(caster, target, dmg);
+        Damage dmg = new Damage(damageValue, Element, false, 5f, 1.5f);
+        DamageCtx ctx = new DamageCtx(caster, target, dmg, style, log);
         DamageSystem.Process(ctx, log);
 
         float actualDamage = healthBefore - target.CurrentHealth;

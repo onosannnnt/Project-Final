@@ -38,7 +38,7 @@ public class SeasonalSupportEffect : SkillEffect
         // Apply Damage to all targets in list
         foreach (var target in targets)
         {
-            DealDamage(caster, target, finalDamage, log);
+            DealDamage(caster, target, finalDamage, log, SkillStyle.None);
         }
 
         // Apply Support if matching current season
@@ -61,17 +61,23 @@ public class SeasonalSupportEffect : SkillEffect
         }
     }
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
-        // Damage is handled in OnSkillStarted for AOE consistency, 
+        // Damage is handled in OnSkillStarted for AOE consistency,
         // but since Skill.Execute loops, we return true here.
-        // Actually, to be safe with the new refactor:
         return true;
+    }
+
+    private void DealDamage(Entity caster, Entity target, float amount, CombatActionLog log, SkillStyle style)
+    {
+        Damage damage = new Damage(amount, Element, false, 5f, 1.5f);
+        DamageCtx ctx = new DamageCtx(caster, target, damage, style, log);
+        DamageSystem.Process(ctx, log);
     }
 
     private Entity FindDeadAlly(Entity caster)
     {
-        if (PlayerTeamManager.Instance != null)
+        if (caster is PlayerEntity)
         {
             foreach (var member in PlayerTeamManager.Instance.ActiveTeamMembers)
             {
@@ -91,8 +97,8 @@ public class SeasonalSupportEffect : SkillEffect
 
     private void HealParty(Entity caster, float amount, CombatActionLog log)
     {
-        List<Entity> allies = (caster is PlayerEntity) ? 
-            PlayerTeamManager.Instance.GetAliveMembers().ConvertAll(p => (Entity)p) : 
+        List<Entity> allies = (caster is PlayerEntity) ?
+            PlayerTeamManager.Instance.GetAliveMembers().ConvertAll(p => (Entity)p) :
             new List<Entity>{caster};
 
         foreach (var ally in allies)
@@ -100,12 +106,5 @@ public class SeasonalSupportEffect : SkillEffect
             ally.Heal(amount);
             log.AddHealEffectLog(new HealEffectLog() { AppliedTarget = ally.Stats.EntityName, AppliedTargetID = ally.GetEntityID(), HealAmount = amount });
         }
-    }
-
-    private void DealDamage(Entity caster, Entity target, float amount, CombatActionLog log)
-    {
-        Damage damage = new Damage(amount, Element, false, 5f, 1.5f);
-        DamageCtx ctx = new DamageCtx(caster, target, damage);
-        DamageSystem.Process(ctx, log);
     }
 }

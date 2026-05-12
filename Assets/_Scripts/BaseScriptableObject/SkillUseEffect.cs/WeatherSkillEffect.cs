@@ -18,7 +18,7 @@ public class WeatherBranchingEffect : SkillEffect
     [Tooltip("Define which effects happen during which weather here.")]
     public List<WeatherBranch> Branches;
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         if (WeatherManager.Instance == null) return true;
 

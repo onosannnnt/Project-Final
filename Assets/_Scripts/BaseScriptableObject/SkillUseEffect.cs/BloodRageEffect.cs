@@ -7,7 +7,7 @@ public class BloodRageEffect : SkillEffect
     public float maxHpCostPercentage = 0.20f; // 20%
     public List<Buff> buffsToApply;
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         // 1. Lose 20% of Max HP
         int hpCost = Mathf.RoundToInt(caster.GetStat(StatType.MaxHealth) * maxHpCostPercentage);

@@ -32,6 +32,11 @@ public class CombatActionProcessor : MonoBehaviour
                     matches = true;
                     break;
                 }
+                if (effect is SeasonalSupportEffect sse && sse.RequiredWeather == current)
+                {
+                    matches = true;
+                    break;
+                }
             }
 
             if (matches)

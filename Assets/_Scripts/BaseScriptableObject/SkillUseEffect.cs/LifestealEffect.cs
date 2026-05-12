@@ -4,14 +4,14 @@ using UnityEngine;
 public class LifestealEffect : SkillEffect
 {
     [SerializeField] private float baseDamage = 100f;
-    [SerializeField] private DamageElement element = DamageElement.Physical;
+    [SerializeField] private DamageElement Element = DamageElement.Physical;
     [SerializeField, Range(0f, 1f)] private float lifestealPercent = 0.5f;
     [SerializeField] private float accuracy = 100f;
     [SerializeField] private float criticalHitChance = 5f;
 
     public override bool IsElementalAttackEffect => true;
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         if (Random.Range(0f, 100f) > accuracy)
         {
@@ -22,7 +22,7 @@ public class LifestealEffect : SkillEffect
         float variance = Random.Range(0.85f, 1.15f);
         float finalDamage = baseDamage * variance;
 
-        Damage damage = new Damage(finalDamage, element, false, criticalHitChance, 1.5f);
+        Damage damage = new Damage(finalDamage, Element, false, criticalHitChance, 1.5f);
         DamageCtx ctx = new DamageCtx(caster, target, damage);
         
         // We want to know how much damage was actually dealt after modifiers

@@ -15,7 +15,7 @@ public class CorruptedBloodHealEffect : SkillEffect
     [SerializeField, Tooltip("If true, the caster consumes their own Corrupted Health to heal the target.")]
     private bool consumeFromCaster = true;
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         Entity source = consumeFromCaster ? caster : target;
         if (source == null || target == null) return false;

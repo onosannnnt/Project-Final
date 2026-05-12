@@ -140,5 +140,5 @@ public abstract class SkillEffect : ScriptableObject
         return false;
     }
 
-    public abstract bool Execute(Entity caster, Entity target, CombatActionLog log);
+    public abstract bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None);
 }

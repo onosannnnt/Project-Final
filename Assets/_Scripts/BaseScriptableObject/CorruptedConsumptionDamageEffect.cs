@@ -16,7 +16,7 @@ public class CorruptedConsumptionDamageEffect : SkillEffect
     public override bool IsElementalAttackEffect => true;
     public override bool IsDotElementSource => false;
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         if (Random.Range(0f, 100f) > Accuracy)
         {
@@ -41,7 +41,7 @@ public class CorruptedConsumptionDamageEffect : SkillEffect
         finalDamage *= variance;
 
         Damage damage = new Damage(finalDamage, Element, false, CriticalHitChance, 1.5f);
-        DamageCtx ctx = new DamageCtx(caster, target, damage);
+        DamageCtx ctx = new DamageCtx(caster, target, damage, style, log);
         DamageSystem.Process(ctx, log);
         return true;
     }

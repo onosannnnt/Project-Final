@@ -11,7 +11,7 @@ public class DispelEnemyBuffGainStackEffect : SkillEffect
     [Tooltip("Gain X stacks for each enemy buff removed.")]
     [Min(1)] public int StacksPerBuffRemoved = 1;
 
-    public override bool Execute(Entity caster, Entity target, CombatActionLog log)
+    public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
         if (caster == null || target == null || target.buffController == null)
         {
