@@ -206,7 +206,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 93582730}
-  - component: {fileID: 93582731}
+  - component: {fileID: 93582732}
   m_Layer: 0
   m_Name: API
   m_TagString: Untagged
@@ -229,7 +229,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &93582731
+--- !u!114 &93582732
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -238,9 +238,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 93582728}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 38149062e6b9a419291dcac465424458, type: 3}
+  m_Script: {fileID: 11500000, guid: 7d9683203e3a241e5a8556b06934f2b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nameInputField: {fileID: 870796602}
+  startButton: {fileID: 1600065144}
+  userData: {fileID: 11400000, guid: bd7868a778b044575959e5160d52fa42, type: 2}
+  nextSceneName: Overworld
 --- !u!1 &340315423
 GameObject:
   m_ObjectHideFlags: 0
@@ -1212,7 +1216,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 93582731}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SceneController, Assembly-CSharp
         m_MethodName: LoadSceneByIndex
         m_Mode: 3

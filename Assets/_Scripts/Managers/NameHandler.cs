@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using TMPro; // สำหรับจัดการ TextMeshPro
 using UnityEngine.SceneManagement;
@@ -37,12 +38,49 @@ public class NameHandler : MonoBehaviour
         {
             // บันทึกชื่อเก็บไว้ (ใช้ PlayerPrefs เพื่อดึงไปใช้ใน Scene อื่นได้ง่าย)
             PlayerPrefs.SetString("PlayerName", playerName);
-            userData.ResetProgression();
-            userData.Username = playerName;
-            // UserResponse response = await NetworkManager.SavePlayerData(userData);
-            // userData.ID = response.ID;
-            // userData.Username = response.Username;
-            userData.ID = Random.Range(1000, 9999); // Assign a random dummy ID
+            if (userData != null)
+            {
+                userData.ResetProgression();
+                userData.Username = playerName;
+            }
+
+            try
+            {
+                UserResponse response = await NetworkManager.SavePlayerData(new CreateUserRequest
+                {
+                    username = playerName
+                });
+
+                if (response != null && userData != null)
+                {
+                    int resolvedId = response.GetId();
+                    string resolvedName = response.GetUsername();
+
+                    if (resolvedId > 0)
+                    {
+                        userData.ID = resolvedId;
+                    }
+
+                    if (!string.IsNullOrEmpty(resolvedName))
+                    {
+                        userData.Username = resolvedName;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"Create user failed, using fallback ID. {e.Message}");
+                if (userData != null)
+                {
+                    userData.ID = UnityEngine.Random.Range(1000, 9999);
+                }
+            }
+
+            if (userData != null)
+            {
+                PlayerPrefs.SetInt("UserId", userData.ID);
+                PlayerPrefs.SetString("PlayerName", userData.Username);
+            }
             PlayerPrefs.Save();
 
 

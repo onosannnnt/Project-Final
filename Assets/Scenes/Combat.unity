@@ -13150,6 +13150,7 @@ GameObject:
   - component: {fileID: 1426198914}
   - component: {fileID: 1426198913}
   - component: {fileID: 1426198912}
+  - component: {fileID: 1426198915}
   m_Layer: 0
   m_Name: TurnManager
   m_TagString: Untagged
@@ -13189,6 +13190,10 @@ MonoBehaviour:
   PlayerActionQueueUI: {fileID: 367059104}
   EnemyActionQueueUI: {fileID: 708008530}
   userData: {fileID: 11400000, guid: bd7868a778b044575959e5160d52fa42, type: 2}
+  enablePlayerstyleLogging: 1
+  stageCompleteSender: {fileID: 0}
+  sendPlayerstyleOnWin: 1
+  sendPlayerstyleOnLose: 0
   turnRound: 0
   combatID: 0
   currentWave: 1
@@ -13204,6 +13209,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a416b8e5630f7c545971b369e55082e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  momentumBuffTemplate: {fileID: 11400000, guid: a3f46b39430fc4d798438980cd2ea41a,
+    type: 2}
 --- !u!114 &1426198913
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13232,6 +13239,21 @@ MonoBehaviour:
   phase2SPRestore: 40
   phase3SPRestore: 50
   useSharedPlayerSkillPointPool: 1
+--- !u!114 &1426198915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1426198909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59b0fba2811e84168ac747c03c8ac5bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  apiBaseUrl: http://localhost:8000
+  stageCompletePath: /combat-logs/batch
+  logResponses: 1
 --- !u!1 &1426415849
 GameObject:
   m_ObjectHideFlags: 0

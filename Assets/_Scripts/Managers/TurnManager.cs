@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +13,12 @@ public class TurnManager : Singleton<TurnManager>
     [SerializeField] private UserData userData;
     public UserData UserData => userData;
 
+    [Header("Playerstyle Logging")]
+    [SerializeField] private bool enablePlayerstyleLogging = true;
+    [SerializeField] private StageCompleteSender stageCompleteSender;
+    [SerializeField] private bool sendPlayerstyleOnWin = true;
+    [SerializeField] private bool sendPlayerstyleOnLose = false;
+
     private CombatLogger combatLogger;
     private CombatActionProcessor actionProcessor;
     public CombatResourceManager ResourceManager => resourceManager;
@@ -23,6 +30,9 @@ public class TurnManager : Singleton<TurnManager>
     public int combatID = 0;
     public int currentWave = 1;
     private bool combatResultResolved;
+
+    private readonly List<CombatLog> stageLogs = new List<CombatLog>();
+    private string playerstyleSessionId;
 
     // --- Multiplayer Turn Variables ---
     private int currentTeamMemberIndex = 0;
@@ -36,6 +46,16 @@ public class TurnManager : Singleton<TurnManager>
         resourceManager = GetComponent<CombatResourceManager>();
         combatLogger = GetComponent<CombatLogger>();
         actionProcessor = GetComponent<CombatActionProcessor>();
+
+        ApplyUserDataFallbackFromPrefs();
+
+        if (stageCompleteSender == null)
+        {
+            stageCompleteSender = GetComponent<StageCompleteSender>();
+        }
+
+        playerstyleSessionId = Guid.NewGuid().ToString();
+        stageLogs.Clear();
 
         resourceManager.Initialize(userData);
         actionProcessor.Initialize(this);
@@ -196,7 +216,7 @@ public class TurnManager : Singleton<TurnManager>
         // // Debug.Log($"[TurnManager] Waiting for {activePlayer.Stats.EntityName} to choose an action.");
 
         activePlayer.SetEnemyTarget(GetFirstEnemy());
-        
+
         // Default ally target to someone else if possible
         PlayerEntity defaultAlly = activePlayer;
         if (PlayerTeamManager.Instance != null && PlayerTeamManager.Instance.ActiveTeamMembers.Count > 1)
@@ -302,7 +322,7 @@ public class TurnManager : Singleton<TurnManager>
             var alivePlayers = PlayerTeamManager.Instance.GetAliveMembers();
             if (alivePlayers.Count > 0)
             {
-                return alivePlayers[Random.Range(0, alivePlayers.Count)];
+                return alivePlayers[UnityEngine.Random.Range(0, alivePlayers.Count)];
             }
         }
 
@@ -395,6 +415,8 @@ public class TurnManager : Singleton<TurnManager>
                 }
             }
 
+            bool hadMomentumBefore = HasMomentum(entity);
+
             // --- BUFF TURN START ---
             entity.buffController.OnTurnStart(entity, log);
 
@@ -413,6 +435,9 @@ public class TurnManager : Singleton<TurnManager>
 
             // --- BUFF TURN END ---
             entity.buffController.OnTurnEnd(entity, log);
+
+            bool hasMomentumAfter = HasMomentum(entity);
+            TryRecordPlayerstyleLog(currentAction, log, hadMomentumBefore, hasMomentumAfter);
 
             // --- UPDATE UI AND REMOVE FROM QUEUE ---
             if (entity is PlayerEntity) PlayerActionQueueUI?.SetActionQueue(currentAction);
@@ -481,6 +506,7 @@ public class TurnManager : Singleton<TurnManager>
         }
 
         combatResultResolved = true;
+        TrySendPlayerstyleLogs(true);
 
         if (userData != null)
         {
@@ -530,7 +556,219 @@ public class TurnManager : Singleton<TurnManager>
         }
 
         combatResultResolved = true;
+        TrySendPlayerstyleLogs(false);
         Loader.Load(Loader.Scenes.Overworld);
+    }
+
+    private void TryRecordPlayerstyleLog(ActionQueue action, CombatActionLog log, bool hadMomentumBefore, bool hasMomentumAfter)
+    {
+        if (!ShouldCollectPlayerstyleData() || action == null || log == null) return;
+        if (action.Caster is not PlayerEntity) return;
+
+        CombatLog entry = BuildCombatLog(action, log, hadMomentumBefore, hasMomentumAfter);
+        if (entry != null)
+        {
+            stageLogs.Add(entry);
+        }
+    }
+
+    private CombatLog BuildCombatLog(ActionQueue action, CombatActionLog log, bool hadMomentumBefore, bool hasMomentumAfter)
+    {
+        Entity caster = action.Caster;
+        Skill skill = action.Skill;
+        Entity target = action.Target;
+
+        int casterId = ResolveCharacterId(caster);
+        float damageDealt = 0f;
+        float damageReceived = 0f;
+
+        if (log.DamageEffectLogs != null)
+        {
+            foreach (var dmg in log.DamageEffectLogs)
+            {
+                if (dmg == null || dmg.Damage == null) continue;
+                float amount = dmg.Damage.Amount;
+                if (dmg.AppliedTargetID == casterId) damageReceived += amount;
+                else damageDealt += amount;
+            }
+        }
+
+        float healAmount = 0f;
+        if (log.HealEffectLogs != null)
+        {
+            foreach (var heal in log.HealEffectLogs)
+            {
+                if (heal == null) continue;
+                healAmount += heal.HealAmount;
+            }
+        }
+
+        int momentumGain = 0;
+        if (log.BuffEffectLogs != null)
+        {
+            foreach (var buff in log.BuffEffectLogs)
+            {
+                if (buff == null || buff.Buff == null) continue;
+                if (buff.AppliedTargetID != casterId) continue;
+                if (buff.Buff.BuffName == "Momentum")
+                {
+                    momentumGain += 1;
+                }
+            }
+        }
+
+        int frenzyStacks = 0;
+        if (caster != null && caster.buffController != null)
+        {
+            ActiveBuff frenzy = caster.buffController.GetBuffByName("Frenzy");
+            if (frenzy != null) frenzyStacks = frenzy.CurrentStack;
+        }
+
+        float casterMaxHp = caster != null ? caster.GetStat(StatType.MaxHealth) : 0f;
+        float casterCorrupted = caster != null ? caster.CorruptedHealth : 0f;
+        float corruptPercent = casterMaxHp > 0f ? (casterCorrupted / casterMaxHp) * 100f : 0f;
+
+        int casterCurrentSp = 0;
+        if (caster != null)
+        {
+            casterCurrentSp = UseSharedPlayerSkillPointPool
+                ? resourceManager.GetSharedPlayerCurrentSkillPoints()
+                : caster.CurrentSP;
+        }
+
+        string weather = "sunny";
+        if (WeatherManager.Instance != null)
+        {
+            weather = MapWeatherForApi(WeatherManager.Instance.CurrentWeather);
+        }
+
+        return new CombatLog
+        {
+            session_id = playerstyleSessionId,
+            player_id = userData != null ? userData.ID : -1,
+            character_id = casterId,
+            wave_number = currentWave,
+            turn_index = log.TurnID,
+            skill_id = skill != null ? skill.skillID : -1,
+            skill_target_id = target != null ? target.GetEntityID() : -1,
+            target_max_hp = target != null ? target.GetStat(StatType.MaxHealth) : 0f,
+            target_current_hp = target != null ? target.CurrentHealth : 0f,
+            damage_dealt = damageDealt,
+            damage_recieve = damageReceived,
+            caster_current_sp = casterCurrentSp,
+            caster_current_hp = caster != null ? caster.CurrentHealth : 0f,
+            caster_max_hp = casterMaxHp,
+            current_frenzy_stack = frenzyStacks,
+            heal_amount = healAmount,
+            current_corrupt_blood_gain = casterCorrupted,
+            corrupt_blood_by_max_hp = corruptPercent,
+            weather = weather,
+            momentum_gain = momentumGain,
+            momentum_used = hadMomentumBefore && !hasMomentumAfter ? 1 : 0
+        };
+    }
+
+    private bool HasMomentum(Entity entity)
+    {
+        if (entity == null || entity.buffController == null) return false;
+        ActiveBuff momentum = entity.buffController.GetBuffByName("Momentum");
+        return momentum != null;
+    }
+
+    private int ResolveCharacterId(Entity caster)
+    {
+        if (caster is PlayerEntity player)
+        {
+            int resolved = player.GetEntityID();
+            if (resolved <= 0 && PlayerTeamManager.Instance != null)
+            {
+                int index = PlayerTeamManager.Instance.IndexOfMember(player);
+                if (index >= 0) resolved = index + 1;
+            }
+
+            if (resolved <= 0) resolved = 1;
+            return Mathf.Clamp(resolved, 1, 2);
+        }
+
+        int fallback = caster != null ? caster.GetEntityID() : 1;
+        if (fallback <= 0) fallback = 1;
+        return Mathf.Clamp(fallback, 1, 2);
+    }
+
+    private void ApplyUserDataFallbackFromPrefs()
+    {
+        if (userData == null) return;
+
+        if (string.IsNullOrEmpty(userData.Username))
+        {
+            string savedName = PlayerPrefs.GetString("PlayerName", string.Empty);
+            if (!string.IsNullOrEmpty(savedName))
+            {
+                userData.Username = savedName;
+            }
+        }
+
+        if (userData.ID <= 0)
+        {
+            int savedId = PlayerPrefs.GetInt("UserId", -1);
+            if (savedId > 0)
+            {
+                userData.ID = savedId;
+            }
+        }
+    }
+
+    private static string MapWeatherForApi(WeatherType weather)
+    {
+        switch (weather)
+        {
+            case WeatherType.Sunny:
+                return "sunny";
+            case WeatherType.Rainy:
+                return "rainy";
+            case WeatherType.Windy:
+                return "autumn";
+            default:
+                return "sunny";
+        }
+    }
+
+    private bool ShouldCollectPlayerstyleData()
+    {
+        if (!enablePlayerstyleLogging) return false;
+
+        if (userData != null)
+        {
+            if (userData.SelectedQuestIndex == UserData.TutorialQuestIndex) return false;
+        }
+
+        QuestEnemies quest = EnemyGenerator.Instance != null ? EnemyGenerator.Instance.GetCurrentQuest() : null;
+        if (quest != null && quest.isTutorial) return false;
+
+        return true;
+    }
+
+    private void TrySendPlayerstyleLogs(bool isWin)
+    {
+        if (!ShouldCollectPlayerstyleData()) return;
+        if (stageLogs.Count == 0) return;
+
+        if (isWin && !sendPlayerstyleOnWin) return;
+        if (!isWin && !sendPlayerstyleOnLose) return;
+
+        if (stageCompleteSender == null)
+        {
+            Debug.LogWarning("StageCompleteSender is not assigned. Playerstyle logs were not sent.");
+            return;
+        }
+
+        CombatLogBatchRequest request = new CombatLogBatchRequest
+        {
+            items = new List<CombatLog>(stageLogs)
+        };
+
+        StartCoroutine(stageCompleteSender.SendStageComplete(request));
+        stageLogs.Clear();
     }
     private List<GameObject> GetAllEnemies()
     {

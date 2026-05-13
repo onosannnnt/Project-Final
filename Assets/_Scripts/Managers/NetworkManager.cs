@@ -9,6 +9,26 @@ public class UserResponse
     // These match the "ID" and "Username" keys in your JSON response
     public int ID;
     public string Username;
+
+    // Support lowercase keys (common in REST APIs).
+    public int id;
+    public string username;
+
+    public int GetId()
+    {
+        return ID > 0 ? ID : id;
+    }
+
+    public string GetUsername()
+    {
+        return !string.IsNullOrEmpty(Username) ? Username : username;
+    }
+}
+
+[System.Serializable]
+public class CreateUserRequest
+{
+    public string username;
 }
 
 [System.Serializable]
@@ -32,7 +52,7 @@ public class NetworkManager : SingletonPersistent<NetworkManager>
         try
         {
             string uri = LoadEnv.apiKey + "/users";
-// // Debug.Log(uri);
+            // // Debug.Log(uri);
             // Await the POST request
             HttpResponseMessage response = await client.PostAsync(uri, content);
 

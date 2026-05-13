@@ -19,7 +19,7 @@ public class LoadEnv : SingletonPersistent<LoadEnv>
         LoadEnv.apiKey = apiKey;
         if (string.IsNullOrEmpty(apiKey))
         {
-            LoadEnv.apiKey = "http://localhost:8080";
+            LoadEnv.apiKey = "http://localhost:8000";
         }
     }
 }

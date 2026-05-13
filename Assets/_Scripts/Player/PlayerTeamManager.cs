@@ -32,7 +32,8 @@ public class PlayerTeamManager : Singleton<PlayerTeamManager>
     [SerializeField] private bool fallbackToPlayerCombatSingleton = true;
 
     [Header("Spawn Points")]
-    [SerializeField] private Vector3[] spawnPositions = new Vector3[]
+    [SerializeField]
+    private Vector3[] spawnPositions = new Vector3[]
     {
         new Vector3(0.911f, -0.66f, 0f),
         new Vector3(1.341f, -0.696f, 0.72f),
@@ -41,7 +42,8 @@ public class PlayerTeamManager : Singleton<PlayerTeamManager>
         new Vector3(1f, 0.03f, 0.5f)
     };
 
-    [SerializeField] private Vector3[] spawnRotations = new Vector3[]
+    [SerializeField]
+    private Vector3[] spawnRotations = new Vector3[]
     {
         new Vector3(0f, 180f, 0f),
         new Vector3(0f, 180f, 0f),
@@ -167,7 +169,15 @@ public class PlayerTeamManager : Singleton<PlayerTeamManager>
         if (member != null && !ActiveTeamMembers.Contains(member))
         {
             ActiveTeamMembers.Add(member);
+            AssignMemberId(member, ActiveTeamMembers.Count);
         }
+    }
+
+    private void AssignMemberId(PlayerEntity member, int oneBasedIndex)
+    {
+        if (member == null) return;
+        int resolvedId = Mathf.Clamp(oneBasedIndex, 1, 2);
+        member.SetEntityID(resolvedId);
     }
 
     private void PlaceMember(PlayerEntity member, int index)
