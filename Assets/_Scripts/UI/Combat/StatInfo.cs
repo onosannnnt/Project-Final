@@ -46,7 +46,7 @@ public class StatInfoUI : MonoBehaviour
         }
 
         CaptureInitialDimensions();
-        
+
         if (Entity != null)
         {
             SubscribeEvents();
@@ -67,7 +67,7 @@ public class StatInfoUI : MonoBehaviour
     private void Update()
     {
         if (Entity == null) return;
-        
+
         // Auto-close if it's not player turn anymore (as per original logic)
         if (TurnManager.Instance != null && TurnManager.Instance.GetTurnState() != TurnState.PlayerTurnState)
         {
@@ -83,7 +83,7 @@ public class StatInfoUI : MonoBehaviour
     {
         UnsubscribeEvents();
         Entity = entity;
-        
+
         if (gameObject.activeInHierarchy)
         {
             SubscribeEvents();
@@ -151,7 +151,7 @@ public class StatInfoUI : MonoBehaviour
         {
             maxWitdthHealthbar = HealthbarFG.rectTransform.rect.width;
         }
-        
+
         if (maxWitdthSkillPointBar <= 0 && SkillPointBarFG != null && SkillPointBarFG.rectTransform.rect.width > 0)
         {
             maxWitdthSkillPointBar = SkillPointBarFG.rectTransform.rect.width;
@@ -161,7 +161,7 @@ public class StatInfoUI : MonoBehaviour
     private void SetupBuffPanel()
     {
         if (BuffCardPrefab == null || BuffTransform == null || DebuffTransform == null || Entity == null) return;
-        
+
         var buffs = Entity.buffController.GetBuffs();
         var debuffs = new List<ActiveBuff>();
         debuffs.AddRange(Entity.buffController.GetDebuffs());
@@ -182,7 +182,7 @@ public class StatInfoUI : MonoBehaviour
         {
             InstantiateBuffUI(debuff, DebuffTransform);
         }
-        
+
         // Force layout rebuild to avoid "wrong size" issues with layout groups
         LayoutRebuilder.ForceRebuildLayoutImmediate(BuffTransform as RectTransform);
         LayoutRebuilder.ForceRebuildLayoutImmediate(DebuffTransform as RectTransform);
@@ -216,13 +216,13 @@ public class StatInfoUI : MonoBehaviour
     private void SetupHealthBar()
     {
         if (HealthbarFG == null || Entity == null) return;
-        
+
         CaptureInitialDimensions();
         if (maxWitdthHealthbar <= 0) return;
 
         float maxHealth = Entity.GetStat(StatType.MaxHealth);
         float healthRatio = maxHealth > 0 ? (float)Entity.CurrentHealth / maxHealth : 0;
-        
+
         HealthbarFG.rectTransform.sizeDelta = new Vector2(maxWitdthHealthbar * healthRatio, HealthbarFG.rectTransform.sizeDelta.y);
         if (HealthText != null) HealthText.text = $"{(int)Entity.CurrentHealth} / {(int)maxHealth}";
     }
@@ -230,7 +230,7 @@ public class StatInfoUI : MonoBehaviour
     private void SetupSkillPointBar()
     {
         if (SkillPointBarFG == null || Entity == null) return;
-        
+
         CaptureInitialDimensions();
 
         // Hide SP bar for entities that aren't players (like enemies)
@@ -265,7 +265,7 @@ public class StatInfoUI : MonoBehaviour
     private void SetStatusBuff()
     {
         if (StatusBuffParent == null || Entity == null) return;
-        
+
         ClearTransform(StatusBuffParent);
 
         List<ActiveBuff> statusBuffs = new List<ActiveBuff>();
@@ -281,7 +281,7 @@ public class StatInfoUI : MonoBehaviour
             if (buffObj.GetComponent<Image>() != null)
                 buffObj.GetComponent<Image>().sprite = buff.Data.Icon;
         }
-        
+
         LayoutRebuilder.ForceRebuildLayoutImmediate(StatusBuffParent as RectTransform);
     }
 }

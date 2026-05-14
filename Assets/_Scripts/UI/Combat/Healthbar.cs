@@ -7,12 +7,11 @@ using UnityEngine.UI;
 
 public class HealthbarUI : MonoBehaviour
 {
-    [SerializeField] private StatInfoUI statInfoUI;
-    [SerializeField] private Button HealthbarButton;
     [SerializeField] private Image HealthForeground;
     [SerializeField] private Image CorruptedHealthForeground;
     [SerializeField] private Image SPForeground;
-    [SerializeField] private TextMeshProUGUI HealthInfo;
+    [SerializeField] private TextMeshProUGUI HealthText;
+    [SerializeField] private TextMeshProUGUI SPText;
     [SerializeField] private Transform BuffParent;
     [SerializeField] private Transform StatusBuffParent;
     [SerializeField] private GameObject BuffPrefab;
@@ -28,8 +27,6 @@ public class HealthbarUI : MonoBehaviour
 
     private void Start()
     {
-        if (HealthbarButton != null) HealthbarButton.onClick.AddListener(OnHealthbarClicked);
-
         if (HealthForeground == null)
         {
             Debug.LogError("HealthForeground image is not assigned in the inspector.");
@@ -181,15 +178,21 @@ public class HealthbarUI : MonoBehaviour
 
     private void UpdateInfoText()
     {
-        if (targetPlayer == null || HealthInfo == null) return;
+        if (targetPlayer == null) return;
 
-        if (SPForeground != null)
+        if (HealthText != null)
         {
-            HealthInfo.text = $"HP {Math.Max(0, targetPlayer.CurrentHealth):F0} | SP {Math.Max(0, targetPlayer.CurrentSP):F0}";
+            HealthText.text = $"HP: {Math.Max(0, targetPlayer.CurrentHealth):F0}";
         }
-        else
+
+        if (SPText != null)
         {
-            HealthInfo.text = $"HP {Math.Max(0, targetPlayer.CurrentHealth):F0}";
+            bool showSp = SPForeground != null;
+            SPText.gameObject.SetActive(showSp);
+            if (showSp)
+            {
+                SPText.text = $"SP: {Math.Max(0, targetPlayer.CurrentSP):F0}";
+            }
         }
     }
 
@@ -264,12 +267,4 @@ public class HealthbarUI : MonoBehaviour
             return "<color=red>";
     }
 
-    private void OnHealthbarClicked()
-    {
-        if (statInfoUI != null)
-        {
-            statInfoUI.SetEntity(targetPlayer);
-            statInfoUI.gameObject.SetActive(true);
-        }
-    }
 }

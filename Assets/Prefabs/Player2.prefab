@@ -185,8 +185,9 @@ MonoBehaviour:
   SpreadAmount: 0.3
   RandomSpawnOffset: 0.1
   targetIndicator: {fileID: 5711837169620404425}
-  stats: {fileID: 11400000, guid: 9ec49d53315034108919a533486662e6, type: 2}
-  skills: {fileID: 11400000, guid: 5a526a6ae7db0422c9d63b916530c938, type: 2}
+  stats: {fileID: 11400000, guid: 51dd9e7ce01f74a4ba026da162dbda8d, type: 2}
+  skills: {fileID: 11400000, guid: 3009cfca1047fa744ab37803320dd422, type: 2}
+  SeasonMatchStreak: 0
   userData: {fileID: 11400000, guid: bd7868a778b044575959e5160d52fa42, type: 2}
   registerAsMainPlayer: 0
 --- !u!1 &5711837169620404425
@@ -308,8 +309,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -0.908, y: 0.193}
-  m_SizeDelta: {x: 1920.0017, y: 507.3513}
+  m_AnchoredPosition: {x: -0.612, y: 0.193}
+  m_SizeDelta: {x: 1313.895, y: 507.3513}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &4641732367204927649
 Canvas:

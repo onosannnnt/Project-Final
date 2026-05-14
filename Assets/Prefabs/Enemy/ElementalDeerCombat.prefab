@@ -222,7 +222,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 880
   m_TargetDisplay: 0
 --- !u!114 &9143411982836596678
 MonoBehaviour:
@@ -280,7 +280,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &8700124313033861750
 Transform:
   m_ObjectHideFlags: 0
@@ -336,7 +336,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 99
+  m_SortingOrder: 900
   m_Sprite: {fileID: 21300000, guid: 63f73e118847f4420af66083a7e1e89a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -752,6 +752,7 @@ MonoBehaviour:
   targetIndicator: {fileID: 3010253069514446788}
   stats: {fileID: 11400000, guid: 3c566c8e4d8ae406da9e5b0a17f29e42, type: 2}
   skills: {fileID: 11400000, guid: dbe69102577c947d7942e1fbd5a65952, type: 2}
+  SeasonMatchStreak: 0
   healthBarForeground: {fileID: 9121815875517389897}
   breakArmorText: {fileID: 1588384611004194450}
   breakStatusImage: {fileID: 4346448736133913830}
@@ -861,7 +862,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8954031037550722348}
   m_LocalRotation: {x: 0, y: 0.035073906, z: 0, w: 0.99938476}
-  m_LocalPosition: {x: 0, y: 0, z: -0.048}
+  m_LocalPosition: {x: 0, y: 0, z: -0.029}
   m_LocalScale: {x: 0.0004, y: 0.0004, z: 0.0004}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -869,8 +870,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 4.02, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0.75, y: 0.138}
-  m_SizeDelta: {x: 1643.665, y: 434.3307}
+  m_AnchoredPosition: {x: 0.477, y: 0.138}
+  m_SizeDelta: {x: 1313.895, y: 434.3307}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &3949138823655047742
 Canvas:
@@ -893,7 +894,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 990
   m_TargetDisplay: 0
 --- !u!114 &1297719004067530088
 MonoBehaviour:
