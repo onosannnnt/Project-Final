@@ -8,6 +8,8 @@ public class StatInfoUI : MonoBehaviour
     [SerializeField] private Button ExitButton;
     [SerializeField] private TMP_Text BuffHeaderText;
     [SerializeField] private TMP_Text DebuffHeaderText;
+    [SerializeField] private TMP_Text EntityNameText;
+    [SerializeField] private Image EntityIconImage;
     [SerializeField] private Transform BuffTransform;
     [SerializeField] private Transform DebuffTransform;
     [SerializeField] private GameObject BuffCardPrefab;
@@ -113,10 +115,32 @@ public class StatInfoUI : MonoBehaviour
 
     private void RefreshAll()
     {
+        SetupEntityHeader();
         SetupHealthBar();
         SetupSkillPointBar();
         SetupBuffPanel();
         SetStatusBuff();
+    }
+
+    private void SetupEntityHeader()
+    {
+        if (EntityNameText != null)
+        {
+            string displayName = Entity?.Stats != null ? Entity.Stats.GetName() : null;
+            if (string.IsNullOrWhiteSpace(displayName) && Entity != null)
+            {
+                displayName = Entity.gameObject.name;
+            }
+
+            EntityNameText.text = displayName ?? string.Empty;
+        }
+
+        if (EntityIconImage != null)
+        {
+            Sprite icon = Entity?.Stats != null ? Entity.Stats.GetIcon() : null;
+            EntityIconImage.sprite = icon;
+            EntityIconImage.enabled = icon != null;
+        }
     }
 
     private void CaptureInitialDimensions()

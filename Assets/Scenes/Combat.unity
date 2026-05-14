@@ -898,6 +898,8 @@ MonoBehaviour:
   ExitButton: {fileID: 341889641}
   BuffHeaderText: {fileID: 2016983547}
   DebuffHeaderText: {fileID: 278558948}
+  EntityNameText: {fileID: 0}
+  EntityIconImage: {fileID: 0}
   BuffTransform: {fileID: 1073861827}
   DebuffTransform: {fileID: 1995648680}
   BuffCardPrefab: {fileID: 218152586619727856, guid: 680270e488c8047a7b6f906badf44593,
@@ -4472,6 +4474,8 @@ MonoBehaviour:
   ExitButton: {fileID: 487436251}
   BuffHeaderText: {fileID: 1209854265}
   DebuffHeaderText: {fileID: 1914936505}
+  EntityNameText: {fileID: 663920496}
+  EntityIconImage: {fileID: 598471981}
   BuffTransform: {fileID: 1856194943}
   DebuffTransform: {fileID: 1167705011}
   BuffCardPrefab: {fileID: 218152586619727856, guid: 680270e488c8047a7b6f906badf44593,
@@ -4483,8 +4487,8 @@ MonoBehaviour:
   StatusBuffParent: {fileID: 396470667}
   StatusBuffPrefab: {fileID: 8145362129620172556, guid: 575c2d784d56f42ec869201ab144b064,
     type: 3}
-  customObjectToHide: {fileID: 0}
-  hideCustomObject: 0
+  customObjectToHide: {fileID: 1764733611}
+  hideCustomObject: 1
 --- !u!224 &603414624
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7877,7 +7881,7 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1958998374}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.0044957995}
+  m_AnchorMin: {x: 0, y: 0.00449574}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
@@ -11388,7 +11392,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 969072761}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.9955042
+  m_Size: 0.99550426
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -11514,7 +11518,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 985369182}
   m_Direction: 2
   m_Value: 1.0000002
-  m_Size: 0.74974287
+  m_Size: 0.7497429
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
