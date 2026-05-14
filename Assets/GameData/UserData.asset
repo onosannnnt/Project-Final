@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68a93d19ed5314d84a7a239a7de394af, type: 3}
   m_Name: UserData
   m_EditorClassIdentifier: 
-  ID: 15
-  Username: pjwiejnf
-  GamePhase: 1
-  SelectedQuestIndex: 1
-  HighestCompletedQuestIndex: 0
+  ID: 17
+  Username: kerongoeing
+  GamePhase: 2
+  SelectedQuestIndex: -1
+  HighestCompletedQuestIndex: 1
   IsGameFinished: 0
-  TotalCoins: 90
+  TotalCoins: 290
   PendingQuestCoins: 0
   PendingRewardQuestIndex: -1
   tutorialCoinReward: 100

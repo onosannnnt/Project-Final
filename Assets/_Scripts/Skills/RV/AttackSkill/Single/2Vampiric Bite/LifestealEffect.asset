@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: LifestealEffect
   m_EditorClassIdentifier: 
   Phase: 1
+  ExecuteOnce: 0
   baseDamage: 150
-  element: 0
+  Element: 0
   lifestealPercent: 0.5
   accuracy: 100
   criticalHitChance: 5
