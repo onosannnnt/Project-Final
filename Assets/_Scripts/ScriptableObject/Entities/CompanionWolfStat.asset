@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CompanionWolfStat
   m_EditorClassIdentifier: 
   EntityName: CompanionWolf
-  Icon: {fileID: -1102573834, guid: 1281f6e90a34745d6b62e3a9fecdd0c1, type: 3}
+  Icon: {fileID: 21300000, guid: e6aa5c0f3e6454a88bc545244d6e8675, type: 3}
   MaxHealth: 400
   MaxSkillPoint: 500
   MaxBreakArmor: 5

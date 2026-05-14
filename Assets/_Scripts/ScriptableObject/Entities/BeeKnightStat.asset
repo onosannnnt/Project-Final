@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BeeKnightStat
   m_EditorClassIdentifier: 
   EntityName: BeeKnight
-  Icon: {fileID: -1102573834, guid: 1281f6e90a34745d6b62e3a9fecdd0c1, type: 3}
+  Icon: {fileID: 21300000, guid: a2057a295e6114276ad2b25fffc19c60, type: 3}
   MaxHealth: 400
   MaxSkillPoint: 500
   MaxBreakArmor: 2

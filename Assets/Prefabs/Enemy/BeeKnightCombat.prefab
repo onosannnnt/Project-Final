@@ -668,6 +668,7 @@ MonoBehaviour:
   targetIndicator: {fileID: 6894917026385424565}
   stats: {fileID: 11400000, guid: 055fe5619ab6ece4693926f0a3e26ac2, type: 2}
   skills: {fileID: 11400000, guid: ab07d8ce1d80f234390feb707fc184c0, type: 2}
+  SeasonMatchStreak: 0
   healthBarForeground: {fileID: 3161185528136002616}
   breakArmorText: {fileID: 1588384611004194450}
   breakStatusImage: {fileID: 3106362515900594859}
@@ -761,7 +762,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 201
   m_Sprite: {fileID: 21300000, guid: 63f73e118847f4420af66083a7e1e89a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
