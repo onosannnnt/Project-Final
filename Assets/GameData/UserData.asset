@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68a93d19ed5314d84a7a239a7de394af, type: 3}
   m_Name: UserData
   m_EditorClassIdentifier: 
-  ID: 8
-  Username: fool
-  GamePhase: 2
+  ID: 10
+  Username: qwdpqojfpwem
+  GamePhase: 3
   SelectedQuestIndex: -1
-  HighestCompletedQuestIndex: 1
+  HighestCompletedQuestIndex: 2
   IsGameFinished: 0
-  TotalCoins: 290
+  TotalCoins: 490
   PendingQuestCoins: 0
   PendingRewardQuestIndex: -1
   tutorialCoinReward: 100
@@ -33,4 +33,9 @@ MonoBehaviour:
   DefaultSkill: {fileID: 11400000, guid: 1388574c03e724a8f834dae785cc7325, type: 2}
   OwnedSkills:
   - {fileID: 11400000, guid: 960ab9b50c23d4b80aa308ff09c2cc5e, type: 2}
+  - {fileID: 11400000, guid: 25ff8610d4d945d4fa36703e5a504cff, type: 2}
+  - {fileID: 11400000, guid: f51740f81383e4075ac5a089f6690096, type: 2}
+  - {fileID: 11400000, guid: 2bbf253faab41468f974deef9e5586d7, type: 2}
+  - {fileID: 11400000, guid: be07c4cb5ae8c401cb642a68a4a45d38, type: 2}
+  - {fileID: 11400000, guid: 2b925b21c564145f9b418681efa819e9, type: 2}
   TrialSkills: []

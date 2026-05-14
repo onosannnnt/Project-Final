@@ -762,9 +762,10 @@ public class TurnManager : Singleton<TurnManager>
             return;
         }
 
-        CombatLogBatchRequest request = new CombatLogBatchRequest
+        StageCompleteRequest request = new StageCompleteRequest
         {
-            items = new List<CombatLog>(stageLogs)
+            player_id = userData != null ? userData.ID : -1,
+            combat_logs = new List<CombatLog>(stageLogs)
         };
 
         StartCoroutine(stageCompleteSender.SendStageComplete(request));

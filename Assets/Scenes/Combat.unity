@@ -13252,7 +13252,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   apiBaseUrl: http://localhost:8000
-  stageCompletePath: /combat-logs/batch
+  stageCompletePath: /ml/stage-complete
   logResponses: 1
 --- !u!1 &1426415849
 GameObject:

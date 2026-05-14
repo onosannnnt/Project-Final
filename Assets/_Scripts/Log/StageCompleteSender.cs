@@ -32,23 +32,24 @@ public class CombatLog
 }
 
 [Serializable]
-public class CombatLogBatchRequest
+public class StageCompleteRequest
 {
-    public List<CombatLog> items;
+    public int player_id;
+    public List<CombatLog> combat_logs;
 }
 
 public class StageCompleteSender : MonoBehaviour
 {
     [SerializeField] private string apiBaseUrl = "http://localhost:8000";
-    [SerializeField] private string stageCompletePath = "/combat-logs/batch";
+    [SerializeField] private string stageCompletePath = "/ml/stage-complete";
     [SerializeField] private bool logResponses = true;
 
-    public IEnumerator SendStageComplete(CombatLogBatchRequest payload)
+    public IEnumerator SendStageComplete(StageCompleteRequest payload)
     {
         if (payload == null) yield break;
 
         string baseUrl = string.IsNullOrWhiteSpace(apiBaseUrl) ? "http://localhost:8000" : apiBaseUrl;
-        string path = string.IsNullOrWhiteSpace(stageCompletePath) ? "/combat-logs/batch" : stageCompletePath;
+        string path = string.IsNullOrWhiteSpace(stageCompletePath) ? "/ml/stage-complete" : stageCompletePath;
         string url = CombineUrl(baseUrl, path);
         string json = JsonUtility.ToJson(payload);
 
