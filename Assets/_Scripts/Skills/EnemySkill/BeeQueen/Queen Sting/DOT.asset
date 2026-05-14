@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ac3565e07bfa4f15b9c31696c35534d, type: 3}
   m_Name: DOT
   m_EditorClassIdentifier: 
-  BuffName: Sting
+  BuffName: True Sting
   Description: 
   Icon: {fileID: 21300000, guid: ea3b8a61f4add494c84dfcffa4d9cc32, type: 3}
   buffType: 1
@@ -25,4 +25,8 @@ MonoBehaviour:
   DiminishingReturnDecayFactor: 0
   targetType: 2
   modifiers: []
-  BaseDamage: 30
+  isStealable: 1
+  preventLethalDamage: 0
+  preventHealing: 0
+  grantsDebuffImmunity: 0
+  BaseDamage: 50
