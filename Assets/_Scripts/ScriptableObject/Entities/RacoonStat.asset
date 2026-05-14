@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EntityName: Raccoon
   Icon: {fileID: -1102573834, guid: 1281f6e90a34745d6b62e3a9fecdd0c1, type: 3}
-  MaxHealth: 800
+  MaxHealth: 500
   MaxSkillPoint: 500
   MaxBreakArmor: 3
   ActionSpeed: 20
+  AdditionalStats: []

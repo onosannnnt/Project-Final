@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EntityName: BeeQueen
   Icon: {fileID: -1102573834, guid: 1281f6e90a34745d6b62e3a9fecdd0c1, type: 3}
-  MaxHealth: 3000
+  MaxHealth: 6000
   MaxSkillPoint: 500
   MaxBreakArmor: 10
   ActionSpeed: 70
