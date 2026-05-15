@@ -33,6 +33,7 @@ public class SeasonalDamageEffect : SkillEffect
     [Header("Special Effects (Triggered if Current Season matches)")]
     public float HealCasterAmount = 0f;
     public bool StealBuffs = false;
+    public Buff SideEffectDebuffTemplate;
     [Range(0f, 1f)] public float MaxHPReductionPercent = 0f;
     [Range(0f, 1f)] public float MomentumMaxHPReductionPercent = 0f;
     public Buff MaxHPDeBuffTemplate;
