@@ -68,7 +68,6 @@ public class StatInfoUI : MonoBehaviour
     {
         if (Entity == null) return;
 
-        // Auto-close if it's not player turn anymore (as per original logic)
         if (TurnManager.Instance != null && TurnManager.Instance.GetTurnState() != TurnState.PlayerTurnState)
         {
             gameObject.SetActive(false);

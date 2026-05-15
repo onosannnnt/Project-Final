@@ -4,8 +4,8 @@ using UnityEngine;
 public class SharedPainEffect : SkillEffect
 {
     [Tooltip("How much of caster-received damage is mirrored to the debuffed target.")]
-    [Range(0f, 100f)]
-    public float RedirectPercent = 30f;
+    [Range(0f, 1f)]
+    public float RedirectPercent = 0.3f;
 
     [Tooltip("Template debuff that stores duration, icon, and UI metadata.")]
     public SharedPainDebuff sharedPainDebuffTemplate;
@@ -19,7 +19,7 @@ public class SharedPainEffect : SkillEffect
 
         SharedPainDebuff debuff = Instantiate(sharedPainDebuffTemplate);
         debuff.LinkedCaster = caster;
-        debuff.RedirectRatio = Mathf.Clamp01(RedirectPercent / 100f);
+        debuff.RedirectRatio = Mathf.Clamp01(RedirectPercent);
 
         target.buffController.AddBuff(debuff);
 

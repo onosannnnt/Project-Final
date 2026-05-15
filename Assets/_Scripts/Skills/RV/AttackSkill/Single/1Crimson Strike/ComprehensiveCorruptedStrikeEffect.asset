@@ -16,7 +16,7 @@ MonoBehaviour:
   ExecuteOnce: 0
   BaseDamage: 200
   Element: 0
-  Accuracy: 100
+  Accuracy: 1
   DamagePer10PercentCorrupted: 20
   CurrentHpCostPercent: 0.05
   ForceHpToMaxPercent: -1

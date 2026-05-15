@@ -70,7 +70,7 @@ public class SeasonalSupportEffect : SkillEffect
 
     private void DealDamage(Entity caster, Entity target, float amount, CombatActionLog log, SkillStyle style)
     {
-        Damage damage = new Damage(amount, Element, false, 5f, 1.5f);
+        Damage damage = new Damage(amount, Element, false, 0.05f, 1.5f);
         DamageCtx ctx = new DamageCtx(caster, target, damage, style, log);
         DamageSystem.Process(ctx, log);
     }

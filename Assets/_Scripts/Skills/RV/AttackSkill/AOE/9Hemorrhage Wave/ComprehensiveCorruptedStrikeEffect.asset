@@ -15,7 +15,7 @@ MonoBehaviour:
   Phase: 1
   BaseDamage: 300
   Element: 0
-  Accuracy: 100
+  Accuracy: 1
   DamagePer10PercentCorrupted: 50
   CurrentHpCostPercent: 0
   ForceHpToMaxPercent: 0.1

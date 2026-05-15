@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: CorruptedConsumptionHealEffect
   m_EditorClassIdentifier: 
   Phase: 1
-  percentOfMaxHPToConsume: 20
+  percentOfMaxHPToConsume: 0.2
   baseHeal: 200
   healPer10PercentConsumed: 80

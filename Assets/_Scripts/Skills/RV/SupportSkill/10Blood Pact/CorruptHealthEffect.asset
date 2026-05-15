@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Phase: 0
   flatAmount: 0
-  percentOfMaxHP: 20
+  percentOfMaxHP: 0.2
   targetCaster: 0

@@ -6,14 +6,14 @@ public class LifestealEffect : SkillEffect
     [SerializeField] private float baseDamage = 100f;
     [SerializeField] private DamageElement Element = DamageElement.Physical;
     [SerializeField, Range(0f, 1f)] private float lifestealPercent = 0.5f;
-    [SerializeField] private float accuracy = 100f;
-    [SerializeField] private float criticalHitChance = 5f;
+    [SerializeField, Range(0f, 1f)] private float accuracy = 1f;
+    [SerializeField, Range(0f, 1f)] private float criticalHitChance = 0.05f;
 
     public override bool IsElementalAttackEffect => true;
 
     public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
-        if (Random.Range(0f, 100f) > accuracy)
+        if (Random.value > accuracy)
         {
             target.ShowDamage(0, Color.white);
             return false;

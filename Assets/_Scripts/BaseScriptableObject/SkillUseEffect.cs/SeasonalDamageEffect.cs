@@ -7,7 +7,7 @@ public class SeasonalDamageEffect : SkillEffect
     [Header("Base Damage")]
     public float BaseDamage = 500f;
     public DamageElement Element = DamageElement.Physical;
-    public float Accuracy = 100f;
+    [Range(0f, 1f)] public float Accuracy = 1f;
 
     [Header("Weather Requirements")]
     public WeatherType RequiredWeather;
@@ -16,7 +16,7 @@ public class SeasonalDamageEffect : SkillEffect
 
     [Header("Weather Bonuses (Current Season)")]
     public float WeatherBonusDamage = 0f;
-    public float WeatherBonusPercent = 0f;
+    [Range(0f, 1f)] public float WeatherBonusPercent = 0f;
 
     [Header("Forecast (Next Season)")]
     public bool UseForecast = false;
@@ -28,15 +28,15 @@ public class SeasonalDamageEffect : SkillEffect
     public bool UseMomentum = false;
     public string MomentumBuffName = "Momentum";
     public float MomentumBonusDamage = 0f;
-    public float MomentumBonusPercent = 0f;
+    [Range(0f, 1f)] public float MomentumBonusPercent = 0f;
 
     [Header("Special Effects (Triggered if Current Season matches)")]
     public float HealCasterAmount = 0f;
     public bool StealBuffs = false;
-    public float MaxHPReductionPercent = 0f;
-    public float MomentumMaxHPReductionPercent = 0f;
+    [Range(0f, 1f)] public float MaxHPReductionPercent = 0f;
+    [Range(0f, 1f)] public float MomentumMaxHPReductionPercent = 0f;
     public Buff MaxHPDeBuffTemplate;
-    public float SleepChance = 0f;
+    [Range(0f, 1f)] public float SleepChance = 0f;
     public Buff SleepBuffTemplate;
     public float RepeatAttackDamage = 0f;
 
@@ -56,7 +56,7 @@ public class SeasonalDamageEffect : SkillEffect
         WeatherType next = WeatherManager.Instance.NextWeather;
 
         // 1. Accuracy Check
-        if (Random.Range(0f, 100f) > Accuracy)
+        if (Random.value > Accuracy)
         {
             target.ShowDamage(0, Color.white);
             return false;
@@ -76,7 +76,7 @@ public class SeasonalDamageEffect : SkillEffect
         if (current == RequiredWeather)
         {
             totalDamage += WeatherBonusDamage;
-            if (WeatherBonusPercent > 0) totalDamage *= (1f + (WeatherBonusPercent / 100f));
+            if (WeatherBonusPercent > 0) totalDamage *= (1f + WeatherBonusPercent);
         }
 
         // Forecast Bonus
@@ -91,7 +91,7 @@ public class SeasonalDamageEffect : SkillEffect
             // Note: The global +40% is already handled by MomentumBuff's IDamageModifier.
             // This section handles skill-specific bonuses (like flat damage additions).
             totalDamage += MomentumBonusDamage;
-            if (MomentumBonusPercent > 0) totalDamage *= (1f + (MomentumBonusPercent / 100f));
+            if (MomentumBonusPercent > 0) totalDamage *= (1f + MomentumBonusPercent);
         }
 
         // Variance
@@ -125,7 +125,7 @@ public class SeasonalDamageEffect : SkillEffect
             // Sleep Chance (Windy)
             if (SleepChance > 0 && SleepBuffTemplate != null)
             {
-                if (Random.Range(0f, 100f) <= SleepChance)
+                if (Random.value <= SleepChance)
                 {
                     target.buffController.AddBuff(SleepBuffTemplate);
                     log.AddBuffEffectLog(new BuffEffectLog()
@@ -153,20 +153,11 @@ public class SeasonalDamageEffect : SkillEffect
             }
 
             // Max HP Reduction (Windy)
-            if (MaxHPReductionPercent > 0 && MaxHPDeBuffTemplate != null)
+            if (MaxHPReductionPercent > 0)
             {
-                float reduction = hasMomentum ? MomentumMaxHPReductionPercent : MaxHPReductionPercent;
-                // Since our system usually uses fixed modifiers in Buff assets, 
-                // for "Dynamic" reduction we'd need a way to pass this.
-                // For now, we'll assume the provided MaxHPDeBuffTemplate handles it, 
-                // or we apply it multiple times.
-                target.buffController.AddBuff(MaxHPDeBuffTemplate);
-                log.AddBuffEffectLog(new BuffEffectLog()
-                {
-                    AppliedTargetID = target.GetEntityID(),
-                    AppliedTarget = target.Stats.EntityName,
-                    Buff = new BuffEffectData(MaxHPDeBuffTemplate)
-                });
+                float reductionPercent = hasMomentum ? MomentumMaxHPReductionPercent : MaxHPReductionPercent;
+                float targetMaxHP = target.GetStat(StatType.MaxHealth);
+                target.GainCorruptedHealth(targetMaxHP * reductionPercent);
             }
         }
 
@@ -181,7 +172,7 @@ public class SeasonalDamageEffect : SkillEffect
 
     private void DealDamage(Entity caster, Entity target, float amount, bool isCrit, CombatActionLog log, SkillStyle style)
     {
-        Damage damage = new Damage(amount, Element, isCrit, 5f, 1.5f);
+        Damage damage = new Damage(amount, Element, isCrit, 0.05f, 1.5f);
         DamageCtx ctx = new DamageCtx(caster, target, damage, style, log);
         DamageSystem.Process(ctx, log);
     }

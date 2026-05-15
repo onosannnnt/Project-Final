@@ -33,6 +33,19 @@ public class HealthbarUI : MonoBehaviour
             return;
         }
 
+        if (CorruptedHealthForeground == null)
+        {
+            Transform corruptedTrans = transform.Find("CorruptedHealthForeground");
+            if (corruptedTrans == null && HealthForeground != null && HealthForeground.transform.parent != null)
+            {
+                corruptedTrans = HealthForeground.transform.parent.Find("CorruptedHealthForeground");
+            }
+            if (corruptedTrans != null)
+            {
+                CorruptedHealthForeground = corruptedTrans.GetComponent<Image>();
+            }
+        }
+
         ForegroundInitialWidth = HealthForeground.rectTransform.sizeDelta.x;
 
         if (SPForeground != null)

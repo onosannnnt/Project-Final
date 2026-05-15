@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: BuffEffect
   m_EditorClassIdentifier: 
   Phase: 0
+  ExecuteOnce: 0
   buffs:
   - {fileID: 11400000, guid: e7a3b99300dab4e68ae51b548b62646e, type: 2}

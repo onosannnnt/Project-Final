@@ -26,6 +26,12 @@ public class BloodOfferingBuff : Buff
         {
             owner.RemoveModifier(modifier, EntityModifierType.Outgoing);
             owner.RemoveModifier(modifier, EntityModifierType.Incoming);
+            
+            if (buffState.CustomState.TryGetValue("CasterEntity", out object casterObj) && casterObj is Entity caster && caster != owner)
+            {
+                caster.RemoveModifier(modifier, EntityModifierType.Incoming);
+            }
+            
             buffState.CustomState.Remove(ModifierKey);
         }
     }
@@ -50,7 +56,14 @@ public class BloodOfferingBuff : Buff
                 if (state.CustomState.ContainsKey(DidConsumeKey)) multiplier += data.ConsumedBonusDamage;
                 ctx.Damage.Amount *= multiplier;
             }
-            if (ctx.Target == owner) { // Incoming
+            
+            Entity casterEntity = owner;
+            if (state.CustomState.TryGetValue("CasterEntity", out object casterObj) && casterObj is Entity caster)
+            {
+                casterEntity = caster;
+            }
+            
+            if (ctx.Target == casterEntity) { // Incoming
                 ctx.Damage.Amount *= (1f + data.IncomingDamagePenalty);
             }
         }

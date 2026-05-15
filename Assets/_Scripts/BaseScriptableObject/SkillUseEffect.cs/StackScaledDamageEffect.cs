@@ -94,7 +94,7 @@ public class StackScaledDamageEffect : SkillEffect
         
         float healthBefore = target.CurrentHealth;
 
-        Damage dmg = new Damage(damageValue, Element, false, 5f, 1.5f);
+        Damage dmg = new Damage(damageValue, Element, false, 0.05f, 1.5f);
         DamageCtx ctx = new DamageCtx(caster, target, dmg, style, log);
         DamageSystem.Process(ctx, log);
 

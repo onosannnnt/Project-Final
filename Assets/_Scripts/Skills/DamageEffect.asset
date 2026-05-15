@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BaseDamage: 50
   Element: 0
-  Accuracy: 100
+  Accuracy: 1
   CriticalHitChance: 0

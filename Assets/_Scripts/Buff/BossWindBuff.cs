@@ -4,9 +4,9 @@ using UnityEngine;
 public class BossWindBuff : Buff
 {
     [Header("Wind Scaling Settings")]
-    public float BaseMissChance = 5f; // เริ่มที่ 5%
-    public float StepMissChance = 5f; // เพิ่มทีละ 5%
-    public float MaxMissChance = 30f; // ตันที่ 30%
+    [Range(0f, 1f)] public float BaseMissChance = 0.05f;
+    [Range(0f, 1f)] public float StepMissChance = 0.05f;
+    [Range(0f, 1f)] public float MaxMissChance = 0.30f;
 
     public override void OnApply(Entity owner, ActiveBuff buffState)
     {
@@ -35,7 +35,7 @@ public class BossWindBuff : Buff
             // Increment stack for UI
             buffState.CurrentStack = Mathf.Min(5, buffState.CurrentStack + 1);
 
-            Debug.Log($"<color=green>[Wind Buff]</color> พายุแรงขึ้น! โอกาสหลบหลีกเพิ่มเป็น {newValue}% (Stack: {buffState.CurrentStack})");
+            Debug.Log($"<color=green>[Wind Buff]</color> พายุแรงขึ้น! โอกาสหลบหลีกเพิ่มเป็น {newValue * 100f:F0}% (Stack: {buffState.CurrentStack})");
         }
     }
 
@@ -55,7 +55,7 @@ public class BossWindBuff : Buff
         public void Modify(DamageCtx ctx)
         {
             float dodgeChance = (float)buffRef.CustomState["currentMissChance"];
-            if (Random.Range(0f, 100f) < dodgeChance)
+            if (Random.value < dodgeChance)
             {
                 ctx.Damage.Amount = 0; // ปรับดาเมจเป็น 0
                 Debug.Log("💨 บอสหลบการโจมตีได้ด้วยพลังแห่งลม!");

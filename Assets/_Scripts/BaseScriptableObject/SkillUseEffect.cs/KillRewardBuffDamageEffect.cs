@@ -6,9 +6,9 @@ public class KillRewardBuffDamageEffect : SkillEffect
     [Header("Damage Settings")]
     [SerializeField] public float DamageAmount = 300f;
     [SerializeField] public DamageElement Element = DamageElement.Physical;
-    [SerializeField] public float Accuracy = 100f;
-    [Range(0f, 100f)]
-    [SerializeField] public float CriticalHitChance = 5f;
+    [SerializeField, Range(0f, 1f)] public float Accuracy = 1f;
+    [Range(0f, 1f)]
+    [SerializeField] public float CriticalHitChance = 0.05f;
     [SerializeField] public float CriticalDamageMultiplier = 1.5f;
 
     public override bool IsElementalAttackEffect => true;
@@ -25,7 +25,7 @@ public class KillRewardBuffDamageEffect : SkillEffect
         if (caster == null || target == null) return false;
 
         // 1) Accuracy check
-        if (Random.Range(0f, 100f) > Accuracy)
+        if (Random.value > Accuracy)
         {
             target.ShowDamage(0, Color.white);
             return false;

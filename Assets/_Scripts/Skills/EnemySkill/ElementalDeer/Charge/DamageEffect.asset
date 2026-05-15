@@ -16,5 +16,5 @@ MonoBehaviour:
   ExecuteOnce: 0
   BaseDamage: 350
   Element: 0
-  Accuracy: 100
-  CriticalHitChance: 5
+  Accuracy: 1
+  CriticalHitChance: 0.05
