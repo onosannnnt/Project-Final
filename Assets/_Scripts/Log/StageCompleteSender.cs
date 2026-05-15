@@ -40,7 +40,7 @@ public class StageCompleteRequest
 
 public class StageCompleteSender : MonoBehaviour
 {
-    [SerializeField] private string apiBaseUrl = "https://moonbloom.narutchai.com/";
+    [SerializeField] private string apiBaseUrl = "https://moonbloom.narutchai.com";
     [SerializeField] private string stageCompletePath = "/ml/stage-complete";
     [SerializeField] private bool logResponses = true;
 
@@ -48,7 +48,7 @@ public class StageCompleteSender : MonoBehaviour
     {
         if (payload == null) yield break;
 
-        string baseUrl = string.IsNullOrWhiteSpace(apiBaseUrl) ? "https://moonbloom.narutchai.com/" : apiBaseUrl;
+        string baseUrl = string.IsNullOrWhiteSpace(apiBaseUrl) ? "https://moonbloom.narutchai.com" : apiBaseUrl;
         string path = string.IsNullOrWhiteSpace(stageCompletePath) ? "/ml/stage-complete" : stageCompletePath;
         string url = CombineUrl(baseUrl, path);
         string json = JsonUtility.ToJson(payload);

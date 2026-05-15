@@ -19,7 +19,7 @@ public class LoadEnv : SingletonPersistent<LoadEnv>
         LoadEnv.apiKey = apiKey;
         if (string.IsNullOrEmpty(apiKey))
         {
-            LoadEnv.apiKey = "https://moonbloom.narutchai.com/";
+            LoadEnv.apiKey = "https://moonbloom.narutchai.com";
         }
     }
 }
