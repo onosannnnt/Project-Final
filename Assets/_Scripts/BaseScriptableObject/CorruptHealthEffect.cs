@@ -16,7 +16,7 @@ public class CorruptHealthEffect : SkillEffect
         if (effectTarget == null) return false;
 
         float maxHP = effectTarget.GetStat(StatType.MaxHealth);
-        float amount = flatAmount + (maxHP * percentOfMaxHP);
+        float amount = Mathf.Abs(flatAmount + (maxHP * percentOfMaxHP));
 
         if (action == CorruptAction.Increase)
         {
