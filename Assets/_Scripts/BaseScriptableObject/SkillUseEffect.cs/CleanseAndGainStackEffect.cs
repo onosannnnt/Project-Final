@@ -12,17 +12,17 @@ public class CleanseAndGainStackEffect : SkillEffect
     {
         if (target == null || stackToGrant == null) return false;
 
-        // Cleanse Debuffs
-        List<ActiveBuff> debuffs = target.buffController.GetDebuffs();
-        int debuffCount = debuffs.Count;
+        // Cleanse Negative Effects
+        List<ActiveBuff> negativeEffects = target.buffController.GetNegativeEffects();
+        int negativeEffectCount = negativeEffects.Count;
 
-        foreach (var debuff in debuffs)
+        foreach (var effect in negativeEffects)
         {
-            target.buffController.RemoveBuff(debuff);
+            target.buffController.RemoveBuff(effect);
         }
 
         // Calculate stacks to gain
-        int stacksToApply = debuffCount > 0 ? (debuffCount * stacksPerDebuff) : fallbackStacks;
+        int stacksToApply = negativeEffectCount > 0 ? (negativeEffectCount * stacksPerDebuff) : fallbackStacks;
 
         // Apply stacks
         for (int i = 0; i < stacksToApply; i++)

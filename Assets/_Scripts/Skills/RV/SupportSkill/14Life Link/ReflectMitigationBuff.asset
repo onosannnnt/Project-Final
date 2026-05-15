@@ -29,4 +29,4 @@ MonoBehaviour:
   preventHealing: 0
   grantsDebuffImmunity: 0
   ReflectPercent: 0.4
-  DamageReductionPercent: 0.2
+  DamageReductionPercent: 0

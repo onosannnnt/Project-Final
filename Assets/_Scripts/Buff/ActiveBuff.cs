@@ -6,6 +6,7 @@ public class ActiveBuff
     public int CurrentStack { get; set; }
     public bool isInitialized { get; set; }
     public bool wasReappliedThisTurn { get; set; }
+    public bool isUsable { get; set; } = true;
     public System.Collections.Generic.Dictionary<string, object> CustomState = new();
 
     public ActiveBuff(Buff data)

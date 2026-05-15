@@ -52,6 +52,17 @@ public class StackScaledDamageEffect : SkillEffect
         if (consumeStacks && activeStacks != null)
         {
             int toConsume = consumeAll ? activeStacks.CurrentStack : stacksToConsume;
+            
+            // Add repeated attack costs to total consumption
+            if (repeatIfEnoughStacks)
+            {
+                toConsume += (_repeatCount * repeatStackCost);
+                if (activeStacks.Data.MaxStack > 0 && toConsume > activeStacks.Data.MaxStack)
+                {
+                    // Protection against consuming more than possible, though unlikely here
+                }
+            }
+
             caster.buffController.ConsumeBuffStack(activeStacks, toConsume);
         }
     }

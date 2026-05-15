@@ -65,7 +65,8 @@ public class SeasonalDamageEffect : SkillEffect
 
         // 2. Calculate Damage
         float totalDamage = BaseDamage;
-        bool hasMomentum = caster.buffController.GetBuffByName(MomentumBuffName) != null && style == SkillStyle.CE;
+        ActiveBuff momentumBuff = caster.buffController.GetBuffByName(MomentumBuffName);
+        bool hasMomentum = momentumBuff != null && momentumBuff.isUsable && style == SkillStyle.CE;
 
         // Matching Season Bonus (+20%)
         if (EnableMatchingBonus && current == RequiredWeather)

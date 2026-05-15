@@ -26,6 +26,10 @@ public class BuffManager
         List<ActiveBuff> debuffs = activeBuffs.FindAll(b => b.Data.buffType == BuffType.Debuff);
         return debuffs;
     }
+    public List<ActiveBuff> GetNegativeEffects()
+    {
+        return activeBuffs.FindAll(b => b.Data.buffType == BuffType.Debuff || b.Data.buffType == BuffType.CrowdControl);
+    }
 
     public void AddBuff(Buff buff)
     {
@@ -60,6 +64,13 @@ public class BuffManager
         {
             ActiveBuff newBuff = new ActiveBuff(buff);
             activeBuffs.Add(newBuff);
+
+            // SPECIAL LOGIC: Newly gained Momentum is not usable until the next turn
+            if (buff.BuffName == "Momentum")
+            {
+                newBuff.isUsable = false;
+            }
+
             buff.OnApply(owner, newBuff);
         }
         OnBuffsChanged?.Invoke();
@@ -96,6 +107,7 @@ public class BuffManager
         List<ActiveBuff> snapshot = new List<ActiveBuff>(activeBuffs);
         foreach (var buff in snapshot)
         {
+            buff.isUsable = true; // Reset usability at turn start
             buff.Data.OnTurnStart(owner, log, buff);
         }
     }

@@ -18,13 +18,13 @@ public class ThresholdCleanseHealEffect : SkillEffect
         float hpRatio = target.CurrentHealth / maxHP;
         float finalHeal = hpRatio <= hpThreshold ? thresholdHealAmount : baseHealAmount;
 
-        // Cleanse debuffs if below threshold
+        // Cleanse negative effects if below threshold
         if (hpRatio <= hpThreshold)
         {
-            List<ActiveBuff> debuffs = target.buffController.GetDebuffs();
-            foreach (var debuff in debuffs)
+            List<ActiveBuff> negativeEffects = target.buffController.GetNegativeEffects();
+            foreach (var effect in negativeEffects)
             {
-                target.buffController.RemoveBuff(debuff);
+                target.buffController.RemoveBuff(effect);
             }
         }
 

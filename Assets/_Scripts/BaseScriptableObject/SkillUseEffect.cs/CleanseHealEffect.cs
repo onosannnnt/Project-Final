@@ -10,11 +10,11 @@ public class CleanseHealEffect : SkillEffect
     {
         if (target == null) return false;
 
-        // Cleanse Debuffs
-        List<ActiveBuff> debuffs = target.buffController.GetDebuffs();
-        foreach (var debuff in debuffs)
+        // Cleanse Negative Effects (Debuffs & CC)
+        List<ActiveBuff> negativeEffects = target.buffController.GetNegativeEffects();
+        foreach (var effect in negativeEffects)
         {
-            target.buffController.RemoveBuff(debuff);
+            target.buffController.RemoveBuff(effect);
         }
 
         // Heal

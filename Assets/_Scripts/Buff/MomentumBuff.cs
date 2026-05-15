@@ -47,8 +47,14 @@ public class MomentumBuff : Buff
             // Only CE attack skills can consume Momentum to gain more damage and bonus effect.
             if (ctx.Style != SkillStyle.CE) return;
 
+            ActiveBuff momentum = owner.buffController.GetBuffByName("Momentum");
+            if (momentum == null || !momentum.isUsable) return;
+
             // Apply bonus
             ctx.Damage.Amount *= (1f + multiplier);
+
+            // Remove buff after one attack
+            owner.buffController.RemoveBuff(momentum);
         }
     }
 }

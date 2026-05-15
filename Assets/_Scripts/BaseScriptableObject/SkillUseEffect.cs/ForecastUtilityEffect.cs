@@ -101,21 +101,21 @@ public class ForecastUtilityEffect : SkillEffect
         // Target Cleanse
         if (cleanseDebuffs)
         {
-            List<ActiveBuff> debuffs = target.buffController.GetDebuffs();
+            List<ActiveBuff> negativeEffects = target.buffController.GetNegativeEffects();
             if (cleanseMostRecentOnly)
             {
-                if (debuffs.Count > 0)
+                if (negativeEffects.Count > 0)
                 {
-                    // Assuming GetDebuffs returns them in order of application or we can just pick the last one.
+                    // Assuming GetNegativeEffects returns them in order of application or we can just pick the last one.
                     // Usually buffController stores them in a list.
-                    target.buffController.RemoveBuff(debuffs[debuffs.Count - 1]);
+                    target.buffController.RemoveBuff(negativeEffects[negativeEffects.Count - 1]);
                 }
             }
             else
             {
-                foreach (var debuff in debuffs)
+                foreach (var effect in negativeEffects)
                 {
-                    target.buffController.RemoveBuff(debuff);
+                    target.buffController.RemoveBuff(effect);
                 }
             }
         }
