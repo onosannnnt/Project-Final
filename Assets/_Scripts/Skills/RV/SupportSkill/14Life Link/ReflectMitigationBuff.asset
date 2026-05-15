@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ReflectMitigationBuff
   m_EditorClassIdentifier: 
   BuffName: Life Link
-  Description: 
+  Description: Reflect damage by 40%
   Icon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}
   buffType: 0
   isPermanent: 0
@@ -25,6 +25,7 @@ MonoBehaviour:
   DiminishingReturnDecayFactor: 0
   targetType: 1
   modifiers: []
+  isStealable: 0
   preventLethalDamage: 0
   preventHealing: 0
   grantsDebuffImmunity: 0

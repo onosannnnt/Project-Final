@@ -26,6 +26,6 @@ MonoBehaviour:
   TargetCount: 0
   reducesArmor: 0
   SkillEffects:
-  - {fileID: 11400000, guid: 5d0c03dceaaa489a8a07d3b514e59eb1, type: 2}
+  - {fileID: 11400000, guid: 378c2aeb69f754ddd9ffaef9c2422af6, type: 2}
   - {fileID: 11400000, guid: 910f64d6a68348baa12376c0528c19c7, type: 2}
-  - {fileID: 11400000, guid: 731c893c240d44dc9dbfde649ffb653d, type: 2}
+  - {fileID: 11400000, guid: 020d8114f61d34495b079f4759e9359d, type: 2}
