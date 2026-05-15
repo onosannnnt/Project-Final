@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillID: 29
   skillName: Morning Dew
-  description: Heal 100 HP +50 per Frenzy Stack.
+  description: Heal 100 HP +30 per Frenzy Stack.
   skillIcon: {fileID: 21300000, guid: ea61475f2ca0f4eeba50601040774701, type: 3}
   skillType: 1
   skillStyle: 2

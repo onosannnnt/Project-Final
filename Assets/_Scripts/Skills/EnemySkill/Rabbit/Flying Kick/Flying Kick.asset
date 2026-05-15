@@ -10,18 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d69cc920a01e47d5b53c9c1598e73c3, type: 3}
-  m_Name: Feral Bite
+  m_Name: Flying Kick
   m_EditorClassIdentifier: 
-  skillID: 307
-  skillName: Feral Bite
+  skillID: 745
+  skillName: Flying kick
   description: 
   skillIcon: {fileID: 21300000, guid: 1f1aaf4286d2c4ea495a95b2bba8abaa, type: 3}
   skillType: 0
   skillStyle: 0
   Tier: 0
   SkillPoint: 0
+  CorruptedHealthGain: 0
   TargetType: 2
   TargetCount: 0
   reducesArmor: 0
   SkillEffects:
-  - {fileID: 11400000, guid: 3959b53ac4bd4420aac49f32ef644dd3, type: 2}
+  - {fileID: 11400000, guid: a13bd2405430a49b2bef4e1f76db6616, type: 2}

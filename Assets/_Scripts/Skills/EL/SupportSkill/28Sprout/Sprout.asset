@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillID: 28
   skillName: Sprout
-  description: Grant 3 Frenzy Stacks to a target.
+  description: Grant 2 Frenzy Stacks to a target.
   skillIcon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}
   skillType: 2
   skillStyle: 2

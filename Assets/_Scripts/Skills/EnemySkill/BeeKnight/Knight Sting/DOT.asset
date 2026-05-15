@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DOT
   m_EditorClassIdentifier: 
   BuffName: Sting
-  Description: 
+  Description: Take 15 damage per stack at the end of turn (Max 6)
   Icon: {fileID: 21300000, guid: ea3b8a61f4add494c84dfcffa4d9cc32, type: 3}
   buffType: 1
   isPermanent: 0
@@ -25,4 +25,8 @@ MonoBehaviour:
   DiminishingReturnDecayFactor: 0
   targetType: 2
   modifiers: []
-  BaseDamage: 30
+  isStealable: 0
+  preventLethalDamage: 0
+  preventHealing: 0
+  grantsDebuffImmunity: 0
+  BaseDamage: 15

@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96c91456b669f4856867d806353c122a, type: 3}
   m_Name: BuffEffect
   m_EditorClassIdentifier: 
+  Phase: 0
+  ExecuteOnce: 0
   buffs:
-  - {fileID: 11400000, guid: 39da2a892b9942747858c93fa3576c9f, type: 2}
+  - {fileID: 11400000, guid: 37a8d194dd6d3b24a91cc5d508f6a928, type: 2}

@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: StackScaledHealEffect
   m_EditorClassIdentifier: 
   Phase: 1
+  ExecuteOnce: 0
   stackSourceBuff: {fileID: 11400000, guid: 3d5cae4c40374de4885c1e1a820a5eeb, type: 2}
   baseHeal: 100
-  healPerStack: 50
+  healPerStack: 30
   maxScalingStacks: 0
-  healParty: 0
   useThresholdBonus: 0
   hpThreshold: 0.3
   bonusMultiplier: 1.5

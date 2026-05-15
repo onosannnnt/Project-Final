@@ -66,7 +66,7 @@ public class BuffManager
     }
     public void RemoveBuff(ActiveBuff buff)
     {
-// // Debug.Log(owner.gameObject.name + " lost buff: " + buff.Data.BuffName);
+        // // Debug.Log(owner.gameObject.name + " lost buff: " + buff.Data.BuffName);
         activeBuffs.Remove(buff);
         OnBuffsChanged?.Invoke();
     }
@@ -84,13 +84,15 @@ public class BuffManager
         {
             OnBuffsChanged?.Invoke();
         }
-    }    public virtual void OnApply(Entity owner, ActiveBuff buff)
+    }
+    public virtual void OnApply(Entity owner, ActiveBuff buff)
     {
         buff.Data.OnApply(owner, buff);
     }
     public virtual void OnTurnStart(Entity owner, CombatActionLog log)
     {
-        foreach (var buff in activeBuffs)
+        List<ActiveBuff> snapshot = new List<ActiveBuff>(activeBuffs);
+        foreach (var buff in snapshot)
         {
             buff.Data.OnTurnStart(owner, log, buff);
         }
@@ -98,7 +100,8 @@ public class BuffManager
     public virtual void OnTurnEnd(Entity owner, CombatActionLog log)
     {
         List<ActiveBuff> toRemove = new();
-        foreach (var buff in activeBuffs)
+        List<ActiveBuff> snapshot = new List<ActiveBuff>(activeBuffs);
+        foreach (var buff in snapshot)
         {
             buff.Data.OnTurnEndAction(owner, log, buff);
             buff.Data.OnTurnEnd(owner, buff);
@@ -107,7 +110,7 @@ public class BuffManager
                 toRemove.Add(buff);
             }
         }
-// // Debug.Log(owner.gameObject.name + " has " + toRemove.Count + " buffs to remove.");
+        // // Debug.Log(owner.gameObject.name + " has " + toRemove.Count + " buffs to remove.");
         foreach (var buff in toRemove)
         {
             buff.Data.OnRemove(owner, buff);

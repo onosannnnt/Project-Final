@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: StackScaledDamageEffect
   m_EditorClassIdentifier: 
   Phase: 1
+  ExecuteOnce: 0
   stackSourceBuff: {fileID: 11400000, guid: 3d5cae4c40374de4885c1e1a820a5eeb, type: 2}
   baseDamage: 100
   damagePerStack: 30
-  element: 0
+  Element: 0
   consumeStacks: 0
   consumeAll: 0
   stacksToConsume: 1

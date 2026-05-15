@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillID: 25
   skillName: Carnivorous Bite
-  description: 'Deal 300 damage +250 per Frenzy Stack and consume all Frenzy Stacks.
+  description: 'Deal 300 damage +80 per Frenzy Stack and consume all Frenzy Stacks.
     [SP: 15]'
   skillIcon: {fileID: 21300000, guid: 1f1aaf4286d2c4ea495a95b2bba8abaa, type: 3}
   skillType: 0

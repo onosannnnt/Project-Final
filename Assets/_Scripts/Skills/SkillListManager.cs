@@ -230,6 +230,8 @@ public class SkillListManager : MonoBehaviour
 
     public void DeselectSkill(SkillHoverHandler handler)
     {
+        if (handler == null) return;
+
         foreach (var slot in selectedSlots)
         {
             if (slot != null && slot.currentHandler == handler)
@@ -239,6 +241,22 @@ public class SkillListManager : MonoBehaviour
                 SaveLoadout();
                 break;
             }
+        }
+    }
+
+    public void DeselectSkillByData(Skill skillData)
+    {
+        if (skillData == null) return;
+
+        foreach (var slot in selectedSlots)
+        {
+            if (slot == null || !slot.isOccupied || slot.skillData != skillData) continue;
+
+            SkillHoverHandler handler = slot.currentHandler ?? FindHandlerBySkill(skillData);
+            slot.ClearSlot();
+            if (handler != null) handler.SetSelected(false);
+            SaveLoadout();
+            break;
         }
     }
 

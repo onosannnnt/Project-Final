@@ -144,15 +144,15 @@ public class CombatResourceManager : MonoBehaviour
             {
                 case 1:
                     member.Stats.SetBase(StatType.MaxHealth, 1000);
-                    member.Stats.SetBase(StatType.MaxSkillPoint, 100);
+                    member.Stats.SetBase(StatType.MaxSkillPoint, 200);
                     break;
                 case 2:
                     member.Stats.SetBase(StatType.MaxHealth, 2000);
-                    member.Stats.SetBase(StatType.MaxSkillPoint, 200);
+                    member.Stats.SetBase(StatType.MaxSkillPoint, 400);
                     break;
                 case 3:
                     member.Stats.SetBase(StatType.MaxHealth, 3000);
-                    member.Stats.SetBase(StatType.MaxSkillPoint, 300);
+                    member.Stats.SetBase(StatType.MaxSkillPoint, 500);
                     break;
                 default:
                     member.Stats.SetBase(StatType.MaxHealth, 3000);
