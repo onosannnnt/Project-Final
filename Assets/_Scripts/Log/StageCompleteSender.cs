@@ -48,7 +48,13 @@ public class StageCompleteSender : MonoBehaviour
     {
         if (payload == null) yield break;
 
-        string baseUrl = string.IsNullOrWhiteSpace(apiBaseUrl) ? "https://moonbloom.narutchai.com" : apiBaseUrl;
+        // Use LoadEnv.apiKey if available, otherwise fallback to Inspector field or hardcoded default
+        string baseUrl = LoadEnv.apiKey;
+        if (string.IsNullOrWhiteSpace(baseUrl))
+        {
+            baseUrl = string.IsNullOrWhiteSpace(apiBaseUrl) ? "https://moonbloom.narutchai.com" : apiBaseUrl;
+        }
+        
         string path = string.IsNullOrWhiteSpace(stageCompletePath) ? "/ml/stage-complete" : stageCompletePath;
         string url = CombineUrl(baseUrl, path);
         string json = JsonUtility.ToJson(payload);

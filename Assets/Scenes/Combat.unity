@@ -14032,7 +14032,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59b0fba2811e84168ac747c03c8ac5bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  apiBaseUrl: http://localhost:8000
+  apiBaseUrl: https://moonbloom.narutchai.com
   stageCompletePath: /ml/stage-complete
   logResponses: 1
 --- !u!1 &1426415849

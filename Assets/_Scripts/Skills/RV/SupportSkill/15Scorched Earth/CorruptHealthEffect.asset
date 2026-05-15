@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: CorruptHealthEffect
   m_EditorClassIdentifier: 
   Phase: 0
+  ExecuteOnce: 1
+  action: 0
   flatAmount: 0
   percentOfMaxHP: 0.25
   targetCaster: 1
