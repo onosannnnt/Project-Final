@@ -17,8 +17,7 @@ public class StatInfoUI : MonoBehaviour
     [SerializeField] private TMP_Text HealthText;
     [SerializeField] private Image SkillPointBarFG;
     [SerializeField] private TMP_Text SkillPointText;
-    [SerializeField] private Transform StatusBuffParent;
-    [SerializeField] private GameObject StatusBuffPrefab;
+    
 
     [Header("Visibility Settings")]
     [SerializeField] private GameObject customObjectToHide;
@@ -110,7 +109,7 @@ public class StatInfoUI : MonoBehaviour
 
     private void HandleHealthChanged(float current, float max) => SetupHealthBar();
     private void HandleSPChanged(int current, int max) => SetupSkillPointBar();
-    private void HandleBuffsChanged() { SetupBuffPanel(); SetStatusBuff(); }
+    private void HandleBuffsChanged() { SetupBuffPanel(); }
 
     private void RefreshAll()
     {
@@ -118,7 +117,6 @@ public class StatInfoUI : MonoBehaviour
         SetupHealthBar();
         SetupSkillPointBar();
         SetupBuffPanel();
-        SetStatusBuff();
     }
 
     private void SetupEntityHeader()
@@ -261,26 +259,5 @@ public class StatInfoUI : MonoBehaviour
         if (SkillPointText != null) SkillPointText.text = $"{currentSP} / {maxSP}";
     }
 
-    private void SetStatusBuff()
-    {
-        if (StatusBuffParent == null || Entity == null) return;
-
-        ClearTransform(StatusBuffParent);
-
-        List<ActiveBuff> statusBuffs = new List<ActiveBuff>();
-        statusBuffs.AddRange(Entity.buffController.GetBuffsByType(BuffType.CrowdControl));
-        statusBuffs.AddRange(Entity.buffController.GetBuffsByType(BuffType.Debuff));
-
-        StatusBuffParent.gameObject.SetActive(statusBuffs.Count > 0);
-        if (statusBuffs.Count == 0) return;
-
-        foreach (var buff in statusBuffs)
-        {
-            GameObject buffObj = Instantiate(StatusBuffPrefab, StatusBuffParent);
-            if (buffObj.GetComponent<Image>() != null)
-                buffObj.GetComponent<Image>().sprite = buff.Data.Icon;
-        }
-
-        LayoutRebuilder.ForceRebuildLayoutImmediate(StatusBuffParent as RectTransform);
-    }
+    
 }

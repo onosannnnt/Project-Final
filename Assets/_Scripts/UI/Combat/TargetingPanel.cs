@@ -11,8 +11,7 @@ public class TargetingPanel : MonoBehaviour
     [SerializeField] private Image Icon;
     [SerializeField] private Transform BuffParent;
     [SerializeField] private GameObject BuffPrefab;
-    [SerializeField] private Transform StatusBuffParent;
-    [SerializeField] private GameObject StatusBuffPrefab;
+    [SerializeField] private GameObject DebuffPrefab;
     private Entity currentTarget;
     public static TargetingPanel instance;
     private void Awake()
@@ -56,7 +55,6 @@ public class TargetingPanel : MonoBehaviour
         gameObject.SetActive(active);
         if (currentTarget == null) return;
         SetBuffs();
-        SetStatusBuff();
         TargetingNameText.text = currentTarget.Stats.GetName();
         Icon.sprite = currentTarget.Stats.GetIcon();
     }
@@ -75,37 +73,33 @@ public class TargetingPanel : MonoBehaviour
             Destroy(child.gameObject);
         }
         if (currentTarget == null) return;
-        List<ActiveBuff> Buffs = currentTarget.buffController.GetBuffsByType(BuffType.Buff);
-        if (Buffs.Count == 0) BuffParent.gameObject.SetActive(false);
-        else BuffParent.gameObject.SetActive(true);
-        foreach (var buff in Buffs)
+
+        List<ActiveBuff> buffs = currentTarget.buffController.GetBuffsByType(BuffType.Buff);
+        List<ActiveBuff> debuffs = new List<ActiveBuff>();
+        debuffs.AddRange(currentTarget.buffController.GetBuffsByType(BuffType.CrowdControl));
+        debuffs.AddRange(currentTarget.buffController.GetBuffsByType(BuffType.Debuff));
+
+        int total = buffs.Count + debuffs.Count;
+        BuffParent.gameObject.SetActive(total > 0);
+
+        foreach (var buff in buffs)
         {
             GameObject buffObj = Instantiate(BuffPrefab, BuffParent.transform);
             buffObj.GetComponent<Image>().sprite = buff.Data.Icon;
             buffObj.transform.Find("Duration").GetComponentInChildren<TextMeshProUGUI>().text = BuffStackColor(buff.CurrentDuration) + $"{buff.CurrentDuration}</color>";
             buffObj.transform.Find("Stack").GetComponentInChildren<TextMeshProUGUI>().text = BuffStackColor(buff.CurrentStack) + $"{buff.CurrentStack}</color>";
         }
-    }
-    public void SetStatusBuff()
-    {
-        foreach (Transform child in StatusBuffParent.transform)
-        {
-            Destroy(child.gameObject);
-        }
-        if (currentTarget == null) return;
-        List<ActiveBuff> statusBuffs = new List<ActiveBuff>();
-        statusBuffs.AddRange(currentTarget.buffController.GetBuffsByType(BuffType.CrowdControl));
-        statusBuffs.AddRange(currentTarget.buffController.GetBuffsByType(BuffType.Debuff));
 
-        if (statusBuffs.Count == 0) StatusBuffParent.gameObject.SetActive(false);
-        else StatusBuffParent.gameObject.SetActive(true);
-        if (statusBuffs.Count == 0) return;
-        foreach (var buff in statusBuffs)
+        if (debuffs.Count > 0 && DebuffPrefab != null)
         {
-            GameObject buffObj = Instantiate(StatusBuffPrefab, StatusBuffParent.transform);
-            buffObj.GetComponent<Image>().sprite = buff.Data.Icon;
+            foreach (var db in debuffs)
+            {
+                GameObject buffObj = Instantiate(DebuffPrefab, BuffParent.transform);
+                buffObj.GetComponent<Image>().sprite = db.Data.Icon;
+            }
         }
     }
+    
 
     private string BuffStackColor(int stack)
     {

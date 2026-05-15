@@ -45,6 +45,11 @@ public class BackgroundManager : MonoBehaviour
 
     private void UpdateBackground(bool force)
     {
+        if (ShouldFreezeBackground())
+        {
+            return;
+        }
+
         int questIndex = userData != null ? userData.SelectedQuestIndex : UserData.NoQuestSelected;
         int wave = turnManager != null ? turnManager.currentWave : 1;
 
@@ -86,5 +91,10 @@ public class BackgroundManager : MonoBehaviour
         {
             worldBackgroundRenderer.sprite = chosen;
         }
+    }
+
+    private bool ShouldFreezeBackground()
+    {
+        return turnManager != null && turnManager.IsCombatResultResolved;
     }
 }

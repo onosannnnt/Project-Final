@@ -30,6 +30,12 @@ public class TurnManager : Singleton<TurnManager>
     public int combatID = 0;
     public int currentWave = 1;
     private bool combatResultResolved;
+    public bool IsCombatResultResolved => combatResultResolved;
+
+    public void MarkCombatResultResolved()
+    {
+        combatResultResolved = true;
+    }
 
     private readonly List<CombatLog> stageLogs = new List<CombatLog>();
     private string playerstyleSessionId;
