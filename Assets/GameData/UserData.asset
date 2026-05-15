@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68a93d19ed5314d84a7a239a7de394af, type: 3}
   m_Name: UserData
   m_EditorClassIdentifier: 
-  ID: 5
-  Username: fcgbdfg
-  GamePhase: 3
+  ID: 8
+  Username: emv
+  GamePhase: 1
   SelectedQuestIndex: -1
-  HighestCompletedQuestIndex: 2
+  HighestCompletedQuestIndex: -1
   IsGameFinished: 0
-  TotalCoins: 7520
+  TotalCoins: 0
   PendingQuestCoins: 0
   PendingRewardQuestIndex: -1
   tutorialCoinReward: 100
@@ -28,29 +28,8 @@ MonoBehaviour:
   playerLoadoutsToReset:
   - {fileID: 11400000, guid: 5a526a6ae7db0422c9d63b916530c938, type: 2}
   - {fileID: 11400000, guid: 3009cfca1047fa744ab37803320dd422, type: 2}
-  HasChosenStarterBuild: 1
-  IsTutorialFinalized: 1
+  HasChosenStarterBuild: 0
+  IsTutorialFinalized: 0
   DefaultSkill: {fileID: 11400000, guid: 1388574c03e724a8f834dae785cc7325, type: 2}
-  OwnedSkills:
-  - {fileID: 11400000, guid: 960ab9b50c23d4b80aa308ff09c2cc5e, type: 2}
-  - {fileID: 11400000, guid: dd6540ec45444446caf02b92a2cd1542, type: 2}
-  - {fileID: 11400000, guid: 2bbf253faab41468f974deef9e5586d7, type: 2}
-  - {fileID: 11400000, guid: be07c4cb5ae8c401cb642a68a4a45d38, type: 2}
-  - {fileID: 11400000, guid: 2571b48f58c754b5eacb5c8427ee3e86, type: 2}
-  - {fileID: 11400000, guid: 2b925b21c564145f9b418681efa819e9, type: 2}
-  - {fileID: 11400000, guid: cffa3d16caa6e4b6dab9bcf04b2b15c8, type: 2}
-  - {fileID: 11400000, guid: 1afd50ff6ce64434693c2f6efc9f01fc, type: 2}
-  - {fileID: 11400000, guid: e87ee075edcf24c85970864774ec4c44, type: 2}
-  - {fileID: 11400000, guid: b87360abd8d52457eac45fe5f375b8af, type: 2}
-  - {fileID: 11400000, guid: 25954162e312a49cc882da17461cd465, type: 2}
-  - {fileID: 11400000, guid: 74d34434fbe1948fb8062dde13fd48bb, type: 2}
-  - {fileID: 11400000, guid: 0a2d4a86e599746a7aad8f9f3a4d9b03, type: 2}
-  - {fileID: 11400000, guid: d7c4a384caa3d4d879c493fd91cc2dd2, type: 2}
-  - {fileID: 11400000, guid: 813d6045c0d404d32bd45a3874a788aa, type: 2}
-  - {fileID: 11400000, guid: 28eb0a6018a814356886b073d7f9471e, type: 2}
-  - {fileID: 11400000, guid: 431bb4b77d1f0418f985347fb8a99ffb, type: 2}
-  - {fileID: 11400000, guid: 981e16273364f4b19867e5caab1dae6e, type: 2}
-  - {fileID: 11400000, guid: 7f66555dc3df946328830aea983cd3d9, type: 2}
-  - {fileID: 11400000, guid: 902be44bffc1f427cae7ff8d18100580, type: 2}
-  - {fileID: 11400000, guid: f7eed15a7ab0a430ca8c3beca04240ba, type: 2}
+  OwnedSkills: []
   TrialSkills: []
