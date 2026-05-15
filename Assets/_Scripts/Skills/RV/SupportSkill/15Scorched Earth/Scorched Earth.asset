@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillID: 15
   skillName: Scorched Earth
-  description: 'Convert 25% of Max HP into Corrupted Blood. Enemies take +10% increased
-    damage per 10% Corrupted Blood for 1 turn.  [SP: 10]'
+  description: Convert 25% of Max HP into Corrupted Blood. Enemies take +10% increased
+    damage per 10% Corrupted Blood for 1 turn.
   skillIcon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}
   skillType: 2
   skillStyle: 1

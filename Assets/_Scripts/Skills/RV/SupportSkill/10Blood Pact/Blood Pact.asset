@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillID: 10
   skillName: Blood Pact
-  description: 'Convert 20% of Max HP into Corrupted Blood. Gain +10% damage per
-    10% Corrupted Blood for 3 turns. [SP: 10]'
+  description: Convert 20% of Max HP into Corrupted Blood. Gain +10% damage per 10%
+    Corrupted Blood for 3 turns.
   skillIcon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}
   skillType: 2
   skillStyle: 1

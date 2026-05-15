@@ -14,8 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillID: 11
   skillName: Siphon Aura
-  description: 'Reduce Corrupted Blood by 20% to heal 200 +80 per 10% Corrupted reduced.
-    [SP: 10]'
+  description: Reduce Corrupted Blood by 20% to heal 200 +80 per 10% Corrupted reduced.
   skillIcon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}
   skillType: 2
   skillStyle: 1

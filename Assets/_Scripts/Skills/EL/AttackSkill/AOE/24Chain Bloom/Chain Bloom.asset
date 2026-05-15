@@ -15,7 +15,7 @@ MonoBehaviour:
   skillID: 24
   skillName: Chain Bloom
   description: "Deal 200 damage to all enemy (if Frenzy Stacks \u2265 6, consume
-    6 Frenzy Stacks to repeat the attack once). [SP: 20]"
+    6 Frenzy Stacks to repeat the attack once)."
   skillIcon: {fileID: 21300000, guid: 1f1aaf4286d2c4ea495a95b2bba8abaa, type: 3}
   skillType: 0
   skillStyle: 2

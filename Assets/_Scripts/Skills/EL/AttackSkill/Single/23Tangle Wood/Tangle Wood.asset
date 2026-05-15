@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillID: 23
   skillName: Tangle Wood
-  description: 'Deal 200 damage +90 per Frenzy Stack, reduce target Speed by 50%
-    for 2 turns, and consume all Frenzy Stacks. [SP: 15]'
+  description: Deal 200 damage +90 per Frenzy Stack, reduce target Speed by 50% for
+    2 turns, and consume all Frenzy Stacks.
   skillIcon: {fileID: 21300000, guid: 1f1aaf4286d2c4ea495a95b2bba8abaa, type: 3}
   skillType: 0
   skillStyle: 2

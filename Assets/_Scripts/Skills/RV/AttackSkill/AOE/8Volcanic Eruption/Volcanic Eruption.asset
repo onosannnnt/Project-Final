@@ -15,7 +15,7 @@ MonoBehaviour:
   skillID: 8
   skillName: Volcanic Eruption
   description: "Deal 400 damage to all enemy (if Corrupted Blood \u2265 40%, gain
-    +400 damage and Stun self for 1 turn). [SP: 80]"
+    +400 damage and Stun self for 1 turn)."
   skillIcon: {fileID: 21300000, guid: 1f1aaf4286d2c4ea495a95b2bba8abaa, type: 3}
   skillType: 0
   skillStyle: 1
