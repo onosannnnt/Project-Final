@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: DamageEffect
   m_EditorClassIdentifier: 
   Phase: 1
-  BaseDamage: 250
+  ExecuteOnce: 0
+  BaseDamage: 300
   Element: 0
-  Accuracy: 100
-  CriticalHitChance: 5
+  Accuracy: 1
+  CriticalHitChance: 0.05

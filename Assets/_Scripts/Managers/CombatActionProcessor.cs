@@ -101,6 +101,13 @@ public class CombatActionProcessor : MonoBehaviour
         }
 
         entity.skillManager.UseSkill(skill, targets, log);
+
+        // Consume Momentum if a CE skill was used
+        if (skill.skillStyle == SkillStyle.CE)
+        {
+            ActiveBuff momentum = entity.buffController.GetBuffByName("Momentum");
+            if (momentum != null) entity.buffController.RemoveBuff(momentum);
+        }
     }
 
     private void ExecuteEnemyAction(EnemyCombat enemy, Entity target, Skill skill, CombatActionLog log)
@@ -122,6 +129,13 @@ public class CombatActionProcessor : MonoBehaviour
         if (skill.CorruptedHealthGain > 0) enemy.GainCorruptedHealth(skill.CorruptedHealthGain);
 
         enemy.skillManager.UseSkill(skill, targets, log);
+
+        // Consume Momentum if a CE skill was used
+        if (skill.skillStyle == SkillStyle.CE)
+        {
+            ActiveBuff momentum = enemy.buffController.GetBuffByName("Momentum");
+            if (momentum != null) enemy.buffController.RemoveBuff(momentum);
+        }
     }
 
     private List<Entity> GetTargets(Entity caster, Entity primaryTarget, Skill skill)

@@ -3,7 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "CorruptedConsumptionHealEffect", menuName = "ScriptableObjects/SkillEffect/CorruptedConsumptionHealEffect")]
 public class CorruptedConsumptionHealEffect : SkillEffect
 {
-    [SerializeField] private float percentOfMaxHPToConsume = 20f;
+    [SerializeField, Range(0f, 1f)] private float percentOfMaxHPToConsume = 0.2f;
     [SerializeField] private float baseHeal = 200f;
     [SerializeField] private float healPer10PercentConsumed = 80f;
 
@@ -11,13 +11,13 @@ public class CorruptedConsumptionHealEffect : SkillEffect
     {
         if (caster == null || target == null) return false;
 
-        float maxHP = caster.GetStat(StatType.MaxHealth);
-        float amountToConsume = maxHP * (percentOfMaxHPToConsume / 100f);
+        float maxHP = target.GetStat(StatType.MaxHealth);
+        float amountToConsume = maxHP * percentOfMaxHPToConsume;
         
-        float actualBefore = caster.CorruptedHealth;
+        float actualBefore = target.CorruptedHealth;
         // Consume up to the requested amount
-        bool consumedAny = caster.TryConsumeCorruptedHealth(Mathf.Min(amountToConsume, actualBefore));
-        float actualConsumed = actualBefore - caster.CorruptedHealth;
+        bool consumedAny = target.TryConsumeCorruptedHealth(Mathf.Min(amountToConsume, actualBefore));
+        float actualConsumed = actualBefore - target.CorruptedHealth;
 
         // Calculate healing: Base + (80 * every 10% of Max HP consumed)
         float chunksConsumed = actualConsumed / (maxHP * 0.1f);

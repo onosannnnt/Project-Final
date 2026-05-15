@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillID: 14
   skillName: Life Link
-  description: Reduce Corrupted Blood by 15% to reflect 40% damage and reduce damage
-    taken by 20% for 1 turn.
+  description: Reduce Corrupted Blood by 15% to gain 40% damage reflection for 1
+    turn and cleanse all debuffs.
   skillIcon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}
   skillType: 2
   skillStyle: 1
@@ -26,4 +26,6 @@ MonoBehaviour:
   TargetCount: 0
   reducesArmor: 0
   SkillEffects:
-  - {fileID: 11400000, guid: 378c2aeb69f754ddd9ffaef9c2422af6, type: 2}
+  - {fileID: 11400000, guid: 5d0c03dceaaa489a8a07d3b514e59eb1, type: 2}
+  - {fileID: 11400000, guid: 910f64d6a68348baa12376c0528c19c7, type: 2}
+  - {fileID: 11400000, guid: 731c893c240d44dc9dbfde649ffb653d, type: 2}

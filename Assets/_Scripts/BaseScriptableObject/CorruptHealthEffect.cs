@@ -4,7 +4,7 @@ using UnityEngine;
 public class CorruptHealthEffect : SkillEffect
 {
     [SerializeField] private float flatAmount;
-    [SerializeField] private float percentOfMaxHP;
+    [SerializeField, Range(0f, 1f)] private float percentOfMaxHP;
     [SerializeField] private bool targetCaster = true;
 
     public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
@@ -13,7 +13,7 @@ public class CorruptHealthEffect : SkillEffect
         if (effectTarget == null) return false;
 
         float maxHP = effectTarget.GetStat(StatType.MaxHealth);
-        float amount = flatAmount + (maxHP * (percentOfMaxHP / 100f));
+        float amount = flatAmount + (maxHP * percentOfMaxHP);
 
         if (amount > 0)
         {

@@ -16,7 +16,7 @@ MonoBehaviour:
   ExecuteOnce: 0
   BaseDamage: 80
   Element: 0
-  Accuracy: 100
+  Accuracy: 1
   RequiredWeather: 2
   EnableMatchingBonus: 1
   WeatherBonusDamage: 0
@@ -34,6 +34,6 @@ MonoBehaviour:
   MaxHPReductionPercent: 0
   MomentumMaxHPReductionPercent: 0
   MaxHPDeBuffTemplate: {fileID: 0}
-  SleepChance: 0.2
+  SleepChance: 0.3
   SleepBuffTemplate: {fileID: 11400000, guid: ddd392678b30e4e4e951788061efabae, type: 2}
   RepeatAttackDamage: 0

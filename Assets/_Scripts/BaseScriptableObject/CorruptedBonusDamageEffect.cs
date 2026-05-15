@@ -10,16 +10,16 @@ public class CorruptedBonusDamageEffect : SkillEffect
     [SerializeField, Range(0f, 1f)] public float CorruptedHpPercentThreshold = 0.2f;
     
     [SerializeField] public DamageElement Element = DamageElement.Physical;
-    [SerializeField] public float Accuracy = 100f;
-    [Range(0f, 100f)]
-    [SerializeField] public float CriticalHitChance = 5f;
+    [SerializeField, Range(0f, 1f)] public float Accuracy = 1f;
+    [Range(0f, 1f)]
+    [SerializeField] public float CriticalHitChance = 0.05f;
 
     public override bool IsElementalAttackEffect => true;
     public override bool IsDotElementSource => false;
 
     public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
-        if (Random.Range(0f, 100f) > Accuracy)
+        if (Random.value > Accuracy)
         {
             target.ShowDamage(0, Color.white);
             return false;

@@ -14,9 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillID: 16
   skillName: Savage Spores
-  description: Gain +3% damage per 10% Corrupted Blood and may consume up to 30%
-    Corrupted Blood to gain an additional +30% damage (caster takes +20% increased
-    damage).
+  description: Convert 30% of target's HP into Corrupted Blood and grant +15% damage
+    per 10% Corrupted Blood on the buffed target.
   skillIcon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}
   skillType: 2
   skillStyle: 1
@@ -27,4 +26,5 @@ MonoBehaviour:
   TargetCount: 0
   reducesArmor: 0
   SkillEffects:
-  - {fileID: 11400000, guid: fbd64b4faf16d4714b1296219e6cf4a4, type: 2}
+  - {fileID: 11400000, guid: 072c2d393bfb4732976a46145cd03ebc, type: 2}
+  - {fileID: 11400000, guid: b899c3cb185a4e57a8724e11e9c4501e, type: 2}

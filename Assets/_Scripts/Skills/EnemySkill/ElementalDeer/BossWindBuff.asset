@@ -27,6 +27,6 @@ MonoBehaviour:
   modifiers: []
   preventLethalDamage: 0
   preventHealing: 0
-  BaseMissChance: 5
-  StepMissChance: 5
-  MaxMissChance: 25
+  BaseMissChance: 0.05
+  StepMissChance: 0.05
+  MaxMissChance: 0.25

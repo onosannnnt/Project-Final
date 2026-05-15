@@ -71,8 +71,13 @@ public class CombatEscapeUI : MonoBehaviour
 
     private void LeaveBattle()
     {
-        // Cleanup Logic
         TurnManager turnManager = TurnManager.Instance;
+        if (turnManager != null)
+        {
+            turnManager.MarkCombatResultResolved();
+        }
+
+        // Cleanup Logic
         if (turnManager != null && turnManager.UserData != null)
         {
             // Clear the active quest so the player can re-select it or choose another

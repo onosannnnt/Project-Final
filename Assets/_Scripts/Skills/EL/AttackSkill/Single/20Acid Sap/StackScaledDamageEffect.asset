@@ -18,7 +18,7 @@ MonoBehaviour:
   baseDamage: 100
   damagePerStack: 80
   Element: 0
-  consumeStacks: 0
+  consumeStacks: 1
   consumeAll: 1
   stacksToConsume: 1
   debuffsToApply: []

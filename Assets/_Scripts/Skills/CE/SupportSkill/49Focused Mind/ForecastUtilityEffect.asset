@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ForecastUtilityEffect
   m_EditorClassIdentifier: 
   Phase: 1
-  ExecuteOnce: 1
+  ExecuteOnce: 0
   healAmount: 0
   healParty: 0
   buffsToApply:

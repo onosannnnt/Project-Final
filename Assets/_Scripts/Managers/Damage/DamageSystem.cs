@@ -13,7 +13,7 @@ public static class DamageSystem
         // Perform Critical Roll if not already determined
         if (!ctx.Damage.IsCriticalHit && ctx.Damage.CritChance > 0)
         {
-            if (UnityEngine.Random.Range(0f, 100f) <= ctx.Damage.CritChance)
+            if (UnityEngine.Random.value <= ctx.Damage.CritChance)
             {
                 ctx.Damage.IsCriticalHit = true;
                 ctx.Damage.Amount *= ctx.Damage.CritMultiplier;

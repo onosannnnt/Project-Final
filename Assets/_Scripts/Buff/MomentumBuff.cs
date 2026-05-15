@@ -49,10 +49,6 @@ public class MomentumBuff : Buff
 
             // Apply bonus
             ctx.Damage.Amount *= (1f + multiplier);
-            
-            // Remove buff after one attack
-            ActiveBuff momentum = owner.buffController.GetBuffByName("Momentum");
-            if (momentum != null) owner.buffController.RemoveBuff(momentum);
         }
     }
 }

@@ -16,7 +16,7 @@ public class ConsumeBuffDamageEffect : DamageEffect
 // // Debug.Log(caster.gameObject.name + " dealt damage on " + target.gameObject.name);
 
         // 1. Accuracy Check
-        if (Random.Range(0f, 100f) > Accuracy)
+        if (Random.value > Accuracy)
         {
             // // Debug.Log($"{caster.gameObject.name}'s attack but missed!");
             target.ShowDamage(0, Color.white);

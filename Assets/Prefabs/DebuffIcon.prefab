@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7363111659184558428}
   - component: {fileID: 2084706836726674357}
   m_Layer: 5
-  m_Name: StatusBuffIcon
+  m_Name: DebuffIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -68,7 +68,7 @@ public class ComprehensiveCorruptedStrikeEffect : SkillEffect
         finalDamage *= variance;
 
         // Apply Damage
-        Damage dmg = new Damage(finalDamage, Element, false, 5f, 1.5f);
+        Damage dmg = new Damage(finalDamage, Element, false, 0.05f, 1.5f);
         DamageCtx ctx = new DamageCtx(caster, target, dmg);
         DamageSystem.Process(ctx, log);
 

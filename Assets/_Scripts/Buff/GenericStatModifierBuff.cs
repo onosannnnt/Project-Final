@@ -5,11 +5,11 @@ public class GenericStatModifierBuff : Buff
 {
     [Header("Damage Modifiers")]
     public float BonusDamageFlat = 0f;
-    public float BonusDamagePercent = 0f;
+    [Range(0f, 1f)] public float BonusDamagePercent = 0f;
 
     [Header("Critical Modifiers")]
-    public float BonusCritChance = 0f;
-    public float BonusCritMultiplier = 0f;
+    [Range(0f, 1f)] public float BonusCritChance = 0f;
+    [Range(0f, 2f)] public float BonusCritMultiplier = 0f;
 
     public override void OnApply(Entity owner, ActiveBuff buffState)
     {
@@ -52,7 +52,7 @@ public class GenericStatModifierBuff : Buff
             // we have to re-roll or just modify the flag if not already crit)
             if (!ctx.Damage.IsCriticalHit && data.BonusCritChance > 0)
             {
-                if (Random.Range(0f, 100f) <= data.BonusCritChance)
+                if (Random.value <= data.BonusCritChance)
                 {
                     ctx.Damage.IsCriticalHit = true;
                     ctx.Damage.Amount *= ctx.Damage.CritMultiplier;

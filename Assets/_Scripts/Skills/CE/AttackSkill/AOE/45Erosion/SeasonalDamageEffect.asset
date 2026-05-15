@@ -16,7 +16,7 @@ MonoBehaviour:
   ExecuteOnce: 1
   BaseDamage: 350
   Element: 0
-  Accuracy: 100
+  Accuracy: 1
   RequiredWeather: 2
   EnableMatchingBonus: 1
   WeatherBonusDamage: 0
