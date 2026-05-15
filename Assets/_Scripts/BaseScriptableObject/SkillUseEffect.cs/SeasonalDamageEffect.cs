@@ -33,6 +33,7 @@ public class SeasonalDamageEffect : SkillEffect
     [Header("Special Effects (Triggered if Current Season matches)")]
     public float HealCasterAmount = 0f;
     public bool StealBuffs = false;
+    public Buff SideEffectDebuffTemplate;
     public float MaxHPReductionPercent = 0f;
     public float MomentumMaxHPReductionPercent = 0f;
     public Buff MaxHPDeBuffTemplate;
@@ -76,7 +77,7 @@ public class SeasonalDamageEffect : SkillEffect
         if (current == RequiredWeather)
         {
             totalDamage += WeatherBonusDamage;
-            if (WeatherBonusPercent > 0) totalDamage *= (1f + (WeatherBonusPercent / 100f));
+            if (WeatherBonusPercent > 0) totalDamage *= (1f + WeatherBonusPercent);
         }
 
         // Forecast Bonus
@@ -91,7 +92,7 @@ public class SeasonalDamageEffect : SkillEffect
             // Note: The global +40% is already handled by MomentumBuff's IDamageModifier.
             // This section handles skill-specific bonuses (like flat damage additions).
             totalDamage += MomentumBonusDamage;
-            if (MomentumBonusPercent > 0) totalDamage *= (1f + (MomentumBonusPercent / 100f));
+            if (MomentumBonusPercent > 0) totalDamage *= (1f + MomentumBonusPercent);
         }
 
         // Variance
@@ -104,6 +105,18 @@ public class SeasonalDamageEffect : SkillEffect
         // 3. Side Effects (Only if Current Season matches)
         if (current == RequiredWeather)
         {
+            // Apply Debuff
+            if (SideEffectDebuffTemplate != null)
+            {
+                target.buffController.AddBuff(SideEffectDebuffTemplate);
+                log.AddBuffEffectLog(new BuffEffectLog()
+                {
+                    AppliedTargetID = target.GetEntityID(),
+                    AppliedTarget = target.Stats.EntityName,
+                    Buff = new BuffEffectData(SideEffectDebuffTemplate)
+                });
+            }
+
             // Repeat Attack (Sun)
             if (RepeatAttackDamage > 0)
             {

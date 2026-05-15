@@ -18,7 +18,8 @@ MonoBehaviour:
   healParty: 0
   buffsToApply: []
   applyBuffsToParty: 0
-  cleanseDebuffs: 0
+  cleanseDebuffs: 1
+  cleanseMostRecentOnly: 1
   lockWeatherDuration: 0
   setNextSeasonOnUse: 1
   nextSeasonToSet: 1

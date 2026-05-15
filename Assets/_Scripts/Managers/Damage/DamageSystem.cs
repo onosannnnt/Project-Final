@@ -20,10 +20,12 @@ public static class DamageSystem
             }
         }
 
-        foreach (var mod in ctx.Caster.OutgoingModifiers)
+        var outgoing = new List<IDamageModifier>(ctx.Caster.OutgoingModifiers);
+        foreach (var mod in outgoing)
             mod.Modify(ctx);
 
-        foreach (var mod in ctx.Target.IncomingModifiers)
+        var incoming = new List<IDamageModifier>(ctx.Target.IncomingModifiers);
+        foreach (var mod in incoming)
             mod.Modify(ctx);
 
         ctx.Damage.Amount = Mathf.Max(ctx.Damage.Amount, 0);

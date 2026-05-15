@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillID: 53
   skillName: Deep Roots
-  description: 'Heal a target for 600 HP and cleanse all debuffs [Next Season: Rainy].'
+  description: 'Heal the target for 600 HP and cleanse all debuffs. [Next Turn: Rainy]'
   skillIcon: {fileID: 21300000, guid: ea61475f2ca0f4eeba50601040774701, type: 3}
   skillType: 1
   skillStyle: 3

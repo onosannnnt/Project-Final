@@ -66,7 +66,9 @@ public class BuffManager
     }
     public void RemoveBuff(ActiveBuff buff)
     {
-        // // Debug.Log(owner.gameObject.name + " lost buff: " + buff.Data.BuffName);
+        if (buff == null || !activeBuffs.Contains(buff)) return;
+
+        buff.Data.OnRemove(owner, buff);
         activeBuffs.Remove(buff);
         OnBuffsChanged?.Invoke();
     }

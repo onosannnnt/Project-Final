@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 429ac4d4225884fb185a149deb1a72af, type: 3}
+  m_Name: DamageReductionDebuff
+  m_EditorClassIdentifier: 
+  BuffName: Damage Reduction
+  Description: Outgoing damage reduced by 30%.
+  Icon: {fileID: 21300000, guid: 1f1aaf4286d2c4ea495a95b2bba8abaa, type: 3}
+  buffType: 1
+  isPermanent: 0
+  Duration: 2
+  isStackable: 0
+  MaxStack: 0
+  StackCalculationType: 0
+  Threshold: 0
+  DiminishingReturnDecayFactor: 0
+  targetType: 0
+  modifiers: []
+  isStealable: 0
+  preventLethalDamage: 0
+  preventHealing: 0
+  grantsDebuffImmunity: 0
+  BonusDamageFlat: 0
+  BonusDamagePercent: -0.3
+  BonusCritChance: 0
+  BonusCritMultiplier: 0

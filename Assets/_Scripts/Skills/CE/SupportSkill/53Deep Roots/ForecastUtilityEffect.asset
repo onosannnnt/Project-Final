@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: ForecastUtilityEffect
   m_EditorClassIdentifier: 
   Phase: 1
-  ExecuteOnce: 1
+  ExecuteOnce: 0
   healAmount: 600
   healParty: 0
   buffsToApply: []
   applyBuffsToParty: 0
   cleanseDebuffs: 1
+  cleanseMostRecentOnly: 0
   lockWeatherDuration: 0
   setNextSeasonOnUse: 1
   nextSeasonToSet: 1

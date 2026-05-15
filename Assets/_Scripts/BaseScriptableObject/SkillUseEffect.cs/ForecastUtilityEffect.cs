@@ -14,6 +14,7 @@ public class ForecastUtilityEffect : SkillEffect
 
     [Header("Utility")]
     [SerializeField] private bool cleanseDebuffs = false;
+    [SerializeField] private bool cleanseMostRecentOnly = false;
     [SerializeField] private int lockWeatherDuration = 0;
 
     [Header("Forecast Manipulation")]
@@ -101,9 +102,21 @@ public class ForecastUtilityEffect : SkillEffect
         if (cleanseDebuffs)
         {
             List<ActiveBuff> debuffs = target.buffController.GetDebuffs();
-            foreach (var debuff in debuffs)
+            if (cleanseMostRecentOnly)
             {
-                target.buffController.RemoveBuff(debuff);
+                if (debuffs.Count > 0)
+                {
+                    // Assuming GetDebuffs returns them in order of application or we can just pick the last one.
+                    // Usually buffController stores them in a list.
+                    target.buffController.RemoveBuff(debuffs[debuffs.Count - 1]);
+                }
+            }
+            else
+            {
+                foreach (var debuff in debuffs)
+                {
+                    target.buffController.RemoveBuff(debuff);
+                }
             }
         }
     }

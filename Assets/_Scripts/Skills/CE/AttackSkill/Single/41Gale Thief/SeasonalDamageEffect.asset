@@ -30,7 +30,8 @@ MonoBehaviour:
   MomentumBonusDamage: 0
   MomentumBonusPercent: 0.3
   HealCasterAmount: 0
-  StealBuffs: 1
+  StealBuffs: 0
+  SideEffectDebuffTemplate: {fileID: 11400000, guid: 41debf0130de4bff8930de0000000001, type: 2}
   MaxHPReductionPercent: 0
   MomentumMaxHPReductionPercent: 0
   MaxHPDeBuffTemplate: {fileID: 0}
