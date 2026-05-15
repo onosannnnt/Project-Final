@@ -8,7 +8,6 @@ public class TargetingPanel : MonoBehaviour
     [SerializeField] private StatInfoUI statInfoUI;
     [SerializeField] private Button DetailPanel;
     [SerializeField] private TextMeshProUGUI TargetingNameText;
-    [SerializeField] private TextMeshProUGUI LevelText;
     [SerializeField] private Image Icon;
     [SerializeField] private Transform BuffParent;
     [SerializeField] private GameObject BuffPrefab;
@@ -35,9 +34,9 @@ public class TargetingPanel : MonoBehaviour
     private void Update()
     {
         // เช็คเงื่อนไขว่า "ควรจะแสดงแผง UI หรือไม่"
-        bool shouldBeActive = (TurnManager.Instance.CurrentActivePlayer as PlayerEntity ?? PlayerCombat.instance).GetPlayerState == PlayerActionState.Targeting 
-                              && currentTarget != null 
-                              && TurnManager.Instance.GetTurnState() == TurnState.PlayerTurnState 
+        bool shouldBeActive = (TurnManager.Instance.CurrentActivePlayer as PlayerEntity ?? PlayerCombat.instance).GetPlayerState == PlayerActionState.Targeting
+                              && currentTarget != null
+                              && TurnManager.Instance.GetTurnState() == TurnState.PlayerTurnState
                               && (TurnManager.Instance.CurrentActivePlayer as PlayerEntity ?? PlayerCombat.instance).GetSelectedSkill != null
                               && (TurnManager.Instance.CurrentActivePlayer as PlayerEntity ?? PlayerCombat.instance).GetSelectedSkill.TargetType != TargetType.Self;
 
@@ -60,7 +59,6 @@ public class TargetingPanel : MonoBehaviour
         SetStatusBuff();
         TargetingNameText.text = currentTarget.Stats.GetName();
         Icon.sprite = currentTarget.Stats.GetIcon();
-        if (LevelText != null) LevelText.text = ""; // Level removed
     }
     public void SetEnemyTargetPanel(Entity enemy)
     {
@@ -98,7 +96,7 @@ public class TargetingPanel : MonoBehaviour
         List<ActiveBuff> statusBuffs = new List<ActiveBuff>();
         statusBuffs.AddRange(currentTarget.buffController.GetBuffsByType(BuffType.CrowdControl));
         statusBuffs.AddRange(currentTarget.buffController.GetBuffsByType(BuffType.Debuff));
-        
+
         if (statusBuffs.Count == 0) StatusBuffParent.gameObject.SetActive(false);
         else StatusBuffParent.gameObject.SetActive(true);
         if (statusBuffs.Count == 0) return;
