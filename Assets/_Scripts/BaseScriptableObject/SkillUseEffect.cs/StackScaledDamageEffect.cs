@@ -39,30 +39,25 @@ public class StackScaledDamageEffect : SkillEffect
         _finalBaseDamage = baseDamage + (stackCount * damagePerStack);
         
         _repeatCount = 0;
+        int toConsume = 0;
+
+        // 1. Handle Repeat Logic (Priority: Specification-driven)
         if (repeatIfEnoughStacks && stackCount >= repeatStackThreshold)
         {
-            int remaining = stackCount;
-            while (remaining >= repeatStackThreshold + repeatStackCost)
-            {
-                _repeatCount++;
-                remaining -= repeatStackCost;
-            }
+            _repeatCount = 1;
+            toConsume = repeatStackCost; // Usually 6 for Chain Bloom
+            Debug.Log($"[StackScaledDamageEffect] {caster.gameObject.name} triggers Repeat (Stacks: {stackCount}). Consuming fixed repeat cost: {toConsume}");
+        }
+        // 2. Handle Generic Consumption (Fallback if not repeating)
+        else if (consumeStacks && activeStacks != null)
+        {
+            toConsume = consumeAll ? activeStacks.CurrentStack : stacksToConsume;
+            Debug.Log($"[StackScaledDamageEffect] {caster.gameObject.name} No Repeat. Consuming generic amount: {toConsume}");
         }
 
-        if (consumeStacks && activeStacks != null)
+        // Execute Consumption
+        if (toConsume > 0 && activeStacks != null)
         {
-            int toConsume = consumeAll ? activeStacks.CurrentStack : stacksToConsume;
-            
-            // Add repeated attack costs to total consumption
-            if (repeatIfEnoughStacks)
-            {
-                toConsume += (_repeatCount * repeatStackCost);
-                if (activeStacks.Data.MaxStack > 0 && toConsume > activeStacks.Data.MaxStack)
-                {
-                    // Protection against consuming more than possible, though unlikely here
-                }
-            }
-
             caster.buffController.ConsumeBuffStack(activeStacks, toConsume);
         }
     }

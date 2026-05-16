@@ -13,5 +13,4 @@ MonoBehaviour:
   m_Name: P1SkillLoadout
   m_EditorClassIdentifier: 
   EquippedSkills:
-  - {fileID: 11400000, guid: 960ab9b50c23d4b80aa308ff09c2cc5e, type: 2}
-  - {fileID: 11400000, guid: 25ff8610d4d945d4fa36703e5a504cff, type: 2}
+  - {fileID: 11400000, guid: 74d34434fbe1948fb8062dde13fd48bb, type: 2}

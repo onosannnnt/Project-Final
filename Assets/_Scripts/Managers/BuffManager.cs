@@ -33,6 +33,12 @@ public class BuffManager
 
     public void AddBuff(Buff buff)
     {
+        if (buff == null)
+        {
+            Debug.LogWarning($"[BuffManager] Attempted to add a null buff to {owner.gameObject.name}");
+            return;
+        }
+
         if (buff.buffType == BuffType.Debuff || buff.buffType == BuffType.CrowdControl)
         {
             if (activeBuffs.Exists(b => b.Data != null && b.Data.grantsDebuffImmunity))

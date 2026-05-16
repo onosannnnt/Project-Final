@@ -243,9 +243,18 @@ public class HealthbarUI : MonoBehaviour
             var stackTransform = buffObj.transform.Find("Stack");
             if (stackTransform != null)
             {
-                var stackText = stackTransform.GetComponentInChildren<TextMeshProUGUI>();
-                if (stackText != null)
-                    stackText.text = BuffStackColor(buff.CurrentStack) + $"{buff.CurrentStack}</color>";
+                // Only show stack count if the buff is actually stackable
+                if (buff.Data.isStackable)
+                {
+                    stackTransform.gameObject.SetActive(true);
+                    var stackText = stackTransform.GetComponentInChildren<TextMeshProUGUI>();
+                    if (stackText != null)
+                        stackText.text = BuffStackColor(buff.CurrentStack) + $"{buff.CurrentStack}</color>";
+                }
+                else
+                {
+                    stackTransform.gameObject.SetActive(false);
+                }
             }
         }
     }

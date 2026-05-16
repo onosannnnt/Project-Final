@@ -134,6 +134,8 @@ public class ForecastUtilityEffect : SkillEffect
 
     private void AddBuff(Entity target, Buff buff, CombatActionLog log)
     {
+        if (buff == null || target == null) return;
+
         target.buffController.AddBuff(buff);
         log.AddBuffEffectLog(new BuffEffectLog()
         {

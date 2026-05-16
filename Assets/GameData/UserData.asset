@@ -20,7 +20,7 @@ MonoBehaviour:
   SelectedQuestIndex: 3
   HighestCompletedQuestIndex: 2
   IsGameFinished: 0
-  TotalCoins: 540
+  TotalCoins: 230
   PendingQuestCoins: 0
   PendingRewardQuestIndex: -1
   tutorialCoinReward: 100
@@ -35,4 +35,57 @@ MonoBehaviour:
   DefaultSkill: {fileID: 11400000, guid: 1388574c03e724a8f834dae785cc7325, type: 2}
   OwnedSkills:
   - {fileID: 11400000, guid: 960ab9b50c23d4b80aa308ff09c2cc5e, type: 2}
+  - {fileID: 11400000, guid: 25ff8610d4d945d4fa36703e5a504cff, type: 2}
+  - {fileID: 11400000, guid: f51740f81383e4075ac5a089f6690096, type: 2}
+  - {fileID: 11400000, guid: 004ebf67e578c49ed803b52b78348275, type: 2}
+  - {fileID: 11400000, guid: 44b5e9c1c40694dda9b06e9de18c1e1f, type: 2}
+  - {fileID: 11400000, guid: da49b81583e914780a3f07a7f2fd34fb, type: 2}
+  - {fileID: 11400000, guid: 9d0349421b5f2467abeeca75ad8e08ec, type: 2}
+  - {fileID: 11400000, guid: 08027bd3b7f7e487ba0daf71e9888369, type: 2}
+  - {fileID: 11400000, guid: 8f63d46acd2b54418850729bcf803566, type: 2}
+  - {fileID: 11400000, guid: c43a1b36c8f53214b9061f5eaff79007, type: 2}
+  - {fileID: 11400000, guid: 8228c8739e9424415b0ac6be3787e3a3, type: 2}
+  - {fileID: 11400000, guid: 03340a7ec62f14fb59a235742685b8d3, type: 2}
+  - {fileID: 11400000, guid: 4b1f3aec81a5a448b9393a9de798a0d0, type: 2}
+  - {fileID: 11400000, guid: 9f57f412bcebc407aafdcc7833532191, type: 2}
+  - {fileID: 11400000, guid: 74d34434fbe1948fb8062dde13fd48bb, type: 2}
+  - {fileID: 11400000, guid: 7f66555dc3df946328830aea983cd3d9, type: 2}
+  - {fileID: 11400000, guid: 313b913161f04449384befae664cab37, type: 2}
+  - {fileID: 11400000, guid: 902be44bffc1f427cae7ff8d18100580, type: 2}
+  - {fileID: 11400000, guid: f7eed15a7ab0a430ca8c3beca04240ba, type: 2}
+  - {fileID: 11400000, guid: 2bbf253faab41468f974deef9e5586d7, type: 2}
+  - {fileID: 11400000, guid: be07c4cb5ae8c401cb642a68a4a45d38, type: 2}
+  - {fileID: 11400000, guid: 2571b48f58c754b5eacb5c8427ee3e86, type: 2}
+  - {fileID: 11400000, guid: 2b925b21c564145f9b418681efa819e9, type: 2}
+  - {fileID: 11400000, guid: cffa3d16caa6e4b6dab9bcf04b2b15c8, type: 2}
+  - {fileID: 11400000, guid: 1afd50ff6ce64434693c2f6efc9f01fc, type: 2}
+  - {fileID: 11400000, guid: e87ee075edcf24c85970864774ec4c44, type: 2}
+  - {fileID: 11400000, guid: b87360abd8d52457eac45fe5f375b8af, type: 2}
+  - {fileID: 11400000, guid: 0a2d4a86e599746a7aad8f9f3a4d9b03, type: 2}
+  - {fileID: 11400000, guid: 2e93ae26964a6469380c23c95bcfb84b, type: 2}
+  - {fileID: 11400000, guid: 9c4289f222d2d4cbf8c774579ce506c6, type: 2}
+  - {fileID: 11400000, guid: bbc99df4c61da4712bd11d1dfd1339a9, type: 2}
+  - {fileID: 11400000, guid: 222c67016ebda43daa1c98f9f79c5ef7, type: 2}
+  - {fileID: 11400000, guid: 0303a0136c52f4be7a8aa2d2809826b3, type: 2}
+  - {fileID: 11400000, guid: 9307e4762e2cf4f9abf2b6215b2792e1, type: 2}
+  - {fileID: 11400000, guid: 330cefd638e1e4e888ba46d5c5ccc4ae, type: 2}
+  - {fileID: 11400000, guid: 981e16273364f4b19867e5caab1dae6e, type: 2}
+  - {fileID: 11400000, guid: d7c4a384caa3d4d879c493fd91cc2dd2, type: 2}
+  - {fileID: 11400000, guid: 1ca036345579842d68627b076cebf97f, type: 2}
+  - {fileID: 11400000, guid: ddfad2ab97ccf43309ad4361b520c246, type: 2}
+  - {fileID: 11400000, guid: 813d6045c0d404d32bd45a3874a788aa, type: 2}
+  - {fileID: 11400000, guid: dd6540ec45444446caf02b92a2cd1542, type: 2}
+  - {fileID: 11400000, guid: 25954162e312a49cc882da17461cd465, type: 2}
+  - {fileID: 11400000, guid: b8c9fe8b379ef41f897fc9aa0e28e066, type: 2}
+  - {fileID: 11400000, guid: 431bb4b77d1f0418f985347fb8a99ffb, type: 2}
+  - {fileID: 11400000, guid: 80bde806d8ed74c93af5ec6f38ebb989, type: 2}
+  - {fileID: 11400000, guid: 9f1807c3595f943b99c5841681ff6b70, type: 2}
+  - {fileID: 11400000, guid: 599a1d1be477d4beea93517ccc81400b, type: 2}
+  - {fileID: 11400000, guid: 39f1382ab7d8440128b504f27ee05922, type: 2}
+  - {fileID: 11400000, guid: a087bfcefd3374a4c844c0b911bbbe6b, type: 2}
+  - {fileID: 11400000, guid: 28eb0a6018a814356886b073d7f9471e, type: 2}
+  - {fileID: 11400000, guid: 5feafc158be5e4de691c18193f38ccde, type: 2}
+  - {fileID: 11400000, guid: 0679a27f1e3f64ba585b2af4c584bcb6, type: 2}
+  - {fileID: 11400000, guid: d4560444e8b3d43ca8ea0249008e3f1f, type: 2}
+  - {fileID: 11400000, guid: ded5efef7f66a4a4eb67dcdef73d7515, type: 2}
   TrialSkills: []

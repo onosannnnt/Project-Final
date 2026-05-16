@@ -191,7 +191,7 @@ public class StatInfoUI : MonoBehaviour
         BuffItemUI ui = buffGO.GetComponent<BuffItemUI>();
         if (ui != null)
         {
-            ui.Setup(buff.Data.BuffName, buff.Data.Description, buff.Data.Icon, buff.CurrentStack, buff.CurrentDuration, buff.Data.isPermanent);
+            ui.Setup(buff.Data.BuffName, buff.Data.Description, buff.Data.Icon, buff.CurrentStack, buff.CurrentDuration, buff.Data.isPermanent, buff.Data.isStackable);
         }
     }
 

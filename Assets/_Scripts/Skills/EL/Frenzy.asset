@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BuffName: Frenzy
   Description: Max 12 Stacks
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: c24620eafefbca84791c90c58ec5dae5, type: 3}
   buffType: 0
   isPermanent: 1
   Duration: 3
@@ -25,3 +25,7 @@ MonoBehaviour:
   DiminishingReturnDecayFactor: 0
   targetType: 0
   modifiers: []
+  isStealable: 1
+  preventLethalDamage: 0
+  preventHealing: 0
+  grantsDebuffImmunity: 0
