@@ -72,26 +72,16 @@ public class CombatActionProcessor : MonoBehaviour
 
         if (entity is PlayerEntity)
         {
-            executed = ExecutePlayerAction(entity, target, skill, log, consumeCost: true);
+            ExecutePlayerAction(entity, target, skill, log);
         }
         else if (entity is EnemyCombat enemy)
         {
-            executed = ExecuteEnemyAction(enemy, target, skill, log, consumeCost: true);
-        }
-
-        if (executed)
-        {
-            TryRepeatActionFromBuff(entity, target, skill, log);
+            ExecuteEnemyAction(enemy, target, skill, log);
         }
     }
 
-    private bool ExecutePlayerAction(Entity entity, Entity target, Skill skill, CombatActionLog log, bool consumeCost)
+    private void ExecutePlayerAction(Entity entity, Entity target, Skill skill, CombatActionLog log)
     {
-        if (entity == null || skill == null)
-        {
-            return false;
-        }
-
         int actualCost = turnManager.GetSkillCost(skill);
         bool canAfford = turnManager.UseSharedPlayerSkillPointPool
             ? turnManager.ResourceManager.GetSharedPlayerCurrentSkillPoints() >= actualCost
@@ -120,11 +110,13 @@ public class CombatActionProcessor : MonoBehaviour
         entity.skillManager.UseSkill(skill, targets, log);
     }
 
-    private bool ExecuteEnemyAction(EnemyCombat enemy, Entity target, Skill skill, CombatActionLog log, bool consumeCost)
+    private void ExecuteEnemyAction(EnemyCombat enemy, Entity target, Skill skill, CombatActionLog log)
     {
-        if (enemy == null || skill == null)
+        int actualCost = turnManager.GetSkillCost(skill);
+        if (enemy.CurrentSP < actualCost)
         {
-            return false;
+            Debug.Log($"{enemy.gameObject.name} not enough SP for {skill.skillName}");
+            return;
         }
 
         // Verify target

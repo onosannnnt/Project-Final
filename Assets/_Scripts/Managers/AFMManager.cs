@@ -18,9 +18,9 @@ public class AFMApiResponse
 
 public enum AFMType
 {
-    el,
-    ce,
-    rv
+    EL,
+    CE,
+    RV
 }
 
 [Serializable]
@@ -71,6 +71,12 @@ public class AFMManager : MonoBehaviour
     [ContextMenu("Apply Mock Response")]
     public void ApplyMockResponse()
     {
+        if (ShouldSkipAFM())
+        {
+            if (verboseLog) Debug.Log("[AFMManager] Skip apply: Tutorial or Quest 1 mode detected.");
+            return;
+        }
+
         if (applyOnlyOnce && hasApplied)
         {
             if (verboseLog)
@@ -92,6 +98,8 @@ public class AFMManager : MonoBehaviour
 
     public bool ApplySingleResponse(AFMApiResponse response)
     {
+        if (ShouldSkipAFM()) return false;
+
         if (response == null)
         {
             Debug.LogWarning("[AFMManager] Response is null.");
@@ -331,5 +339,26 @@ public class AFMManager : MonoBehaviour
     private static string ToApiType(AFMType type)
     {
         return type.ToString().ToLowerInvariant();
+    }
+
+    private bool ShouldSkipAFM()
+    {
+        // 1. Check UserData via TurnManager
+        if (TurnManager.Instance != null && TurnManager.Instance.UserData != null)
+        {
+            int index = TurnManager.Instance.UserData.SelectedQuestIndex;
+            if (index == UserData.TutorialQuestIndex || index == UserData.Quest1Index)
+                return true;
+        }
+
+        // 2. Check current quest data directly (Tutorial flag)
+        if (EnemyGenerator.Instance != null)
+        {
+            var quest = EnemyGenerator.Instance.GetCurrentQuest();
+            if (quest != null && quest.isTutorial)
+                return true;
+        }
+
+        return false;
     }
 }
