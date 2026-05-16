@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: ComprehensiveCorruptedStrikeEffect
   m_EditorClassIdentifier: 
   Phase: 1
+  ExecuteOnce: 0
   BaseDamage: 400
   Element: 0
-  Accuracy: 1
+  Accuracy: 100
   DamagePer10PercentCorrupted: 0
   CurrentHpCostPercent: 0
   ForceHpToMaxPercent: -1
