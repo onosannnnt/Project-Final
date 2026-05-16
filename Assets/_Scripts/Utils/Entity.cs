@@ -69,14 +69,14 @@ public abstract class Entity : MonoBehaviour
         float maxHp = GetStat(StatType.MaxHealth);
         float cap = maxHp * 0.9f; // Cap at 90%
         corruptedHealth = Mathf.Clamp(corruptedHealth + amount, 0, cap);
-        
+
         // Clamp current health to new effective max
         float effectiveMax = EffectiveMaxHealth;
         if (currentHealth > effectiveMax)
         {
             currentHealth = effectiveMax;
         }
-        
+
         TriggerHealthChanged();
         OnCorruptedHealthChanged?.Invoke(currentHealth, corruptedHealth, maxHp);
     }
@@ -85,7 +85,7 @@ public abstract class Entity : MonoBehaviour
     {
         float maxHp = GetStat(StatType.MaxHealth);
         corruptedHealth = Mathf.Clamp(corruptedHealth - amount, 0, maxHp);
-        
+
         TriggerHealthChanged();
         OnCorruptedHealthChanged?.Invoke(currentHealth, corruptedHealth, maxHp);
     }
@@ -95,7 +95,7 @@ public abstract class Entity : MonoBehaviour
         float maxHp = GetStat(StatType.MaxHealth);
         float cap = maxHp * 0.9f; // Cap at 90%
         corruptedHealth = Mathf.Clamp(amount, 0, cap);
-        
+
         // Clamp current health if needed
         float effectiveMax = EffectiveMaxHealth;
         if (currentHealth > effectiveMax)
@@ -154,6 +154,8 @@ public abstract class Entity : MonoBehaviour
         if (isDead) return;
 
         float appliedDamage = damage.Amount;
+
+        TryApplyDeathSave(ref appliedDamage);
 
         bool hasLethalProtection = buffController != null &&
                                     buffController.GetAllBuffs().Exists(b => b.Data != null && b.Data.preventLethalDamage);
@@ -224,7 +226,7 @@ public abstract class Entity : MonoBehaviour
             currentSkillPoint = Mathf.Clamp(amount, 0, (int)GetStat(StatType.MaxSkillPoint));
         else
             currentSkillPoint = Mathf.Clamp(currentSkillPoint + amount, 0, (int)GetStat(StatType.MaxSkillPoint));
-            
+
         OnSPChanged?.Invoke(currentSkillPoint, (int)GetStat(StatType.MaxSkillPoint));
     }
 
@@ -297,6 +299,98 @@ public abstract class Entity : MonoBehaviour
         return (baseStat + flatStat) * MultiplierStat;
     }
     protected abstract void Die();
+
+    private bool TryApplyDeathSave(ref float appliedDamage)
+    {
+        if (appliedDamage <= 0f)
+        {
+            return false;
+        }
+
+        if (currentHealth <= 1f)
+        {
+            return false;
+        }
+
+        if (currentHealth - appliedDamage > 0f)
+        {
+            return false;
+        }
+
+        if (buffController == null)
+        {
+            return false;
+        }
+
+        List<ActiveBuff> buffs = buffController.GetAllBuffs();
+        if (buffs == null || buffs.Count == 0)
+        {
+            return false;
+        }
+
+        foreach (ActiveBuff activeBuff in buffs)
+        {
+            if (activeBuff?.Data is DeathSaveBuff deathSaveBuff)
+            {
+                float chance = deathSaveBuff.GetChance(activeBuff);
+                if (chance <= 0f)
+                {
+                    continue;
+                }
+
+                if (UnityEngine.Random.Range(0f, 100f) <= chance)
+                {
+                    appliedDamage = Mathf.Min(appliedDamage, currentHealth - 1f);
+
+                    if (deathSaveBuff.GrantEnemyImmunityForRestOfTurn && this is EnemyCombat)
+                    {
+                        deathSaveBuff.SetRestOfTurnImmunity(activeBuff);
+                    }
+
+                    if (deathSaveBuff.ConsumeStackOnTrigger)
+                    {
+                        buffController.ConsumeBuffStack(activeBuff, 1);
+                    }
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private bool HasRestOfTurnDeathSaveImmunity()
+    {
+        if (!(this is EnemyCombat))
+        {
+            return false;
+        }
+
+        if (buffController == null)
+        {
+            return false;
+        }
+
+        List<ActiveBuff> buffs = buffController.GetAllBuffs();
+        if (buffs == null || buffs.Count == 0)
+        {
+            return false;
+        }
+
+        foreach (ActiveBuff activeBuff in buffs)
+        {
+            if (activeBuff?.Data is DeathSaveBuff deathSaveBuff)
+            {
+                if (deathSaveBuff.HasRestOfTurnImmunity(activeBuff))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
     public virtual bool CanAction()
     {
         foreach (var buff in buffController.GetAllBuffs())

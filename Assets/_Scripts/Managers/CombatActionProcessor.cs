@@ -43,7 +43,7 @@ public class CombatActionProcessor : MonoBehaviour
             {
                 entity.SeasonMatchStreak++;
                 Debug.Log($"[Weather Match] {entity.gameObject.name} streak: {entity.SeasonMatchStreak}/3 (Weather: {current})");
-                
+
                 if (entity.SeasonMatchStreak >= 3)
                 {
                     if (momentumBuffTemplate != null)
@@ -72,16 +72,26 @@ public class CombatActionProcessor : MonoBehaviour
 
         if (entity is PlayerEntity)
         {
-            ExecutePlayerAction(entity, target, skill, log);
+            executed = ExecutePlayerAction(entity, target, skill, log, consumeCost: true);
         }
         else if (entity is EnemyCombat enemy)
         {
-            ExecuteEnemyAction(enemy, target, skill, log);
+            executed = ExecuteEnemyAction(enemy, target, skill, log, consumeCost: true);
+        }
+
+        if (executed)
+        {
+            TryRepeatActionFromBuff(entity, target, skill, log);
         }
     }
 
-    private void ExecutePlayerAction(Entity entity, Entity target, Skill skill, CombatActionLog log)
+    private bool ExecutePlayerAction(Entity entity, Entity target, Skill skill, CombatActionLog log, bool consumeCost)
     {
+        if (entity == null || skill == null)
+        {
+            return false;
+        }
+
         int actualCost = turnManager.GetSkillCost(skill);
         bool canAfford = turnManager.UseSharedPlayerSkillPointPool
             ? turnManager.ResourceManager.GetSharedPlayerCurrentSkillPoints() >= actualCost
@@ -110,13 +120,11 @@ public class CombatActionProcessor : MonoBehaviour
         entity.skillManager.UseSkill(skill, targets, log);
     }
 
-    private void ExecuteEnemyAction(EnemyCombat enemy, Entity target, Skill skill, CombatActionLog log)
+    private bool ExecuteEnemyAction(EnemyCombat enemy, Entity target, Skill skill, CombatActionLog log, bool consumeCost)
     {
-        int actualCost = turnManager.GetSkillCost(skill);
-        if (enemy.CurrentSP < actualCost)
+        if (enemy == null || skill == null)
         {
-            Debug.Log($"{enemy.gameObject.name} not enough SP for {skill.skillName}");
-            return;
+            return false;
         }
 
         // Verify target

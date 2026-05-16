@@ -13,6 +13,8 @@ public class UserData : ScriptableObject
 
     public int ID;
     public string Username;
+    public AFMType AFMType;
+    public int AFMTier = 0;
     [Tooltip("Current game progression phase (e.g., 1, 2, 3)")]
     public int GamePhase = 1;
     [Tooltip("Selected quest index. -1 means no quest is selected yet.")]
@@ -64,7 +66,7 @@ public class UserData : ScriptableObject
     {
         if (skill == null) return false;
         // DefaultSkill is always "owned" but doesn't live in the OwnedSkills list
-        if (skill == DefaultSkill) return true; 
+        if (skill == DefaultSkill) return true;
         return OwnedSkills.Contains(skill) || TrialSkills.Contains(skill);
     }
 
@@ -82,7 +84,7 @@ public class UserData : ScriptableObject
     public void RemoveSkill(Skill skill)
     {
         if (skill == null || skill == DefaultSkill) return;
-        
+
         if (OwnedSkills.Contains(skill))
         {
             OwnedSkills.Remove(skill);
@@ -135,7 +137,7 @@ public class UserData : ScriptableObject
                 {
                     // Remove all trial skills from this loadout
                     loadout.EquippedSkills.RemoveAll(s => skillsToRemove.Contains(s));
-                    
+
 #if UNITY_EDITOR
                     UnityEditor.EditorUtility.SetDirty(loadout);
 #endif
@@ -258,7 +260,7 @@ public class UserData : ScriptableObject
             return true;
         }
 
-        // If another quest is already selected, we shouldn't overwrite it directly 
+        // If another quest is already selected, we shouldn't overwrite it directly
         // to prevent potential logic issues (player should complete or clear first)
         if (HasSelectedQuest())
         {

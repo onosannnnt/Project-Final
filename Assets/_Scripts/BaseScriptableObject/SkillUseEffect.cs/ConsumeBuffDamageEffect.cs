@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ConsumeBuffDamageEffect", menuName = "ScriptableObjects/SkillEffect/ConsumeBuffDamageEffect")]
@@ -10,17 +11,18 @@ public class ConsumeBuffDamageEffect : DamageEffect
 
     [System.NonSerialized] private int _lastActionID = -1;
     [System.NonSerialized] private int _cachedStacksConsumed = 0;
+    [System.NonSerialized] private bool _cachedDidPreserveStacks = false;
 
     public override bool Execute(Entity caster, Entity target, CombatActionLog log, SkillStyle style = SkillStyle.None)
     {
-// // Debug.Log(caster.gameObject.name + " dealt damage on " + target.gameObject.name);
+        // // Debug.Log(caster.gameObject.name + " dealt damage on " + target.gameObject.name);
 
         // 1. Accuracy Check
         if (Random.value > Accuracy)
         {
             // // Debug.Log($"{caster.gameObject.name}'s attack but missed!");
             target.ShowDamage(0, Color.white);
-            return false; 
+            return false;
         }
 
         // Calculate Base + Bonus from Buff
@@ -31,31 +33,37 @@ public class ConsumeBuffDamageEffect : DamageEffect
         {
             _lastActionID = log.ActionID;
             _cachedStacksConsumed = 0;
+            _cachedDidPreserveStacks = false;
 
             ActiveBuff buff = caster.buffController.GetBuffByName(BuffNameToConsume);
-// // Debug.Log($"[ConsumeBuffDamageEffect] Looking for buff: {BuffNameToConsume}. Found on caster: {buff != null}");
-            
-            if (buff == null) 
+            bool isCasterBuff = buff != null;
+            // // Debug.Log($"[ConsumeBuffDamageEffect] Looking for buff: {BuffNameToConsume}. Found on caster: {buff != null}");
+
+            if (buff == null)
             {
                 buff = target.buffController.GetBuffByName(BuffNameToConsume);
-// // Debug.Log($"[ConsumeBuffDamageEffect] Looking for buff: {BuffNameToConsume}. Found on target: {buff != null}");
+                // // Debug.Log($"[ConsumeBuffDamageEffect] Looking for buff: {BuffNameToConsume}. Found on target: {buff != null}");
             }
 
             if (buff != null && buff.CurrentStack > 0)
             {
-// // Debug.Log($"[ConsumeBuffDamageEffect] {BuffNameToConsume} found with {buff.CurrentStack} stacks.");
+                // // Debug.Log($"[ConsumeBuffDamageEffect] {BuffNameToConsume} found with {buff.CurrentStack} stacks.");
                 _cachedStacksConsumed = Mathf.Min(buff.CurrentStack, MaxStacksToConsume);
+                _cachedDidPreserveStacks = isCasterBuff && ShouldPreserveStacks(caster, buff);
 
-                if (caster.buffController.GetBuffByName(BuffNameToConsume) != null)
+                if (!_cachedDidPreserveStacks)
                 {
-                    caster.buffController.ConsumeBuffStack(buff, _cachedStacksConsumed);
-                }
-                else
-                {
-                    target.buffController.ConsumeBuffStack(buff, _cachedStacksConsumed);
+                    if (isCasterBuff)
+                    {
+                        caster.buffController.ConsumeBuffStack(buff, _cachedStacksConsumed);
+                    }
+                    else
+                    {
+                        target.buffController.ConsumeBuffStack(buff, _cachedStacksConsumed);
+                    }
                 }
 
-// // Debug.Log($"Consumed {_cachedStacksConsumed} stacks of {BuffNameToConsume} for bonus damage.");
+                // // Debug.Log($"Consumed {_cachedStacksConsumed} stacks of {BuffNameToConsume} for bonus damage.");
             }
         }
 
@@ -66,11 +74,38 @@ public class ConsumeBuffDamageEffect : DamageEffect
         float variance = Random.Range(0.85f, 1.15f);
         float finalDamage = totalDamage * variance;
 
-// // Debug.Log($"Base Damage: {totalDamage}, Variance: {variance}, Final Damage: {finalDamage}");
+        // // Debug.Log($"Base Damage: {totalDamage}, Variance: {variance}, Final Damage: {finalDamage}");
 
         Damage damage = new Damage(finalDamage, Element, false, CriticalHitChance, 1.5f);
         DamageCtx ctx = new DamageCtx(caster, target, damage);
         DamageSystem.Process(ctx, log);
         return true;
+    }
+
+    private bool ShouldPreserveStacks(Entity caster, ActiveBuff consumedBuff)
+    {
+        if (caster == null || caster.buffController == null || consumedBuff == null)
+        {
+            return false;
+        }
+
+        List<ActiveBuff> buffs = caster.buffController.GetAllBuffs();
+        if (buffs == null)
+        {
+            return false;
+        }
+
+        foreach (ActiveBuff activeBuff in buffs)
+        {
+            if (activeBuff?.Data is StackPreserveBuff preserveBuff)
+            {
+                if (preserveBuff.ShouldPreserve(consumedBuff, activeBuff))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
