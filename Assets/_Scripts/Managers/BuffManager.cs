@@ -73,12 +73,15 @@ public class BuffManager
 
             buff.OnApply(owner, newBuff);
         }
+        
+        Debug.Log($"[BuffManager] {owner.gameObject.name} added buff: {buff.BuffName} (Type: {buff.buffType}, Icon: {(buff.Icon != null ? buff.Icon.name : "NULL")}). Total buffs: {activeBuffs.Count}");
         OnBuffsChanged?.Invoke();
     }
     public void RemoveBuff(ActiveBuff buff)
     {
         if (buff == null || !activeBuffs.Contains(buff)) return;
 
+        Debug.Log($"[BuffManager] {owner.gameObject.name} REMOVING buff: {buff.Data.BuffName}. Reason: Manual/Scripted call.");
         buff.Data.OnRemove(owner, buff);
         activeBuffs.Remove(buff);
         OnBuffsChanged?.Invoke();
@@ -127,6 +130,7 @@ public class BuffManager
         // // Debug.Log(owner.gameObject.name + " has " + toRemove.Count + " buffs to remove.");
         foreach (var buff in toRemove)
         {
+            Debug.Log($"[BuffManager] {owner.gameObject.name} REMOVING buff: {buff.Data.BuffName}. Reason: Duration expired ({buff.CurrentDuration}) and not permanent.");
             buff.Data.OnRemove(owner, buff);
             activeBuffs.Remove(buff);
         }

@@ -222,8 +222,7 @@ public class HealthbarUI : MonoBehaviour
             Destroy(child.gameObject);
         }
         if (targetPlayer == null || targetPlayer.buffController == null) return;
-        // List<ActiveBuff> statusBuffs = new List<ActiveBuff>();
-        // List<ActiveBuff> Buffs = targetPlayer.buffController.GetBuffsByType(BuffType.Buff);
+        
         List<ActiveBuff> Buffs = new List<ActiveBuff>();
         Buffs.AddRange(targetPlayer.buffController.GetBuffsByType(BuffType.Buff));
         Buffs.AddRange(targetPlayer.buffController.GetBuffsByType(BuffType.Debuff));

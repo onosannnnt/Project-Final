@@ -90,6 +90,7 @@ public class SeasonalDamageEffect : SkillEffect
         // Momentum Damage Bonus
         if (UseMomentum && hasMomentum)
         {
+            Debug.Log($"[SeasonalDamageEffect] {caster.gameObject.name} applying skill-specific Momentum bonus: {MomentumBonusPercent * 100}% extra damage.");
             // Note: The global +40% is already handled by MomentumBuff's IDamageModifier.
             // This section handles skill-specific bonuses (like flat damage additions).
             totalDamage += MomentumBonusDamage;

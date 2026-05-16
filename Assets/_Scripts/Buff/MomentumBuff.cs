@@ -48,7 +48,15 @@ public class MomentumBuff : Buff
             if (ctx.Style != SkillStyle.CE) return;
 
             ActiveBuff momentum = owner.buffController.GetBuffByName("Momentum");
-            if (momentum == null || !momentum.isUsable) return;
+            if (momentum == null) return;
+            
+            if (!momentum.isUsable)
+            {
+                Debug.Log($"[MomentumBuff] {owner.gameObject.name} has Momentum but it's not usable yet this turn.");
+                return;
+            }
+
+            Debug.Log($"[MomentumBuff] {owner.gameObject.name} consuming Momentum for damage bonus! (Multiplier: {multiplier})");
 
             // Apply bonus
             ctx.Damage.Amount *= (1f + multiplier);

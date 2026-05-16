@@ -42,10 +42,13 @@ public class CombatActionProcessor : MonoBehaviour
             if (matches)
             {
                 entity.SeasonMatchStreak++;
+                Debug.Log($"[Weather Match] {entity.gameObject.name} streak: {entity.SeasonMatchStreak}/3 (Weather: {current})");
+                
                 if (entity.SeasonMatchStreak >= 3)
                 {
                     if (momentumBuffTemplate != null)
                     {
+                        Debug.Log($"[MOMENTUM GAINED] {entity.gameObject.name} has reached a streak of 3 and gained Momentum!");
                         entity.buffController.AddBuff(momentumBuffTemplate);
                         log.AddBuffEffectLog(new BuffEffectLog()
                         {
@@ -59,6 +62,10 @@ public class CombatActionProcessor : MonoBehaviour
             }
             else
             {
+                if (entity.SeasonMatchStreak > 0)
+                {
+                    Debug.Log($"[Streak Broken] {entity.gameObject.name} failed to match weather. Streak reset to 0.");
+                }
                 entity.SeasonMatchStreak = 0;
             }
         }
@@ -101,13 +108,6 @@ public class CombatActionProcessor : MonoBehaviour
         }
 
         entity.skillManager.UseSkill(skill, targets, log);
-
-        // Consume Momentum if a CE skill was used
-        if (skill.skillStyle == SkillStyle.CE)
-        {
-            ActiveBuff momentum = entity.buffController.GetBuffByName("Momentum");
-            if (momentum != null) entity.buffController.RemoveBuff(momentum);
-        }
     }
 
     private void ExecuteEnemyAction(EnemyCombat enemy, Entity target, Skill skill, CombatActionLog log)
@@ -129,13 +129,6 @@ public class CombatActionProcessor : MonoBehaviour
         if (skill.CorruptedHealthGain > 0) enemy.GainCorruptedHealth(skill.CorruptedHealthGain);
 
         enemy.skillManager.UseSkill(skill, targets, log);
-
-        // Consume Momentum if a CE skill was used
-        if (skill.skillStyle == SkillStyle.CE)
-        {
-            ActiveBuff momentum = enemy.buffController.GetBuffByName("Momentum");
-            if (momentum != null) enemy.buffController.RemoveBuff(momentum);
-        }
     }
 
     private List<Entity> GetTargets(Entity caster, Entity primaryTarget, Skill skill)

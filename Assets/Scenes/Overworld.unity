@@ -25612,7 +25612,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 812, y: 55}
+  m_AnchoredPosition: {x: 907.00006, y: 55}
   m_SizeDelta: {x: 88, y: 88}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &930995242
@@ -34278,7 +34278,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1238750526
 RectTransform:
   m_ObjectHideFlags: 0
@@ -34297,7 +34297,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 907, y: 55}
+  m_AnchoredPosition: {x: 1002.00006, y: 55}
   m_SizeDelta: {x: 88, y: 88}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1238750527
@@ -34344,9 +34344,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1798345013}
+      - m_Target: {fileID: 664269751}
         m_TargetAssemblyTypeName: InventoryTabController, Assembly-CSharp
-        m_MethodName: OpenInventory
+        m_MethodName: 
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -37953,7 +37953,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 657, y: 55}
+  m_AnchoredPosition: {x: 752, y: 55}
   m_SizeDelta: {x: 197, y: 88}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1382903368

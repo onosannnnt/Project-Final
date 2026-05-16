@@ -13972,7 +13972,7 @@ MonoBehaviour:
   EnemyActionQueueUI: {fileID: 708008530}
   userData: {fileID: 11400000, guid: bd7868a778b044575959e5160d52fa42, type: 2}
   enablePlayerstyleLogging: 1
-  stageCompleteSender: {fileID: 0}
+  stageCompleteSender: {fileID: 1426198915}
   sendPlayerstyleOnWin: 1
   sendPlayerstyleOnLose: 0
   turnRound: 0
