@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillID: 12
   skillName: Desperate Prayer
-  description: Heal 200 HP (increase to 600 and cleanse all debuffs if target HP is
-    below 30%).
+  description: Heal 200 HP (increase to 600 and cleanse all debuffs if target HP
+    is below 30%).
   skillIcon: {fileID: 21300000, guid: ea61475f2ca0f4eeba50601040774701, type: 3}
   skillType: 1
   skillStyle: 1
@@ -26,4 +26,4 @@ MonoBehaviour:
   TargetCount: 0
   reducesArmor: 0
   SkillEffects:
-  - {fileID: 11400000, guid: bcf22b3952f04eb3ab0f4c1d9455009f, type: 2}
+  - {fileID: 11400000, guid: f8003df9a884144628578fa061f64c3c, type: 2}
