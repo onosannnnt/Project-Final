@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Primal Bloodlust
   m_EditorClassIdentifier: 
   BuffName: Primal Bloodlust
-  Description: The AlphaWolf feeds on the fall of its pack. Each death grants permanent
-    [Enraged] stacks, amplifying its ferocity. If all allies perish, it summons reinforcements.
-    Control the pack before its rage spirals out of control.
+  Description: "AlphaWolf gains permanent [Enraged] stacks whenever one of its allies
+    dies, increasing its damage over time. If all allied wolves are defeated, the
+    boss will summon new reinforcements. Defeat the pack carefully before the boss
+    becomes too strong.\r"
   Icon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}
   buffType: 0
   isPermanent: 1
@@ -27,5 +28,7 @@ MonoBehaviour:
   DiminishingReturnDecayFactor: 0
   targetType: 0
   modifiers: []
+  isStealable: 1
   preventLethalDamage: 0
   preventHealing: 0
+  grantsDebuffImmunity: 0
