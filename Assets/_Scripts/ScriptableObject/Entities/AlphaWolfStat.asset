@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EntityName: AlphaWolf
   Icon: {fileID: 21300000, guid: 9e1e4cbac9e3843c5987e0f6e26652b5, type: 3}
-  MaxHealth: 3000
+  MaxHealth: 2500
   MaxSkillPoint: 500
   MaxBreakArmor: 10
   ActionSpeed: 70
