@@ -12,9 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 712068ecc01d545b9a31d14ba66c3665, type: 3}
   m_Name: P2SkillLoadout
   m_EditorClassIdentifier: 
-  EquippedSkills:
-  - {fileID: 11400000, guid: 4e97e858d89a4604d9e586ff7865a25b, type: 2}
-  - {fileID: 11400000, guid: d1c58fe4a20e84293a08627f33ed6fce, type: 2}
-  - {fileID: 11400000, guid: 0d575b8c335695f48a878803c4c49058, type: 2}
-  - {fileID: 11400000, guid: a8c4ef1be40ae493898372072af757a5, type: 2}
-  - {fileID: 11400000, guid: 7369144d56efa4387b6d4a97dd32d6cc, type: 2}
+  EquippedSkills: []

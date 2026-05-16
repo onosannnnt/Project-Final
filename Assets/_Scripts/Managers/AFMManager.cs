@@ -44,7 +44,6 @@ public class AFMManager : MonoBehaviour
     [SerializeField] private bool onlyAliveMembers = true;
     [SerializeField] private bool verboseLog = true;
     [SerializeField] private bool applyOnlyOnce = true;
-    [SerializeField] private bool skipIfBuffAlreadyExists = true;
     [SerializeField] private bool applyToAllControlledPlayers = true;
 
     [Tooltip("Single mock API response using shape: { player_id, type, tier }")]
@@ -62,7 +61,16 @@ public class AFMManager : MonoBehaviour
 
         if (applyOnStart)
         {
-            ApplyMockResponse();
+            // Prioritize real data from UserData if tier > 0
+            UserData data = TurnManager.Instance != null ? TurnManager.Instance.UserData : null;
+            if (data != null && data.AFMTier > 0)
+            {
+                RefreshBuffsFromUserData();
+            }
+            else
+            {
+                ApplyMockResponse();
+            }
         }
     }
 
@@ -94,6 +102,32 @@ public class AFMManager : MonoBehaviour
         {
             hasApplied = true;
         }
+    }
+
+    public void RefreshBuffsFromUserData()
+    {
+        if (ShouldSkipAFM()) return;
+
+        // Find UserData if not already known
+        UserData data = null;
+        if (TurnManager.Instance != null) data = TurnManager.Instance.UserData;
+        
+        if (data == null)
+        {
+            Debug.LogWarning("[AFMManager] Cannot refresh buffs: UserData not found.");
+            return;
+        }
+
+        Debug.Log($"[AFMManager] Refreshing buffs from UserData: {data.AFMType} T{data.AFMTier}");
+
+        AFMApiResponse response = new AFMApiResponse
+        {
+            type = data.AFMType,
+            tier = data.AFMTier,
+            player_id = data.ID
+        };
+
+        ApplyResponseToAllControlledPlayers(response);
     }
 
     public bool ApplySingleResponse(AFMApiResponse response)
@@ -205,19 +239,21 @@ public class AFMManager : MonoBehaviour
             return false;
         }
 
-        if (skipIfBuffAlreadyExists)
+        // 1. Clean up ANY existing buff that is part of the AFM rules
+        // This ensures T1 is removed when upgrading to T2, even if they have different names.
+        foreach (var rule in buffRules)
         {
-            ActiveBuff existing = member.buffController.GetBuffByName(buff.BuffName);
-            if (existing != null)
+            if (rule != null && rule.buff != null)
             {
-                if (verboseLog)
+                ActiveBuff existing = member.buffController.GetBuffByName(rule.buff.BuffName);
+                if (existing != null)
                 {
-                    Debug.Log($"[AFMManager] Skip apply: '{buff.BuffName}' already exists on '{member.gameObject.name}'.");
+                    member.buffController.RemoveBuff(existing);
                 }
-                return false;
             }
         }
 
+        // 2. Apply the new buff
         member.buffController.AddBuff(buff);
 
         if (verboseLog)

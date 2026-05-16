@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BuffName: Spell echo
   Description: There is a 30% chance to repeat the attack skill once.
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}
   buffType: 0
   isPermanent: 1
   Duration: 3
@@ -25,8 +25,10 @@ MonoBehaviour:
   DiminishingReturnDecayFactor: 0
   targetType: 0
   modifiers: []
+  isStealable: 1
   preventLethalDamage: 0
   preventHealing: 0
+  grantsDebuffImmunity: 0
   RepeatChancePercent: 30
   ConsumeStackOnTrigger: 0
   RemoveBuffOnTrigger: 0

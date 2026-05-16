@@ -38,11 +38,20 @@ public class StageCompleteRequest
     public List<CombatLog> combat_logs;
 }
 
+[Serializable]
+public class StageCompleteResponse
+{
+    public string message;
+    public string new_type;
+    public int new_tier;
+}
+
 public class StageCompleteSender : MonoBehaviour
 {
     [SerializeField] private string apiBaseUrl = "https://moonbloom.narutchai.com";
     [SerializeField] private string stageCompletePath = "/ml/stage-complete";
     [SerializeField] private bool logResponses = true;
+    [SerializeField] private UserData userData;
 
     public IEnumerator SendStageComplete(StageCompleteRequest payload)
     {
@@ -70,9 +79,74 @@ public class StageCompleteSender : MonoBehaviour
         {
             Debug.LogError($"Stage-complete failed: {request.error} | {request.downloadHandler.text}");
         }
-        else if (logResponses)
+        else 
         {
-            Debug.Log($"Stage-complete ok: {request.downloadHandler.text}");
+            if (logResponses)
+            {
+                Debug.Log($"Stage-complete ok: {request.downloadHandler.text}");
+            }
+
+        // Parse response and update AFM data
+        try 
+        {
+            StageCompleteResponse response = JsonUtility.FromJson<StageCompleteResponse>(request.downloadHandler.text);
+            UserData currentData = userData != null ? userData : (TurnManager.Instance != null ? TurnManager.Instance.UserData : null);
+            
+            if (response != null && currentData != null)
+            {
+                bool changed = false;
+                if (!string.IsNullOrEmpty(response.new_type))
+                {
+                    if (TryParseAFMType(response.new_type, out AFMType parsedType))
+                    {
+                        if (currentData.AFMType != parsedType)
+                        {
+                            currentData.AFMType = parsedType;
+                            changed = true;
+                        }
+                    }
+                }
+
+                if (response.new_tier > 0)
+                {
+                    if (currentData.AFMTier != response.new_tier)
+                    {
+                        currentData.AFMTier = response.new_tier;
+                        changed = true;
+                    }
+                }
+
+                if (changed)
+                {
+                    Debug.Log($"[StageCompleteSender] Updated UserData with new AFM: {currentData.AFMType} T{currentData.AFMTier}");
+                    
+                    // Notify AFMManager to apply buffs immediately if it exists
+                    AFMManager afm = FindObjectOfType<AFMManager>();
+                    if (afm != null)
+                    {
+                        afm.RefreshBuffsFromUserData();
+                    }
+                }
+            }
+        }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[StageCompleteSender] Failed to parse AFM response: {e.Message}");
+            }
+        }
+    }
+
+    private bool TryParseAFMType(string raw, out AFMType result)
+    {
+        result = AFMType.EL;
+        if (string.IsNullOrWhiteSpace(raw)) return false;
+        string val = raw.Trim().ToLowerInvariant();
+        switch (val)
+        {
+            case "el": result = AFMType.EL; return true;
+            case "ce": result = AFMType.CE; return true;
+            case "rv": result = AFMType.RV; return true;
+            default: return false;
         }
     }
 

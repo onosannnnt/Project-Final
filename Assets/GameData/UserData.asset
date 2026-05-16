@@ -14,11 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 8
   Username: emv
-  GamePhase: 1
-  SelectedQuestIndex: 1
-  HighestCompletedQuestIndex: 0
+  AFMType: 1
+  AFMTier: 3
+  GamePhase: 3
+  SelectedQuestIndex: 3
+  HighestCompletedQuestIndex: 2
   IsGameFinished: 0
-  TotalCoins: 0
+  TotalCoins: 540
   PendingQuestCoins: 0
   PendingRewardQuestIndex: -1
   tutorialCoinReward: 100
@@ -32,14 +34,5 @@ MonoBehaviour:
   IsTutorialFinalized: 1
   DefaultSkill: {fileID: 11400000, guid: 1388574c03e724a8f834dae785cc7325, type: 2}
   OwnedSkills:
-  - {fileID: 11400000, guid: 25ff8610d4d945d4fa36703e5a504cff, type: 2}
   - {fileID: 11400000, guid: 960ab9b50c23d4b80aa308ff09c2cc5e, type: 2}
-  - {fileID: 11400000, guid: 2bbf253faab41468f974deef9e5586d7, type: 2}
-  - {fileID: 11400000, guid: 86b6d2d6369ea9640be32041f5d08a49, type: 2}
-  - {fileID: 11400000, guid: 722595add0b174647aea6ea04c50e891, type: 2}
-  - {fileID: 11400000, guid: 4e97e858d89a4604d9e586ff7865a25b, type: 2}
-  - {fileID: 11400000, guid: d1c58fe4a20e84293a08627f33ed6fce, type: 2}
-  - {fileID: 11400000, guid: 0d575b8c335695f48a878803c4c49058, type: 2}
-  - {fileID: 11400000, guid: a8c4ef1be40ae493898372072af757a5, type: 2}
-  - {fileID: 11400000, guid: 7369144d56efa4387b6d4a97dd32d6cc, type: 2}
   TrialSkills: []
