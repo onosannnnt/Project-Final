@@ -15,7 +15,8 @@ public class ThresholdHealEffect : SkillEffect
         if (maxHP <= 0) return false;
 
         float hpRatio = target.CurrentHealth / maxHP;
-        float finalHeal = hpRatio <= hpThreshold ? thresholdHealAmount : baseHealAmount;
+        bool isBelowThreshold = hpRatio < hpThreshold;
+        float finalHeal = isBelowThreshold ? thresholdHealAmount : baseHealAmount;
 
         target.Heal(finalHeal);
         log.AddHealEffectLog(new HealEffectLog()
@@ -24,6 +25,16 @@ public class ThresholdHealEffect : SkillEffect
             AppliedTargetID = target.GetEntityID(),
             HealAmount = finalHeal
         });
+
+        if (isBelowThreshold)
+        {
+            var debuffs = target.buffController.GetDebuffs();
+            if (debuffs.Count > 0)
+            {
+                // Remove the most recent debuff (last in the list)
+                target.buffController.RemoveBuff(debuffs[debuffs.Count - 1]);
+            }
+        }
 
         return true;
     }

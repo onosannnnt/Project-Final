@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Phase: 1
   baseHealAmount: 200
-  thresholdHealAmount: 600
+  thresholdHealAmount: 400
   hpThreshold: 0.3
