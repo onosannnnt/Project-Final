@@ -237,7 +237,7 @@ public class HealthbarUI : MonoBehaviour
             {
                 var durationText = durationTransform.GetComponentInChildren<TextMeshProUGUI>();
                 if (durationText != null)
-                    durationText.text = BuffStackColor(buff.CurrentDuration) + $"{buff.CurrentDuration}</color>";
+                    durationText.text = $"{buff.CurrentDuration}";
             }
 
             var stackTransform = buffObj.transform.Find("Stack");
@@ -249,7 +249,7 @@ public class HealthbarUI : MonoBehaviour
                     stackTransform.gameObject.SetActive(true);
                     var stackText = stackTransform.GetComponentInChildren<TextMeshProUGUI>();
                     if (stackText != null)
-                        stackText.text = BuffStackColor(buff.CurrentStack) + $"{buff.CurrentStack}</color>";
+                        stackText.text = $"{buff.CurrentStack}";
                 }
                 else
                 {
@@ -276,16 +276,6 @@ public class HealthbarUI : MonoBehaviour
             GameObject buffObj = Instantiate(StatusBuffPrefab, StatusBuffParent.transform);
             buffObj.GetComponent<Image>().sprite = buff.Data.Icon;
         }
-    }
-
-    private string BuffStackColor(int stack)
-    {
-        if (stack >= 5)
-            return "<color=green>";
-        else if (stack >= 3)
-            return "<color=yellow>";
-        else
-            return "<color=red>";
     }
 
 }

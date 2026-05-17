@@ -86,8 +86,8 @@ public class TargetingPanel : MonoBehaviour
         {
             GameObject buffObj = Instantiate(BuffPrefab, BuffParent.transform);
             buffObj.GetComponent<Image>().sprite = buff.Data.Icon;
-            buffObj.transform.Find("Duration").GetComponentInChildren<TextMeshProUGUI>().text = BuffStackColor(buff.CurrentDuration) + $"{buff.CurrentDuration}</color>";
-            buffObj.transform.Find("Stack").GetComponentInChildren<TextMeshProUGUI>().text = BuffStackColor(buff.CurrentStack) + $"{buff.CurrentStack}</color>";
+            buffObj.transform.Find("Duration").GetComponentInChildren<TextMeshProUGUI>().text = $"{buff.CurrentDuration}";
+            buffObj.transform.Find("Stack").GetComponentInChildren<TextMeshProUGUI>().text = $"{buff.CurrentStack}";
         }
 
         if (debuffs.Count > 0 && DebuffPrefab != null)
@@ -101,15 +101,6 @@ public class TargetingPanel : MonoBehaviour
     }
     
 
-    private string BuffStackColor(int stack)
-    {
-        if (stack >= 5)
-            return "<color=green>";
-        else if (stack >= 3)
-            return "<color=yellow>";
-        else
-            return "<color=red>";
-    }
     private void OnPanelClicked()
     {
         statInfoUI.SetEntity(currentTarget);
