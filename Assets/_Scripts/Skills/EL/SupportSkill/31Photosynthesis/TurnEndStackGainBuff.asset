@@ -25,8 +25,9 @@ MonoBehaviour:
   DiminishingReturnDecayFactor: 0
   targetType: 1
   modifiers: []
+  isStealable: 1
   preventLethalDamage: 0
   preventHealing: 0
   grantsDebuffImmunity: 0
   BuffToGain: {fileID: 11400000, guid: 3d5cae4c40374de4885c1e1a820a5eeb, type: 2}
-  StacksPerTurn: 1
+  StacksPerTurn: 2

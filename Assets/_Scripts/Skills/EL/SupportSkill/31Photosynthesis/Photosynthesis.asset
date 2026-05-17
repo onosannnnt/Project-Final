@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillID: 31
   skillName: Photosynthesis
-  description: Grant a buff that gives 1 Frenzy Stack at the end of each turn for
+  description: Grant a buff that gives 2 Frenzy Stack at the end of each turn for
     3 turns.
   skillIcon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}
   skillType: 2
   skillStyle: 2
-  Tier: 2
-  SkillPoint: 35
+  Tier: 3
+  SkillPoint: 70
   CorruptedHealthGain: 0
   TargetType: 1
   TargetCount: 0

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: CleanseAndGainStackEffect
   m_EditorClassIdentifier: 
   Phase: 0
+  ExecuteOnce: 0
   stackToGrant: {fileID: 11400000, guid: 3d5cae4c40374de4885c1e1a820a5eeb, type: 2}
-  stacksPerDebuff: 2
+  stacksPerDebuff: 1
   fallbackStacks: 1

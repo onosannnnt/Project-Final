@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillID: 36
   skillName: Overgrowth
-  description: Cleanse all debuffs from target and gain 2 Frenzy Stacks per debuff
+  description: Cleanse all debuffs from target and gain 1 Frenzy Stacks per debuff
     removed (if none, gain 1 Frenzy Stack).
   skillIcon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}
   skillType: 2
   skillStyle: 2
-  Tier: 3
-  SkillPoint: 75
+  Tier: 2
+  SkillPoint: 40
   CorruptedHealthGain: 0
   TargetType: 1
   TargetCount: 0
