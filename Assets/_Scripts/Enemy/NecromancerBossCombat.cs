@@ -12,6 +12,7 @@ public class NecromancerBossCombat : BossCombat
     // ใช้เช็คว่าเทิร์นที่แล้วมีลูกน้องกี่ตัว เพื่อดูว่ามีลูกน้องตายไหม
     private int previousMinionCount = 0;
     private int turnCounter = 0;
+    private bool hasSummoned = false;
 
     protected override void Start()
     {
@@ -70,15 +71,16 @@ public class NecromancerBossCombat : BossCombat
 
         Skill selectedSkill = null;
 
-        // 4. เงื่อนไขการ Summon: ถ้าลูกน้องตายหมดเกลี้ยง (เหลือ 0 ตัว) ให้เรียกใหม่
-        if (currentMinionCount == 0 && summonSkill != null)
+        // 4. เงื่อนไขการ Summon: ถ้าลูกน้องตายหมดเกลี้ยง (เหลือ 0 ตัว) และยังไม่ได้ใช้สกิลนี้ในรอบการต่อสู้นี้ ให้เรียกใหม่
+        if (currentMinionCount == 0 && summonSkill != null && !hasSummoned)
         {
             selectedSkill = summonSkill;
-            Debug.Log("ลูกน้องตายหมดแล้ว! บอสใช้สกิล Summon เรียกลูกน้องชุดใหม่");
+            hasSummoned = true; // Mark as summoned once
+            Debug.Log("ลูกน้องตายหมดแล้ว! บอสใช้สกิล Summon เรียกลูกน้องชุดใหม่ (จำกัด 1 ครั้งต่อการต่อสู้)");
         }
         else
         {
-            // 5. ถ้าลูกน้องยังอยู่ ให้โจมตีตามปกติ
+            // 5. ถ้าลูกน้องยังอยู่ หรือใช้ Summon ไปแล้ว ให้โจมตีตามปกติ
             do
             {
                 selectedSkill = skills[turnCounter % skills.Count];

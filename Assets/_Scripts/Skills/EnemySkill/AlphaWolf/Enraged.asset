@@ -13,18 +13,20 @@ MonoBehaviour:
   m_Name: Enraged
   m_EditorClassIdentifier: 
   BuffName: Enraged
-  Description: Deal extra 50 damage per stack. (Max 5)
-  Icon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}
+  Description: Deal extra 30 damage per stack. (Max 4)
+  Icon: {fileID: 21300000, guid: a3b792d74d96ab84eaac934399e5b662, type: 3}
   buffType: 0
   isPermanent: 1
   Duration: 3
   isStackable: 1
-  MaxStack: 5
+  MaxStack: 4
   StackCalculationType: 0
   Threshold: 0
   DiminishingReturnDecayFactor: 0
   targetType: 0
   modifiers: []
+  isStealable: 1
   preventLethalDamage: 0
   preventHealing: 0
+  grantsDebuffImmunity: 0
   BonusDamage: 50

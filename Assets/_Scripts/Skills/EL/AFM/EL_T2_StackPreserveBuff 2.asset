@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BuffName: Wisdombound Blessing
   Description: There is a 20% chance to not consume a Frenzy stack.
-  Icon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}
+  Icon: {fileID: 21300000, guid: 156b1649b67a4ea49b2f88d0c37fd463, type: 3}
   buffType: 0
   isPermanent: 1
   Duration: 3
