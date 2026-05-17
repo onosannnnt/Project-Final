@@ -17,7 +17,7 @@ MonoBehaviour:
   Icon: {fileID: 21300000, guid: ea3b8a61f4add494c84dfcffa4d9cc32, type: 3}
   buffType: 1
   isPermanent: 0
-  Duration: 3
+  Duration: 2
   isStackable: 1
   MaxStack: 6
   StackCalculationType: 0
