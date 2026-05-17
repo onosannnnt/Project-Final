@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TurnEndStackGainBuff
   m_EditorClassIdentifier: 
   BuffName: Photosynthesis
-  Description: Gives 1 Frenzy Stack at the end of each turn
+  Description: Gives 2 Frenzy Stack at the end of each turn
   Icon: {fileID: 21300000, guid: 40347d9c288a04da1a59f00e324837d8, type: 3}
   buffType: 0
   isPermanent: 0
