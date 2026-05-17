@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c67874e852b44966a11afd924b94618, type: 3}
   m_Name: EL_TEST_StackPreserveBuff 2
   m_EditorClassIdentifier: 
-  BuffName: Wisdombound Blessing
+  BuffName: Blessing
   Description: There is a 100% chance to not consume a Frenzy stack.
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: 156b1649b67a4ea49b2f88d0c37fd463, type: 3}
   buffType: 0
   isPermanent: 1
   Duration: 3
@@ -25,8 +25,10 @@ MonoBehaviour:
   DiminishingReturnDecayFactor: 0
   targetType: 0
   modifiers: []
+  isStealable: 0
   preventLethalDamage: 0
   preventHealing: 0
+  grantsDebuffImmunity: 0
   AppliesToAnyBuff: 1
   TargetBuffs:
   - {fileID: 11400000, guid: 3d5cae4c40374de4885c1e1a820a5eeb, type: 2}

@@ -96,6 +96,20 @@ public class BuffManager
     {
         if (buff == null || !activeBuffs.Contains(buff)) return;
 
+        // --- AFM Stack Preservation Logic ---
+        // Check if any active buff is a StackPreserveBuff and if it triggers for the buff being consumed
+        foreach (var activePreserveBuff in activeBuffs)
+        {
+            if (activePreserveBuff.Data is StackPreserveBuff preserveRule)
+            {
+                if (preserveRule.ShouldPreserve(buff, activePreserveBuff))
+                {
+                    Debug.Log($"[AFM] {owner.gameObject.name} PRESERVED stack of {buff.Data.BuffName}!");
+                    return; // Skip consumption
+                }
+            }
+        }
+
         buff.CurrentStack -= stacksToConsume;
 
         if (buff.CurrentStack <= 0)

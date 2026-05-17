@@ -18,7 +18,7 @@ MonoBehaviour:
   Element: 0
   Accuracy: 100
   DamagePer10PercentCorrupted: 40
-  CurrentHpCostPercent: 0.05
+  CurrentHpCostPercent: 0
   ForceHpToMaxPercent: -1
   CorruptedThresholdPercent: 0.3
   BonusDamageOnThreshold: 0

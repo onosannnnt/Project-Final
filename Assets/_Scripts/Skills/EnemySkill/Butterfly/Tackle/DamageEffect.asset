@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Phase: 1
   ExecuteOnce: 0
-  BaseDamage: 70
+  BaseDamage: 7000
   Element: 0
   Accuracy: 1
   CriticalHitChance: 0

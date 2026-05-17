@@ -15434,7 +15434,7 @@ MonoBehaviour:
     buff: {fileID: 11400000, guid: 04bed68dc64274c64be3530d19f956d7, type: 2}
   - type: 0
     tier: 4
-    buff: {fileID: 11400000, guid: 27046ebf1e27f43ccaf819c75aa0ec79, type: 2}
+    buff: {fileID: 11400000, guid: 6fb64cbf8f11a404a8d5f88bfefe212b, type: 2}
   - type: 1
     tier: 4
     buff: {fileID: 11400000, guid: f9f9f4a463deb4d7ead0345e2e056b21, type: 2}

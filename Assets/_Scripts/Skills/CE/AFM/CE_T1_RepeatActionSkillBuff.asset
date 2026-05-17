@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03aac862c604545bea5d56fdc7ca9026, type: 3}
   m_Name: CE_T1_RepeatActionSkillBuff
   m_EditorClassIdentifier: 
-  BuffName: Spell echo
+  BuffName: Blessing
   Description: There is a 10% chance to repeat the attack skill once.
   Icon: {fileID: 21300000, guid: ae2a72439316c2848b28cd3af4c774c4, type: 3}
   buffType: 0
@@ -25,7 +25,7 @@ MonoBehaviour:
   DiminishingReturnDecayFactor: 0
   targetType: 0
   modifiers: []
-  isStealable: 1
+  isStealable: 0
   preventLethalDamage: 0
   preventHealing: 0
   grantsDebuffImmunity: 0

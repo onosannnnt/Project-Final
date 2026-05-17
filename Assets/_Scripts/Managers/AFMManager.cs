@@ -305,6 +305,17 @@ public class AFMManager : MonoBehaviour
 
     private Buff ResolveBuff(AFMType responseType, int tier)
     {
+        // 1. Try to load from Resources for automatic mapping
+        // Path format: AFM/{Type}/{Tier} e.g. AFM/EL/3
+        string resourcePath = $"AFM/{responseType}/{tier}";
+        Buff resourceBuff = Resources.Load<Buff>(resourcePath);
+        if (resourceBuff != null)
+        {
+            if (verboseLog) Debug.Log($"[AFMManager] Resolved buff '{resourceBuff.BuffName}' from Resources: {resourcePath}");
+            return resourceBuff;
+        }
+
+        // 2. Fallback to manual buffRules list
         if (buffRules == null || buffRules.Count == 0)
         {
             return null;

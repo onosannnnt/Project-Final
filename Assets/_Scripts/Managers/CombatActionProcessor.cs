@@ -78,6 +78,54 @@ public class CombatActionProcessor : MonoBehaviour
         {
             ExecuteEnemyAction(enemy, target, skill, log);
         }
+
+        // --- Repeat Action AFM Logic ---
+        CheckAndHandleRepeatAction(entity, target, skill, log);
+    }
+
+    private void CheckAndHandleRepeatAction(Entity entity, Entity target, Skill skill, CombatActionLog log)
+    {
+        if (entity == null || entity.buffController == null || skill == null) return;
+
+        // Find the RepeatActionSkillBuff among active buffs
+        foreach (var activeBuff in entity.buffController.GetAllBuffs())
+        {
+            if (activeBuff.Data is RepeatActionSkillBuff repeatBuff)
+            {
+                // Check if the skill is allowed to repeat and if the chance rolls successfully
+                if (repeatBuff.CanRepeatSkill(skill) && repeatBuff.ShouldRepeat(activeBuff))
+                {
+                    Debug.Log($"[AFM] Repeat Action triggered for {entity.gameObject.name} using {skill.skillName}!");
+                    
+                    // Execute the skill again
+                    // We call the inner execution methods directly to bypass momentum/streak logic for the repeat
+                    if (entity is PlayerEntity)
+                    {
+                        // Note: We don't consume resources for the repeat action
+                        List<Entity> targets = GetTargets(entity, target, skill);
+                        if (targets.Count > 0)
+                        {
+                            entity.skillManager.UseSkill(skill, targets, log);
+                        }
+                    }
+                    else if (entity is EnemyCombat enemy)
+                    {
+                        List<Entity> targets = GetTargets(enemy, target, skill);
+                        if (targets.Count > 0)
+                        {
+                            enemy.skillManager.UseSkill(skill, targets, log);
+                        }
+                    }
+
+                    // Handle buff consumption/removal if configured
+                    repeatBuff.OnRepeatTriggered(entity, activeBuff);
+                    
+                    // We only allow one repeat per action to prevent potential infinite loops 
+                    // (though ShouldRepeat is usually a roll, safety first)
+                    break;
+                }
+            }
+        }
     }
 
     private void ExecutePlayerAction(Entity entity, Entity target, Skill skill, CombatActionLog log)
