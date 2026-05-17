@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68a93d19ed5314d84a7a239a7de394af, type: 3}
   m_Name: UserData
   m_EditorClassIdentifier: 
-  ID: 36
-  Username: ekjnfei
-  AFMType: 2
+  ID: 39
+  Username: demotest2
+  AFMType: 0
   AFMTier: 4
   GamePhase: 1
   SelectedQuestIndex: -1

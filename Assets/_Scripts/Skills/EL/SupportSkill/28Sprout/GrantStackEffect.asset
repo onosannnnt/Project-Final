@@ -15,5 +15,5 @@ MonoBehaviour:
   Phase: 1
   ExecuteOnce: 0
   buffToGrant: {fileID: 11400000, guid: 3d5cae4c40374de4885c1e1a820a5eeb, type: 2}
-  stacksToGrant: 2
+  stacksToGrant: 4
   targetCaster: 0
