@@ -94,6 +94,12 @@ public class StageCompleteSender : MonoBehaviour
             
             if (response != null && currentData != null)
             {
+                // [PATCH/DEMO BRANCH] Automatic AFM Synchronization is disabled.
+                // We keep the local UserData values unchanged to allow for manual developer testing.
+                Debug.Log($"[StageCompleteSender] API returned AFM: {response.new_type} T{response.new_tier}. " +
+                          $"Automatic sync is DISABLED in this branch. Staying with manual: {currentData.AFMType} T{currentData.AFMTier}");
+
+                /*
                 bool changed = false;
                 if (!string.IsNullOrEmpty(response.new_type))
                 {
@@ -127,12 +133,13 @@ public class StageCompleteSender : MonoBehaviour
                         afm.RefreshBuffsFromUserData();
                     }
                 }
+                */
             }
         }
-            catch (Exception e)
-            {
-                Debug.LogWarning($"[StageCompleteSender] Failed to parse AFM response: {e.Message}");
-            }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[StageCompleteSender] Failed to parse AFM response: {e.Message}");
+        }
         }
     }
 
