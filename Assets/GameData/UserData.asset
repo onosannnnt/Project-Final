@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68a93d19ed5314d84a7a239a7de394af, type: 3}
   m_Name: UserData
   m_EditorClassIdentifier: 
-  ID: 39
-  Username: demotest2
+  ID: 44
+  Username: demoye
   AFMType: 0
   AFMTier: 4
-  GamePhase: 1
+  GamePhase: 2
   SelectedQuestIndex: -1
-  HighestCompletedQuestIndex: -1
+  HighestCompletedQuestIndex: 1
   IsGameFinished: 0
-  TotalCoins: 0
+  TotalCoins: 90
   PendingQuestCoins: 0
   PendingRewardQuestIndex: -1
   tutorialCoinReward: 100
@@ -30,8 +30,19 @@ MonoBehaviour:
   playerLoadoutsToReset:
   - {fileID: 11400000, guid: 5a526a6ae7db0422c9d63b916530c938, type: 2}
   - {fileID: 11400000, guid: 3009cfca1047fa744ab37803320dd422, type: 2}
-  HasChosenStarterBuild: 0
-  IsTutorialFinalized: 0
+  HasChosenStarterBuild: 1
+  IsTutorialFinalized: 1
   DefaultSkill: {fileID: 11400000, guid: 1388574c03e724a8f834dae785cc7325, type: 2}
-  OwnedSkills: []
+  OwnedSkills:
+  - {fileID: 11400000, guid: 8228c8739e9424415b0ac6be3787e3a3, type: 2}
+  - {fileID: 11400000, guid: 03340a7ec62f14fb59a235742685b8d3, type: 2}
+  - {fileID: 11400000, guid: c43a1b36c8f53214b9061f5eaff79007, type: 2}
+  - {fileID: 11400000, guid: 0a2d4a86e599746a7aad8f9f3a4d9b03, type: 2}
+  - {fileID: 11400000, guid: 2e93ae26964a6469380c23c95bcfb84b, type: 2}
+  - {fileID: 11400000, guid: b8c9fe8b379ef41f897fc9aa0e28e066, type: 2}
+  - {fileID: 11400000, guid: 4b1f3aec81a5a448b9393a9de798a0d0, type: 2}
+  - {fileID: 11400000, guid: 9f57f412bcebc407aafdcc7833532191, type: 2}
+  - {fileID: 11400000, guid: 74d34434fbe1948fb8062dde13fd48bb, type: 2}
+  - {fileID: 11400000, guid: bbc99df4c61da4712bd11d1dfd1339a9, type: 2}
+  - {fileID: 11400000, guid: 222c67016ebda43daa1c98f9f79c5ef7, type: 2}
   TrialSkills: []

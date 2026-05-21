@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: EL_TEST_StackPreserveBuff 2
   m_EditorClassIdentifier: 
   BuffName: Blessing
-  Description: There is a 100% chance to not consume a Frenzy stack.
+  Description: There is a 30% chance to not consume a Frenzy stack.
   Icon: {fileID: 21300000, guid: 156b1649b67a4ea49b2f88d0c37fd463, type: 3}
   buffType: 0
   isPermanent: 1
